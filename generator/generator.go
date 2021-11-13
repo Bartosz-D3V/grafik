@@ -2,6 +2,9 @@ package generator
 
 import (
 	"bytes"
+	"go/format"
+	"path/filepath"
+	"strings"
 	"text/template"
 )
 
@@ -11,10 +14,10 @@ type Generator struct {
 	template *template.Template
 }
 
-func New() *Generator {
-	tmpl, err := template.ParseGlob("templates/*.tmpl")
+func New(fptr string) *Generator {
+	tmpl, err := template.ParseGlob(filepath.Join(fptr, "templates/*.tmpl"))
 	if err != nil {
-		panic("pa")
+		panic(err)
 	}
 	return &Generator{
 		stream:   bytes.Buffer{},
@@ -25,6 +28,10 @@ func New() *Generator {
 
 func (g *Generator) WriteHeader() {
 	g.write(Header)
+}
+
+func (g *Generator) WriteLineBreaks(r int) {
+	g.write(strings.Repeat("\n", r))
 }
 
 func (g *Generator) WriteInterface(name string, fn ...Func) {
@@ -39,5 +46,14 @@ func (g *Generator) WriteInterface(name string, fn ...Func) {
 }
 
 func (g *Generator) Generate() []byte {
-	return g.stream.Bytes()
+	b := make([]byte, g.stream.Len())
+	_, err := g.stream.Read(b)
+	if err != nil {
+		panic(err)
+	}
+	b, err = format.Source(b)
+	if err != nil {
+		panic(err)
+	}
+	return b
 }

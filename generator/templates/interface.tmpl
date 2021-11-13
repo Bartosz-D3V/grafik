@@ -1,4 +1,0 @@
-type {{.InterfaceName}} interface {
-	{{range .Functions}}{{template "function_header" .}}{{end}}
-}
-{{- define "function_header"}}{{.Name}}({{.JoinArgsBy ", "}}) {{.Type}}{{end}}

@@ -1,0 +1,19 @@
+type Query {
+    file(id: ID!): File
+    files: [File!]!
+}
+
+type Mutation {
+    renameFile(
+        id: ID!
+        name: String!
+    ): File
+
+    deleteFile(
+        id: ID!
+    ): File
+}
+
+type File {
+    name: String
+}
