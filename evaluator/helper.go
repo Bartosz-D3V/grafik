@@ -46,6 +46,7 @@ func (e *evaluator) generateStructFromDefinition() {
 			Name:   cType.Name,
 			Fields: e.parseFieldArgs(cType.Fields),
 		}
+		e.generator.WriteLineBreak(2)
 		e.generator.WriteStruct(s)
 	}
 }

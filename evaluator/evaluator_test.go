@@ -11,9 +11,9 @@ import (
 	"testing"
 )
 
-func TestEvaluator_Generate(t *testing.T) {
+func TestEvaluator_Generate_FlatStructure(t *testing.T) {
 	pd := test.GetParentDir(t)
-	schema := loadSchema(t, pd)
+	schema := loadSchema(t, pd, "test/simple-definition.graphql")
 	e := New(pd, schema)
 
 	out := string(e.Generate())
@@ -38,8 +38,48 @@ type File struct {
 	assert.Equal(t, expOut, out)
 }
 
-func loadSchema(t *testing.T, pd string) *ast.Schema {
-	schemaLoc := path.Join(pd, "test/simple-definition.graphql")
+func TestEvaluator_Generate_NestedStructure(t *testing.T) {
+	pd := test.GetParentDir(t)
+	schema := loadSchema(t, pd, "test/nested-type-definition.graphql")
+	e := New(pd, schema)
+
+	out := string(e.Generate())
+	expOut := test.PrepExpCode(t, fmt.Sprintf(`
+// Generated with ggrafik. DO NOT EDIT
+
+type Query interface {
+	getHero() Character
+}
+
+type Character struct {
+	name      string
+	homeWorld Planet
+	species   Species
+}
+
+type Planet struct {
+	name     string
+	climate  string
+	location Location
+}
+
+type Species struct {
+	name     string
+	lifespan int
+	origin   Planet
+}
+
+type Location struct {
+	posX int
+	poxY int
+}
+`))
+
+	assert.Equal(t, expOut, out)
+}
+
+func loadSchema(t *testing.T, pd string, schemaName string) *ast.Schema {
+	schemaLoc := path.Join(pd, schemaName)
 	file, err := ioutil.ReadFile(schemaLoc)
 	assert.NoError(t, err)
 	assert.NotNil(t, file)

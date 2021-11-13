@@ -1,0 +1,26 @@
+type Query {
+    getHero: Character
+}
+
+type Character {
+    name: String
+    homeWorld: Planet
+    species: Species
+}
+
+type Planet {
+    name: String
+    climate: String
+    location: Location
+}
+
+type Location {
+    posX: Float
+    poxY: Float
+}
+
+type Species {
+    name: String
+    lifespan: Int
+    origin: Planet
+}
