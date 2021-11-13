@@ -1,0 +1,12 @@
+type Query {
+    getHero: Character
+}
+
+type Character {
+    name: String
+    appearsIn: [Episode]!
+}
+
+type Episode {
+    name: String
+}

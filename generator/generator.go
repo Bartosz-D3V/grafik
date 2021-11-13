@@ -18,7 +18,6 @@ type Generator interface {
 
 type generator struct {
 	stream   bytes.Buffer
-	ident    int
 	template *template.Template
 }
 
@@ -29,7 +28,6 @@ func New(fptr string) Generator {
 	}
 	return &generator{
 		stream:   bytes.Buffer{},
-		ident:    0,
 		template: tmpl,
 	}
 }

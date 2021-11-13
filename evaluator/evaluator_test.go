@@ -22,7 +22,7 @@ func TestEvaluator_Generate_FlatStructure(t *testing.T) {
 
 type Query interface {
 	file(id string) File
-	files()
+	files() []File
 }
 
 type Mutation interface {
@@ -31,6 +31,32 @@ type Mutation interface {
 }
 
 type File struct {
+	name string
+}
+`))
+
+	assert.Equal(t, expOut, out)
+}
+
+func TestEvaluator_Generate_ArrayStructure(t *testing.T) {
+	pd := test.GetParentDir(t)
+	schema := loadSchema(t, pd, "test/array-type-definition.graphql")
+	e := New(pd, schema)
+
+	out := string(e.Generate())
+	expOut := test.PrepExpCode(t, fmt.Sprintf(`
+// Generated with ggrafik. DO NOT EDIT
+
+type Query interface {
+	getHero() Character
+}
+
+type Character struct {
+	name      string
+	appearsIn []Episode
+}
+
+type Episode struct {
 	name string
 }
 `))

@@ -1,6 +1,7 @@
 package evaluator
 
 import (
+	"fmt"
 	"github.com/Bartosz-D3V/ggrafik/generator"
 	"github.com/vektah/gqlparser/ast"
 	"strings"
@@ -31,7 +32,7 @@ func (e *evaluator) generateInterfaceFromDefinition(query *ast.Definition) {
 		f := generator.Func{
 			Name: field.Name,
 			Args: e.parseFnArgs(field.Arguments),
-			Type: e.convGoType(field.Type.NamedType),
+			Type: e.convGoType(field.Type),
 		}
 		funcs = append(funcs, f)
 	}
@@ -64,7 +65,7 @@ func (e *evaluator) parseFnArgs(args ast.ArgumentDefinitionList) []generator.Typ
 	for _, arg := range args {
 		farg := generator.TypeArg{
 			Name: arg.Name,
-			Type: e.convGoType(arg.Type.NamedType),
+			Type: e.convGoType(arg.Type),
 		}
 		funcArgs = append(funcArgs, farg)
 	}
@@ -76,17 +77,17 @@ func (e *evaluator) parseFieldArgs(args ast.FieldList) []generator.TypeArg {
 	for _, arg := range args {
 		farg := generator.TypeArg{
 			Name: arg.Name,
-			Type: e.convGoType(arg.Type.NamedType),
+			Type: e.convGoType(arg.Type),
 		}
 		funcArgs = append(funcArgs, farg)
 	}
 	return funcArgs
 }
 
-func (e *evaluator) convGoType(namedType string) string {
-	switch namedType {
+func (e *evaluator) convGoType(astType *ast.Type) string {
+	switch namedType := astType.NamedType; namedType {
 	case "String",
-		"",
+		//"",
 		"Int":
 		return strings.ToLower(namedType)
 	case "ID":
@@ -96,7 +97,20 @@ func (e *evaluator) convGoType(namedType string) string {
 	case "Boolean":
 		return "bool"
 	default:
-		e.customTypes[namedType] = true
-		return namedType
+		return e.convComplexType(astType)
 	}
+}
+
+func (e *evaluator) convComplexType(astType *ast.Type) string {
+	if isList := astType.IsCompatible(ast.ListType(astType.Elem, astType.Position)); isList {
+		e.customTypes[astType.Elem.NamedType] = true
+		return fmt.Sprintf("[]%s", astType.Elem.NamedType)
+	}
+
+	if astType.NamedType == "" {
+		return ""
+	}
+
+	e.customTypes[astType.NamedType] = true
+	return astType.NamedType
 }

@@ -14,7 +14,7 @@ func main() {
 	fptr := flag.String("fpath", wd, "file path to read from")
 	flag.Parse()
 
-	file, err := ioutil.ReadFile("test/nested-type-definition.graphql")
+	file, err := ioutil.ReadFile("test/array-type-definition.graphql")
 	if err != nil {
 		panic(err)
 	}
