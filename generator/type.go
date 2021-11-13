@@ -5,14 +5,14 @@ import (
 	"strings"
 )
 
-type FuncArg struct {
+type TypeArg struct {
 	Name string
 	Type string
 }
 
 type Func struct {
 	Name string
-	Args []FuncArg
+	Args []TypeArg
 	Type string
 }
 
@@ -23,4 +23,9 @@ func (f Func) JoinArgsBy(s string) string {
 	}
 
 	return strings.Join(pArgs, s)
+}
+
+type Struct struct {
+	Name   string
+	Fields []TypeArg
 }

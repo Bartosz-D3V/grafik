@@ -29,6 +29,10 @@ type Mutation interface {
 	renameFile(id string, name string) File
 	deleteFile(id string) File
 }
+
+type File struct {
+	name string
+}
 `))
 
 	assert.Equal(t, expOut, out)
@@ -45,7 +49,7 @@ func loadSchema(t *testing.T, pd string) *ast.Schema {
 		Name:  "simple-definition.graphql",
 	})
 	assert.Nil(t, err)
-	assert.NotNil(t, schemaLoc)
+	assert.NotNil(t, schema)
 
 	return schema
 }

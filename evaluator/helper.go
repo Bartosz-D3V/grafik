@@ -8,33 +8,49 @@ import (
 
 func (e *evaluator) genSchemaDef() {
 	if e.schema.Query != nil {
-		e.generateFromDefinition(e.schema.Query)
+		e.generateInterfaceFromDefinition(e.schema.Query)
 	}
 
-	e.generator.WriteLineBreaks(2)
+	e.generator.WriteLineBreak(2)
 
 	if e.schema.Mutation != nil {
-		e.generateFromDefinition(e.schema.Mutation)
+		e.generateInterfaceFromDefinition(e.schema.Mutation)
 	}
+
+	e.generator.WriteLineBreak(2)
+
+	e.generateStructFromDefinition()
 }
 
-func (e *evaluator) generateFromDefinition(query *ast.Definition) {
-	usrFields := query.Fields[:numOfBuiltIns(query)]
+func (e *evaluator) generateInterfaceFromDefinition(query *ast.Definition) {
+	usrFields := query.Fields[:e.numOfBuiltIns(query)]
 	interfaceName := query.Name
 
 	var funcs []generator.Func
 	for _, field := range usrFields {
 		f := generator.Func{
 			Name: field.Name,
-			Args: parseArgs(field.Arguments),
-			Type: field.Type.NamedType,
+			Args: e.parseFnArgs(field.Arguments),
+			Type: e.convGoType(field.Type.NamedType),
 		}
 		funcs = append(funcs, f)
 	}
 	e.generator.WriteInterface(interfaceName, funcs...)
 }
 
-func numOfBuiltIns(query *ast.Definition) int {
+func (e *evaluator) generateStructFromDefinition() {
+	for customType := range e.customTypes {
+		cType := e.schema.Types[customType]
+
+		s := generator.Struct{
+			Name:   cType.Name,
+			Fields: e.parseFieldArgs(cType.Fields),
+		}
+		e.generator.WriteStruct(s)
+	}
+}
+
+func (e *evaluator) numOfBuiltIns(query *ast.Definition) int {
 	if query.OneOf("Query") {
 		return len(query.Fields) - 2
 	} else {
@@ -42,21 +58,34 @@ func numOfBuiltIns(query *ast.Definition) int {
 	}
 }
 
-func parseArgs(args ast.ArgumentDefinitionList) []generator.FuncArg {
-	var funcArgs []generator.FuncArg
+func (e *evaluator) parseFnArgs(args ast.ArgumentDefinitionList) []generator.TypeArg {
+	var funcArgs []generator.TypeArg
 	for _, arg := range args {
-		farg := generator.FuncArg{
+		farg := generator.TypeArg{
 			Name: arg.Name,
-			Type: convGoType(arg.Type.NamedType),
+			Type: e.convGoType(arg.Type.NamedType),
 		}
 		funcArgs = append(funcArgs, farg)
 	}
 	return funcArgs
 }
 
-func convGoType(namedType string) string {
+func (e *evaluator) parseFieldArgs(args ast.FieldList) []generator.TypeArg {
+	var funcArgs []generator.TypeArg
+	for _, arg := range args {
+		farg := generator.TypeArg{
+			Name: arg.Name,
+			Type: e.convGoType(arg.Type.NamedType),
+		}
+		funcArgs = append(funcArgs, farg)
+	}
+	return funcArgs
+}
+
+func (e *evaluator) convGoType(namedType string) string {
 	switch namedType {
 	case "String",
+		"",
 		"Int":
 		return strings.ToLower(namedType)
 	case "ID":
@@ -66,6 +95,7 @@ func convGoType(namedType string) string {
 	case "Boolean":
 		return "bool"
 	default:
+		e.customTypes[namedType] = true
 		return namedType
 	}
 }

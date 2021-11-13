@@ -10,7 +10,7 @@ import (
 func TestGenerator_WriteInterface_NoArgWithReturn(t *testing.T) {
 	fn := Func{
 		Name: "FindBook",
-		Args: make([]FuncArg, 0),
+		Args: make([]TypeArg, 0),
 		Type: "Book",
 	}
 	pd := test.GetParentDir(t)
@@ -30,7 +30,7 @@ type BookService interface {
 func TestGenerator_WriteInterface_SingleArgWithReturn(t *testing.T) {
 	fn := Func{
 		Name: "FindBook",
-		Args: []FuncArg{{Name: "isbn", Type: "string"}},
+		Args: []TypeArg{{Name: "isbn", Type: "string"}},
 		Type: "Book",
 	}
 	pd := test.GetParentDir(t)
@@ -50,7 +50,7 @@ type BookService interface {
 func TestGenerator_WriteInterface_MultiArgWithReturn(t *testing.T) {
 	fn := Func{
 		Name: "FindEmployee",
-		Args: []FuncArg{
+		Args: []TypeArg{
 			{Name: "name", Type: "string"},
 			{Name: "department", Type: "string"},
 			{Name: "age", Type: "int"},
@@ -74,12 +74,12 @@ type EmployeeService interface {
 func TestGenerator_WriteInterface_MultiMethods(t *testing.T) {
 	fn1 := Func{
 		Name: "FindBook",
-		Args: make([]FuncArg, 0),
+		Args: make([]TypeArg, 0),
 		Type: "Book",
 	}
 	fn2 := Func{
 		Name: "FindEmployee",
-		Args: []FuncArg{
+		Args: []TypeArg{
 			{Name: "name", Type: "string"},
 			{Name: "department", Type: "string"},
 			{Name: "age", Type: "int"},

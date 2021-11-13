@@ -10,6 +10,8 @@ import (
 func PrepExpCode(t *testing.T, code string) string {
 	code = strings.TrimPrefix(code, "\n")
 	p, err := format.Source([]byte(code))
-	assert.NoError(t, err)
+	if !assert.NoError(t, err) {
+		t.FailNow()
+	}
 	return string(p)
 }

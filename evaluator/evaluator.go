@@ -10,24 +10,25 @@ type Evaluator interface {
 }
 
 type evaluator struct {
-	generator *generator.Generator
-	schema    *ast.Schema
-	fptr      string
+	generator   generator.Generator
+	schema      *ast.Schema
+	customTypes map[string]bool
 }
 
 func New(fptr string, schema *ast.Schema) Evaluator {
 	return &evaluator{
-		generator: generator.New(fptr),
-		schema:    schema,
+		generator:   generator.New(fptr),
+		schema:      schema,
+		customTypes: make(map[string]bool, 0),
 	}
 }
 
 func (e *evaluator) Generate() []byte {
 	e.generator.WriteHeader()
 
-	e.generator.WriteLineBreaks(2)
+	e.generator.WriteLineBreak(2)
 
 	e.genSchemaDef()
-	e.generator.WriteLineBreaks(1)
+	e.generator.WriteLineBreak(1)
 	return e.generator.Generate()
 }
