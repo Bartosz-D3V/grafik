@@ -13,6 +13,7 @@ type Generator interface {
 	WriteLineBreak(r int)
 	WriteInterface(name string, fn ...Func)
 	WriteStruct(s Struct)
+	WriteEnum(e Enum)
 	Generate() []byte
 }
 
@@ -53,6 +54,13 @@ func (g *generator) WriteInterface(name string, fn ...Func) {
 
 func (g *generator) WriteStruct(s Struct) {
 	err := g.template.ExecuteTemplate(&g.stream, "struct.tmpl", s)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (g *generator) WriteEnum(e Enum) {
+	err := g.template.ExecuteTemplate(&g.stream, "enum.tmpl", e)
 	if err != nil {
 		panic(err)
 	}

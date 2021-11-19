@@ -1,0 +1,8 @@
+query {
+    continents(filter: {code: {eq: "AN"}}) {
+        code
+        countries {
+            name
+        }
+    }
+}

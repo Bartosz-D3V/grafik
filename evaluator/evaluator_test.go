@@ -13,7 +13,7 @@ import (
 
 func TestEvaluator_Generate_FlatStructure(t *testing.T) {
 	pd := test.GetParentDir(t)
-	schema := loadSchema(t, pd, "test/simple-definition.graphql")
+	schema := loadSchema(t, pd, "test/simple_type.graphql")
 	e := New(pd, schema)
 
 	out := string(e.Generate())
@@ -40,7 +40,7 @@ type File struct {
 
 func TestEvaluator_Generate_ArrayStructure(t *testing.T) {
 	pd := test.GetParentDir(t)
-	schema := loadSchema(t, pd, "test/array-type-definition.graphql")
+	schema := loadSchema(t, pd, "test/array.graphql")
 	e := New(pd, schema)
 
 	out := string(e.Generate())
@@ -66,7 +66,7 @@ type Episode struct {
 
 func TestEvaluator_Generate_NestedStructure(t *testing.T) {
 	pd := test.GetParentDir(t)
-	schema := loadSchema(t, pd, "test/nested-type-definition.graphql")
+	schema := loadSchema(t, pd, "test/nested_type.graphql")
 	e := New(pd, schema)
 
 	out := string(e.Generate())
@@ -104,6 +104,50 @@ type Location struct {
 	assert.Equal(t, expOut, out)
 }
 
+func TestEvaluator_Generate_Enum(t *testing.T) {
+	pd := test.GetParentDir(t)
+	schema := loadSchema(t, pd, "test/enum.graphql")
+	e := New(pd, schema)
+
+	out := string(e.Generate())
+	expOut := test.PrepExpCode(t, fmt.Sprintf(`
+// Generated with ggrafik. DO NOT EDIT
+
+type Department string
+
+const (
+	IT      Department = "IT"
+	SALES   Department = "SALES"
+	HR      Department = "HR"
+	SUPPORT Department = "SUPPORT"
+)
+`))
+
+	assert.Equal(t, expOut, out)
+}
+
+func TestEvaluator_Generate_Input(t *testing.T) {
+	pd := test.GetParentDir(t)
+	schema := loadSchema(t, pd, "test/input.graphql")
+	e := New(pd, schema)
+
+	out := string(e.Generate())
+	expOut := test.PrepExpCode(t, fmt.Sprintf(`
+// Generated with ggrafik. DO NOT EDIT
+
+type Query interface {
+	all(department Department) string
+}
+
+type Department struct {
+	code int
+	eq   string
+}
+`))
+
+	assert.Equal(t, expOut, out)
+}
+
 func loadSchema(t *testing.T, pd string, schemaName string) *ast.Schema {
 	schemaLoc := path.Join(pd, schemaName)
 	file, err := ioutil.ReadFile(schemaLoc)
@@ -112,7 +156,7 @@ func loadSchema(t *testing.T, pd string, schemaName string) *ast.Schema {
 
 	schema, err := gqlparser.LoadSchema(&ast.Source{
 		Input: string(file),
-		Name:  "simple-definition.graphql",
+		Name:  schemaName,
 	})
 	assert.Nil(t, err)
 	assert.NotNil(t, schema)
