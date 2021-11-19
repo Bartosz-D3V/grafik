@@ -14,7 +14,7 @@ func main() {
 	fptr := flag.String("fpath", wd, "file path to read from")
 	flag.Parse()
 
-	file, err := ioutil.ReadFile("test/array-type-definition.graphql")
+	file, err := ioutil.ReadFile("test/countries.graphql")
 	if err != nil {
 		panic(err)
 	}
@@ -23,6 +23,9 @@ func main() {
 		Name:  "nested-type-definition.graphql",
 	})
 
+	fileQuery, err := ioutil.ReadFile("test/coutries_query.graphql")
+	query, err := gqlparser.LoadQuery(schema, string(fileQuery))
+	print(query)
 	e := evaluator.New(*fptr, schema)
 	print(string(e.Generate()))
 }

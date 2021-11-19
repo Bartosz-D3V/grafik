@@ -29,3 +29,8 @@ type Struct struct {
 	Name   string
 	Fields []TypeArg
 }
+
+type Enum struct {
+	Name   string
+	Fields []string
+}

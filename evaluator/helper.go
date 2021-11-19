@@ -20,6 +20,8 @@ func (e *evaluator) genSchemaDef() {
 
 	e.generator.WriteLineBreak(2)
 
+	e.generateEnumTypesFromDefinition(e.schema.Types)
+
 	e.generateStructFromDefinition()
 }
 
@@ -39,17 +41,50 @@ func (e *evaluator) generateInterfaceFromDefinition(query *ast.Definition) {
 	e.generator.WriteInterface(interfaceName, funcs...)
 }
 
+func (e *evaluator) generateEnumTypesFromDefinition(types map[string]*ast.Definition) {
+	for _, definition := range types {
+		if definition.Kind == ast.Enum && !definition.BuiltIn {
+			e.createEnum(definition)
+		}
+	}
+}
+
 func (e *evaluator) generateStructFromDefinition() {
 	for customType := range e.customTypes {
 		cType := e.schema.Types[customType]
 
-		s := generator.Struct{
-			Name:   cType.Name,
-			Fields: e.parseFieldArgs(cType.Fields),
+		switch cType.Kind {
+		case ast.Object,
+			ast.InputObject:
+			e.createStruct(cType)
+		default:
+			panic(fmt.Errorf("%s type not supported", cType.Kind))
 		}
-		e.generator.WriteLineBreak(2)
-		e.generator.WriteStruct(s)
 	}
+}
+
+func (e *evaluator) createEnum(cType *ast.Definition) {
+	fields := make([]string, len(cType.EnumValues))
+	for i, field := range cType.EnumValues {
+		fields[i] = field.Name
+	}
+
+	en := generator.Enum{
+		Name:   cType.Name,
+		Fields: fields,
+	}
+
+	e.generator.WriteLineBreak(2)
+	e.generator.WriteEnum(en)
+}
+
+func (e *evaluator) createStruct(cType *ast.Definition) {
+	s := generator.Struct{
+		Name:   cType.Name,
+		Fields: e.parseFieldArgs(cType.Fields),
+	}
+	e.generator.WriteLineBreak(2)
+	e.generator.WriteStruct(s)
 }
 
 func (e *evaluator) numOfBuiltIns(query *ast.Definition) int {
@@ -87,7 +122,6 @@ func (e *evaluator) parseFieldArgs(args ast.FieldList) []generator.TypeArg {
 func (e *evaluator) convGoType(astType *ast.Type) string {
 	switch namedType := astType.NamedType; namedType {
 	case "String",
-		//"",
 		"Int":
 		return strings.ToLower(namedType)
 	case "ID":

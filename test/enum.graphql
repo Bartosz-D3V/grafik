@@ -1,0 +1,6 @@
+enum Department {
+    IT
+    SALES
+    HR
+    SUPPORT
+}
