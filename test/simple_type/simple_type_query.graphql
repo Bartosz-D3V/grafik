@@ -1,0 +1,5 @@
+query getFile {
+    file(id: "123-ABC") {
+        name
+    }
+}

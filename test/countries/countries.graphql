@@ -66,6 +66,10 @@ type Query {
     language(code: ID!): Language
 }
 
+type Mutation {
+    deleteContinents(filter: ContinentFilterInput): [Continent!]!
+}
+
 type State {
     code: String
     name: String!

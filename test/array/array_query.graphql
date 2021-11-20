@@ -1,0 +1,8 @@
+query getBookTags {
+    getBook {
+        tags {
+            name
+        }
+        name
+    }
+}

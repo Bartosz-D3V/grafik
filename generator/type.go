@@ -34,3 +34,8 @@ type Enum struct {
 	Name   string
 	Fields []string
 }
+
+type Const struct {
+	Name string
+	Val  string
+}

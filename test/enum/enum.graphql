@@ -1,0 +1,14 @@
+type Query {
+    getDepartment: Department
+}
+
+type Department {
+    name: DepartmentName
+}
+
+enum DepartmentName {
+    IT
+    SALES
+    HR
+    SUPPORT
+}

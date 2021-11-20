@@ -1,0 +1,9 @@
+type Query {
+    all(company: Company): String
+}
+
+input Company {
+    code: Int
+    eq: String
+}
+
