@@ -1,0 +1,3 @@
+query getCompanyWithCode123 {
+    all(company: {code: 123})
+}

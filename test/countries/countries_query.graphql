@@ -1,0 +1,17 @@
+query getCountriesInAN {
+    continents(filter: {code: {eq: "AN"}}) {
+        code
+        countries {
+            name
+        }
+    }
+}
+
+mutation deleteCountriesInAN {
+    deleteContinents(filter: {code: {eq: "AN"}}) {
+        code
+        countries {
+            name
+        }
+    }
+}

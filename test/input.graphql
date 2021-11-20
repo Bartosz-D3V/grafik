@@ -1,8 +1,0 @@
-input Department {
-    code: Int
-    eq: String
-}
-
-type Query {
-    all(department: Department): String
-}

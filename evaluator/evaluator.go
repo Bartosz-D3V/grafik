@@ -10,16 +10,18 @@ type Evaluator interface {
 }
 
 type evaluator struct {
-	generator   generator.Generator
-	schema      *ast.Schema
-	customTypes map[string]bool
+	generator     generator.Generator
+	schema        *ast.Schema
+	queryDocument *ast.QueryDocument
+	customTypes   map[string]bool
 }
 
-func New(fptr string, schema *ast.Schema) Evaluator {
+func New(fptr string, schema *ast.Schema, queryDocument *ast.QueryDocument) Evaluator {
 	return &evaluator{
-		generator:   generator.New(fptr),
-		schema:      schema,
-		customTypes: make(map[string]bool, 0),
+		generator:     generator.New(fptr),
+		schema:        schema,
+		queryDocument: queryDocument,
+		customTypes:   make(map[string]bool, 0),
 	}
 }
 
@@ -30,5 +32,8 @@ func (e *evaluator) Generate() []byte {
 
 	e.genSchemaDef()
 	e.generator.WriteLineBreak(1)
+
+	e.genOperations()
+
 	return e.generator.Generate()
 }

@@ -1,0 +1,12 @@
+type Query {
+    getBook: Book
+}
+
+type Book {
+    name: String
+    tags: [Tag]!
+}
+
+type Tag {
+    name: String
+}

@@ -14,11 +14,12 @@ type Generator interface {
 	WriteInterface(name string, fn ...Func)
 	WriteStruct(s Struct)
 	WriteEnum(e Enum)
+	WriteConst(c Const)
 	Generate() []byte
 }
 
 type generator struct {
-	stream   bytes.Buffer
+	stream   *bytes.Buffer
 	template *template.Template
 }
 
@@ -28,7 +29,7 @@ func New(fptr string) Generator {
 		panic(err)
 	}
 	return &generator{
-		stream:   bytes.Buffer{},
+		stream:   &bytes.Buffer{},
 		template: tmpl,
 	}
 }
@@ -46,21 +47,28 @@ func (g *generator) WriteInterface(name string, fn ...Func) {
 		"InterfaceName": name,
 		"Functions":     fn,
 	}
-	err := g.template.ExecuteTemplate(&g.stream, "interface.tmpl", config)
+	err := g.template.ExecuteTemplate(g.stream, "interface.tmpl", config)
 	if err != nil {
 		panic(err)
 	}
 }
 
 func (g *generator) WriteStruct(s Struct) {
-	err := g.template.ExecuteTemplate(&g.stream, "struct.tmpl", s)
+	err := g.template.ExecuteTemplate(g.stream, "struct.tmpl", s)
 	if err != nil {
 		panic(err)
 	}
 }
 
 func (g *generator) WriteEnum(e Enum) {
-	err := g.template.ExecuteTemplate(&g.stream, "enum.tmpl", e)
+	err := g.template.ExecuteTemplate(g.stream, "enum.tmpl", e)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (g *generator) WriteConst(c Const) {
+	err := g.template.ExecuteTemplate(g.stream, "const.tmpl", c)
 	if err != nil {
 		panic(err)
 	}
