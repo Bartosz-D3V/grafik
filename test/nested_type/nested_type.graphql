@@ -1,5 +1,13 @@
 type Query {
-    getHero: Character
+    getHero(characterSelector: CharacterSelector): Character
+}
+
+input CharacterSelector {
+    idSelector: IdSelector
+}
+
+input IdSelector {
+    id: String
 }
 
 type Character {

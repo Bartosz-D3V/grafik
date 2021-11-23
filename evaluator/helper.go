@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"fmt"
+	"github.com/Bartosz-D3V/ggrafik/common"
 	"github.com/Bartosz-D3V/ggrafik/generator"
 	"github.com/vektah/gqlparser/ast"
 	"strings"
@@ -22,11 +23,11 @@ func (e *evaluator) genSchemaDef() {
 
 	e.generateEnumTypesFromDefinition(e.schema.Types)
 
-	e.generateStructFromDefinition()
+	e.generateStructs()
 }
 
 func (e *evaluator) generateInterfaceFromDefinition(query *ast.Definition) {
-	usrFields := query.Fields[:e.numOfBuiltIns(query)]
+	usrFields := query.Fields[:common.NumOfBuiltIns(query)]
 	interfaceName := query.Name
 
 	var funcs []generator.Func
@@ -49,8 +50,9 @@ func (e *evaluator) generateEnumTypesFromDefinition(types map[string]*ast.Defini
 	}
 }
 
-func (e *evaluator) generateStructFromDefinition() {
-	for customType := range e.customTypes {
+func (e *evaluator) generateStructs() {
+	cTypes := e.visitor.IntrospectTypes()
+	for _, customType := range cTypes {
 		cType := e.schema.Types[customType]
 
 		switch cType.Kind {
@@ -58,7 +60,7 @@ func (e *evaluator) generateStructFromDefinition() {
 			ast.InputObject:
 			e.createStruct(cType)
 		default:
-			//panic(fmt.Errorf("%s type not supported", cType.Kind))
+			panic(fmt.Errorf("%s type not supported", cType.Kind))
 		}
 	}
 }
@@ -85,14 +87,6 @@ func (e *evaluator) createStruct(cType *ast.Definition) {
 	}
 	e.generator.WriteLineBreak(2)
 	e.generator.WriteStruct(s)
-}
-
-func (e *evaluator) numOfBuiltIns(query *ast.Definition) int {
-	if query.OneOf("Query") {
-		return len(query.Fields) - 2
-	} else {
-		return len(query.Fields)
-	}
 }
 
 func (e *evaluator) parseFnArgs(args *ast.ArgumentDefinitionList) []generator.TypeArg {
@@ -136,8 +130,7 @@ func (e *evaluator) convGoType(astType *ast.Type) string {
 }
 
 func (e *evaluator) convComplexType(astType *ast.Type) string {
-	if isList := astType.IsCompatible(ast.ListType(astType.Elem, astType.Position)); isList {
-		e.customTypes[astType.Elem.NamedType] = true
+	if common.IsList(astType) {
 		return fmt.Sprintf("[]%s", astType.Elem.NamedType)
 	}
 
@@ -145,7 +138,6 @@ func (e *evaluator) convComplexType(astType *ast.Type) string {
 		return ""
 	}
 
-	e.customTypes[astType.NamedType] = true
 	return astType.NamedType
 }
 

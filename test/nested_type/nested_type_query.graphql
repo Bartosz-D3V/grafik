@@ -1,5 +1,9 @@
 query getHero {
-    getHero {
-        name
+    getHero(characterSelector: {idSelector: {id: "123ABC"}}) {
+        homeWorld {
+            location {
+                posX
+            }
+        }
     }
 }
