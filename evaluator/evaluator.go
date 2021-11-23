@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"github.com/Bartosz-D3V/ggrafik/generator"
+	"github.com/Bartosz-D3V/ggrafik/visitor"
 	"github.com/vektah/gqlparser/ast"
 )
 
@@ -11,17 +12,17 @@ type Evaluator interface {
 
 type evaluator struct {
 	generator     generator.Generator
+	visitor       visitor.Visitor
 	schema        *ast.Schema
 	queryDocument *ast.QueryDocument
-	customTypes   map[string]bool
 }
 
 func New(fptr string, schema *ast.Schema, queryDocument *ast.QueryDocument) Evaluator {
 	return &evaluator{
 		generator:     generator.New(fptr),
+		visitor:       visitor.New(schema, queryDocument),
 		schema:        schema,
 		queryDocument: queryDocument,
-		customTypes:   make(map[string]bool, 0),
 	}
 }
 

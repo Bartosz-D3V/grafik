@@ -92,7 +92,7 @@ func TestEvaluator_Generate_NestedStructure(t *testing.T) {
 // Generated with ggrafik. DO NOT EDIT
 
 type Query interface {
-	getHero() Character
+	getHero(characterSelector CharacterSelector) Character
 }
 
 type Character struct {
@@ -107,20 +107,32 @@ type Planet struct {
 	location Location
 }
 
+type Location struct {
+	posX int
+	poxY int
+}
+
 type Species struct {
 	name     string
 	lifespan int
 	origin   Planet
 }
 
-type Location struct {
-	posX int
-	poxY int
+type CharacterSelector struct {
+	idSelector IdSelector
+}
+
+type IdSelector struct {
+	id string
 }
 
 const getHero = %cquery getHero {
-    getHero {
-        name
+    getHero(characterSelector: {idSelector: {id: "123ABC"}}) {
+        homeWorld {
+            location {
+                posX
+            }
+        }
     }
 }%c
 `, '`', '`'))
