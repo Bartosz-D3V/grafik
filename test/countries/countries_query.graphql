@@ -1,5 +1,5 @@
-query getCountriesInAN {
-    continents(filter: {code: {eq: "AN"}}) {
+query getCountriesByContinentCode($code: ID) {
+    continents(filter: {code: {eq: $code}}) {
         code
         countries {
             name
