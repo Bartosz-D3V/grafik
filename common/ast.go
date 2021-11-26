@@ -3,15 +3,13 @@ package common
 import "github.com/vektah/gqlparser/ast"
 
 func IsList(astType *ast.Type) bool {
-	if astType.IsCompatible(ast.ListType(astType.Elem, astType.Position)) {
-		return true
-	}
-	return false
+	return astType.IsCompatible(ast.ListType(astType.Elem, astType.Position))
 }
 
 func NumOfBuiltIns(query *ast.Definition) int {
 	if query.OneOf("Query") {
-		return len(query.Fields) - 2
+		const numOfPredefinedQueryDefs = 2
+		return len(query.Fields) - numOfPredefinedQueryDefs
 	} else {
 		return len(query.Fields)
 	}
