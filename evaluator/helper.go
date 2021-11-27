@@ -9,37 +9,15 @@ import (
 )
 
 func (e *evaluator) genSchemaDef() {
-	if e.schema.Query != nil {
-		e.generateInterfaceFromDefinition(e.schema.Query)
-	}
-
 	e.generator.WriteLineBreak(2)
-
-	if e.schema.Mutation != nil {
-		e.generateInterfaceFromDefinition(e.schema.Mutation)
-	}
 
 	e.generator.WriteLineBreak(2)
 
 	e.generateEnumTypesFromDefinition(e.schema.Types)
 
 	e.generateStructs()
-}
 
-func (e *evaluator) generateInterfaceFromDefinition(query *ast.Definition) {
-	usrFields := query.Fields[:common.NumOfBuiltIns(query)]
-	interfaceName := query.Name
-
-	var funcs []generator.Func
-	for _, field := range usrFields {
-		f := generator.Func{
-			Name: field.Name,
-			Args: e.parseFnArgs(&field.Arguments),
-			Type: e.convGoType(field.Type),
-		}
-		funcs = append(funcs, f)
-	}
-	e.generator.WriteInterface(interfaceName, funcs...)
+	e.generator.WriteLineBreak(2)
 }
 
 func (e *evaluator) generateEnumTypesFromDefinition(types map[string]*ast.Definition) {
@@ -86,14 +64,14 @@ func (e *evaluator) createStruct(cType *ast.Definition) {
 		Fields: e.parseFieldArgs(&cType.Fields),
 	}
 	e.generator.WriteLineBreak(2)
-	e.generator.WriteStruct(s)
+	e.generator.WritePublicStruct(s)
 }
 
-func (e *evaluator) parseFnArgs(args *ast.ArgumentDefinitionList) []generator.TypeArg {
+func (e *evaluator) parseFnArgs(args *ast.VariableDefinitionList) []generator.TypeArg {
 	var funcArgs []generator.TypeArg
 	for _, arg := range *args {
 		farg := generator.TypeArg{
-			Name: arg.Name,
+			Name: arg.Variable,
 			Type: e.convGoType(arg.Type),
 		}
 		funcArgs = append(funcArgs, farg)
@@ -178,4 +156,43 @@ func (e *evaluator) genOperations() {
 			e.generator.WriteLineBreak(1)
 		}
 	}
+}
+
+func (e *evaluator) genClientCode() {
+	e.genOpsInterface()
+	e.generator.WriteLineBreak(2)
+
+	e.genClientStruct()
+	e.generator.WriteLineBreak(2)
+
+	e.generator.WriteClientConstructor(e.clientName)
+}
+
+func (e *evaluator) genOpsInterface() {
+	ops := e.queryDocument.Operations
+	interfaceName := fmt.Sprintf("%sGraphql", strings.Title(e.clientName))
+
+	var funcs []generator.Func
+	for _, op := range ops {
+		f := generator.Func{
+			Name: strings.Title(op.Name),
+			Args: e.parseFnArgs(&op.VariableDefinitions),
+			Type: "(*http.Response, error)",
+		}
+		funcs = append(funcs, f)
+	}
+	e.generator.WriteInterface(interfaceName, funcs...)
+}
+
+func (e *evaluator) genClientStruct() {
+	s := generator.Struct{
+		Name: fmt.Sprintf("%sGraphql", e.clientName),
+		Fields: []generator.TypeArg{
+			{
+				Name: "ctrl",
+				Type: "graphqlClient.Client",
+			},
+		},
+	}
+	e.generator.WritePrivateStruct(s)
 }

@@ -14,19 +14,20 @@ func main() {
 	fptr := flag.String("fpath", wd, "file path to read from")
 	flag.Parse()
 
+	clientName := "countries"
 	file, err := ioutil.ReadFile("test/countries/countries.graphql")
 	if err != nil {
 		panic(err)
 	}
 	schema, err := gqlparser.LoadSchema(&ast.Source{
 		Input: string(file),
-		Name:  "countries.graphql",
+		Name:  clientName,
 	})
 
 	fileQuery, err := ioutil.ReadFile("test/countries/countries_query.graphql")
 	query, err := gqlparser.LoadQuery(schema, string(fileQuery))
 
-	e := evaluator.New(*fptr, schema, query)
+	e := evaluator.New(*fptr, schema, query, clientName)
 
 	print(string(e.Generate()))
 }
