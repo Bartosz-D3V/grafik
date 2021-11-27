@@ -60,7 +60,7 @@ func (e *evaluator) generateStructs() {
 			ast.InputObject:
 			e.createStruct(cType)
 		default:
-			panic(fmt.Errorf("%s type not supported", cType.Kind))
+			//panic(fmt.Errorf("%s type not supported", cType.Kind))
 		}
 	}
 }
@@ -131,7 +131,11 @@ func (e *evaluator) convGoType(astType *ast.Type) string {
 
 func (e *evaluator) convComplexType(astType *ast.Type) string {
 	if common.IsList(astType) {
-		return fmt.Sprintf("[]%s", astType.Elem.NamedType)
+		if nt := astType.Elem; common.IsComplex(nt) {
+			return fmt.Sprintf("[]%s", nt.NamedType)
+		} else {
+			return fmt.Sprintf("[]%s", strings.ToLower(nt.NamedType))
+		}
 	}
 
 	if astType.NamedType == "" {

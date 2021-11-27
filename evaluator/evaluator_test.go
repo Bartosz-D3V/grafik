@@ -22,25 +22,25 @@ func TestEvaluator_Generate_FlatStructure(t *testing.T) {
 // Generated with ggrafik. DO NOT EDIT
 
 type Query interface {
-	file(id string) File
-	files() []File
+	File(id string) File
+	Files() []File
 }
 
 type Mutation interface {
-	renameFile(id string, name string) File
-	deleteFile(id string) File
+	RenameFile(id string, name string) File
+	DeleteFile(id string) File
 }
 
 type File struct {
-	name string
+	Name string %[1]cjson:"name"%[1]c
 }
 
-const getFile = %cquery getFile {
+const getFile = %[1]cquery getFile {
     file(id: "123-ABC") {
         name
     }
-}%c
-`, '`', '`'))
+}%[1]c
+`, '`'))
 
 	assert.Equal(t, expOut, out)
 }
@@ -56,27 +56,27 @@ func TestEvaluator_Generate_ArrayStructure(t *testing.T) {
 // Generated with ggrafik. DO NOT EDIT
 
 type Query interface {
-	getBook() Book
+	GetBook() Book
 }
 
 type Book struct {
-	name string
-	tags []Tag
+	Name string %[1]cjson:"name"%[1]c
+	Tags []Tag  %[1]cjson:"tags"%[1]c
 }
 
 type Tag struct {
-	name string
+	Name string %[1]cjson:"name"%[1]c
 }
 
-const getBookTags = %cquery getBookTags {
+const getBookTags = %[1]cquery getBookTags {
     getBook {
         tags {
             name
         }
         name
     }
-}%c
-`, '`', '`'))
+}%[1]c
+`, '`'))
 
 	assert.Equal(t, expOut, out)
 }
@@ -92,41 +92,41 @@ func TestEvaluator_Generate_NestedStructure(t *testing.T) {
 // Generated with ggrafik. DO NOT EDIT
 
 type Query interface {
-	getHero(characterSelector CharacterSelector) Character
+	GetHero(characterSelector CharacterSelector) Character
 }
 
 type Character struct {
-	name      string
-	homeWorld Planet
-	species   Species
+	Name      string  %[1]cjson:"name"%[1]c
+	HomeWorld Planet  %[1]cjson:"homeWorld"%[1]c
+	Species   Species %[1]cjson:"species"%[1]c
 }
 
 type Planet struct {
-	name     string
-	climate  string
-	location Location
+	Name     string   %[1]cjson:"name"%[1]c
+	Climate  string   %[1]cjson:"climate"%[1]c
+	Location Location %[1]cjson:"location"%[1]c
 }
 
 type Location struct {
-	posX int
-	poxY int
+	PosX int %[1]cjson:"posX"%[1]c
+	PoxY int %[1]cjson:"poxY"%[1]c
 }
 
 type Species struct {
-	name     string
-	lifespan int
-	origin   Planet
+	Name     string %[1]cjson:"name"%[1]c
+	Lifespan int    %[1]cjson:"lifespan"%[1]c
+	Origin   Planet %[1]cjson:"origin"%[1]c
 }
 
 type CharacterSelector struct {
-	idSelector IdSelector
+	IdSelector IdSelector %[1]cjson:"idSelector"%[1]c
 }
 
 type IdSelector struct {
-	id string
+	Id string %[1]cjson:"id"%[1]c
 }
 
-const getHero = %cquery getHero {
+const getHero = %[1]cquery getHero {
     getHero(characterSelector: {idSelector: {id: "123ABC"}}) {
         homeWorld {
             location {
@@ -134,8 +134,8 @@ const getHero = %cquery getHero {
             }
         }
     }
-}%c
-`, '`', '`'))
+}%[1]c
+`, '`'))
 
 	assert.Equal(t, expOut, out)
 }
@@ -151,7 +151,7 @@ func TestEvaluator_Generate_Enum(t *testing.T) {
 // Generated with ggrafik. DO NOT EDIT
 
 type Query interface {
-	getDepartment() Department
+	GetDepartment() Department
 }
 
 type DepartmentName string
@@ -164,15 +164,15 @@ const (
 )
 
 type Department struct {
-	name DepartmentName
+	Name DepartmentName %[1]cjson:"name"%[1]c
 }
 
-const getDepartment = %cquery getDepartment {
+const getDepartment = %[1]cquery getDepartment {
     getDepartment {
         name
     }
-}%c
-`, '`', '`'))
+}%[1]c
+`, '`'))
 
 	assert.Equal(t, expOut, out)
 }
@@ -188,18 +188,18 @@ func TestEvaluator_Generate_Input(t *testing.T) {
 // Generated with ggrafik. DO NOT EDIT
 
 type Query interface {
-	all(company Company) string
+	All(company Company) string
 }
 
 type Company struct {
-	code int
-	eq   string
+	Code int    %[1]cjson:"code"%[1]c
+	Eq   string %[1]cjson:"eq"%[1]c
 }
 
-const getCompanyWithCode123 = %cquery getCompanyWithCode123 {
+const getCompanyWithCode123 = %[1]cquery getCompanyWithCode123 {
     all(company: {code: 123})
-}%c
-`, '`', '`'))
+}%[1]c
+`, '`'))
 
 	assert.Equal(t, expOut, out)
 }

@@ -25,7 +25,7 @@ func (v *visitor) parseOpTypes(query *ast.Definition) {
 func (v *visitor) findSubTypes(t *ast.Definition) {
 	if t != nil && t.Fields != nil {
 		for _, field := range t.Fields {
-			if v.isComplex(field.Type) {
+			if common.IsComplex(field.Type) {
 				v.registerType(t.Name)
 				if !v.typeRegistered(field.Type.NamedType) {
 					v.findSubTypes(v.schema.Types[field.Type.NamedType])
@@ -38,12 +38,6 @@ func (v *visitor) findSubTypes(t *ast.Definition) {
 			}
 		}
 	}
-}
-
-func (v *visitor) isComplex(t *ast.Type) bool {
-	return t.NamedType != "String" && t.NamedType != "Int" &&
-		t.NamedType != "ID" && t.NamedType != "Float" &&
-		t.NamedType != "Boolean"
 }
 
 func (v *visitor) registerType(typeName string) {

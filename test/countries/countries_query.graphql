@@ -1,4 +1,4 @@
-query getCountriesByContinentCode($code: ID) {
+query getCountriesByContinentCode($code: String) {
     continents(filter: {code: {eq: $code}}) {
         code
         countries {
