@@ -17,7 +17,7 @@ func TestClient_Execute_DefaultHeader_Success(t *testing.T) {
 	}))
 
 	query := `
-    query($code: ID!) {
+    query getContinentNameByCode($code: ID!) {
         continent(code: $code) {
             code,
             name
@@ -137,7 +137,6 @@ func handleRequest(t *testing.T, exp countriesResponse, w http.ResponseWriter, r
 
 	// Check payload - query
 	assert.NotNil(t, graphqlReq.Query)
-	assert.False(t, strings.Contains(graphqlReq.Query, " "))
 	assert.False(t, strings.Contains(graphqlReq.Query, "\n"))
 	assert.False(t, strings.Contains(graphqlReq.Query, "\t"))
 }

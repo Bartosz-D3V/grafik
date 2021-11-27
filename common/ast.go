@@ -14,3 +14,9 @@ func NumOfBuiltIns(query *ast.Definition) int {
 		return len(query.Fields)
 	}
 }
+
+func IsComplex(t *ast.Type) bool {
+	return t.NamedType != "String" && t.NamedType != "Int" &&
+		t.NamedType != "ID" && t.NamedType != "Float" &&
+		t.NamedType != "Boolean"
+}

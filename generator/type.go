@@ -10,6 +10,10 @@ type TypeArg struct {
 	Type string
 }
 
+func (t TypeArg) ExportName() string {
+	return strings.Title(t.Name)
+}
+
 type Func struct {
 	Name string
 	Args []TypeArg
@@ -23,6 +27,10 @@ func (f Func) JoinArgsBy(s string) string {
 	}
 
 	return strings.Join(pArgs, s)
+}
+
+func (f Func) ExportName() string {
+	return strings.Title(f.Name)
 }
 
 type Struct struct {
