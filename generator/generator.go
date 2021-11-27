@@ -12,9 +12,11 @@ type Generator interface {
 	WriteHeader()
 	WriteLineBreak(r int)
 	WriteInterface(name string, fn ...Func)
-	WriteStruct(s Struct)
+	WritePublicStruct(s Struct)
+	WritePrivateStruct(s Struct)
 	WriteEnum(e Enum)
 	WriteConst(c Const)
+	WriteClientConstructor(clientName string)
 	Generate() []byte
 }
 
@@ -53,8 +55,23 @@ func (g *generator) WriteInterface(name string, fn ...Func) {
 	}
 }
 
-func (g *generator) WriteStruct(s Struct) {
-	err := g.template.ExecuteTemplate(g.stream, "struct.tmpl", s)
+func (g *generator) WritePublicStruct(s Struct) {
+	config := map[string]interface{}{
+		"Struct": s,
+		"Public": true,
+	}
+	err := g.template.ExecuteTemplate(g.stream, "struct.tmpl", config)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (g *generator) WritePrivateStruct(s Struct) {
+	config := map[string]interface{}{
+		"Struct": s,
+		"Public": false,
+	}
+	err := g.template.ExecuteTemplate(g.stream, "struct.tmpl", config)
 	if err != nil {
 		panic(err)
 	}
@@ -69,6 +86,13 @@ func (g *generator) WriteEnum(e Enum) {
 
 func (g *generator) WriteConst(c Const) {
 	err := g.template.ExecuteTemplate(g.stream, "const.tmpl", c)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (g *generator) WriteClientConstructor(clientName string) {
+	err := g.template.ExecuteTemplate(g.stream, "constructor.tmpl", clientName)
 	if err != nil {
 		panic(err)
 	}

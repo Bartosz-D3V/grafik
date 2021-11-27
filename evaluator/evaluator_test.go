@@ -15,21 +15,11 @@ func TestEvaluator_Generate_FlatStructure(t *testing.T) {
 	pd := test.GetParentDir(t)
 	schema := loadSchema(t, pd, "test/simple_type/simple_type.graphql")
 	query := loadQuery(t, pd, schema, "test/simple_type/simple_type_query.graphql")
-	e := New(pd, schema, query)
+	e := New(pd, schema, query, "SimpleType")
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with ggrafik. DO NOT EDIT
-
-type Query interface {
-	File(id string) File
-	Files() []File
-}
-
-type Mutation interface {
-	RenameFile(id string, name string) File
-	DeleteFile(id string) File
-}
 
 type File struct {
 	Name string %[1]cjson:"name"%[1]c
@@ -40,6 +30,20 @@ const getFile = %[1]cquery getFile {
         name
     }
 }%[1]c
+
+type SimpleTypeGraphql interface {
+	GetFile() (*http.Response, error)
+}
+
+type SimpleTypeGraphql struct {
+	ctrl graphqlClient.Client
+}
+
+func New(endpoint string, client *http.Client) *SimpleTypeGraphql {
+	return &SimpleTypeGraphql{
+		ctrl: graphqlClient.New(endpoint, client),
+	}
+}
 `, '`'))
 
 	assert.Equal(t, expOut, out)
@@ -49,15 +53,11 @@ func TestEvaluator_Generate_ArrayStructure(t *testing.T) {
 	pd := test.GetParentDir(t)
 	schema := loadSchema(t, pd, "test/array/array.graphql")
 	query := loadQuery(t, pd, schema, "test/array/array_query.graphql")
-	e := New(pd, schema, query)
+	e := New(pd, schema, query, "")
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with ggrafik. DO NOT EDIT
-
-type Query interface {
-	GetBook() Book
-}
 
 type Book struct {
 	Name string %[1]cjson:"name"%[1]c
@@ -76,6 +76,20 @@ const getBookTags = %[1]cquery getBookTags {
         name
     }
 }%[1]c
+
+type ArrayGraphql interface {
+	GetBookTags() (*http.Response, error)
+}
+
+type arrayGraphql struct {
+	ctrl graphqlClient.Client
+}
+
+func New(endpoint string, client *http.Client) *arrayGraphql {
+	return &arrayGraphql{
+		ctrl: graphqlClient.New(endpoint, client),
+	}
+}
 `, '`'))
 
 	assert.Equal(t, expOut, out)
@@ -85,15 +99,11 @@ func TestEvaluator_Generate_NestedStructure(t *testing.T) {
 	pd := test.GetParentDir(t)
 	schema := loadSchema(t, pd, "test/nested_type/nested_type.graphql")
 	query := loadQuery(t, pd, schema, "test/nested_type/nested_type_query.graphql")
-	e := New(pd, schema, query)
+	e := New(pd, schema, query, "NestedType")
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with ggrafik. DO NOT EDIT
-
-type Query interface {
-	GetHero(characterSelector CharacterSelector) Character
-}
 
 type Character struct {
 	Name      string  %[1]cjson:"name"%[1]c
@@ -135,6 +145,20 @@ const getHero = %[1]cquery getHero {
         }
     }
 }%[1]c
+
+type NestedTypeGraphql interface {
+	GetHero() (*http.Response, error)
+}
+
+type NestedTypeGraphql struct {
+	ctrl graphqlClient.Client
+}
+
+func New(endpoint string, client *http.Client) *NestedTypeGraphql {
+	return &NestedTypeGraphql{
+		ctrl: graphqlClient.New(endpoint, client),
+	}
+}
 `, '`'))
 
 	assert.Equal(t, expOut, out)
@@ -144,15 +168,11 @@ func TestEvaluator_Generate_Enum(t *testing.T) {
 	pd := test.GetParentDir(t)
 	schema := loadSchema(t, pd, "test/enum/enum.graphql")
 	query := loadQuery(t, pd, schema, "test/enum/enum_query.graphql")
-	e := New(pd, schema, query)
+	e := New(pd, schema, query, "")
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with ggrafik. DO NOT EDIT
-
-type Query interface {
-	GetDepartment() Department
-}
 
 type DepartmentName string
 
@@ -172,6 +192,20 @@ const getDepartment = %[1]cquery getDepartment {
         name
     }
 }%[1]c
+
+type EnumGraphql interface {
+	GetDepartment() (*http.Response, error)
+}
+
+type enumGraphql struct {
+	ctrl graphqlClient.Client
+}
+
+func New(endpoint string, client *http.Client) *enumGraphql {
+	return &enumGraphql{
+		ctrl: graphqlClient.New(endpoint, client),
+	}
+}
 `, '`'))
 
 	assert.Equal(t, expOut, out)
@@ -181,15 +215,11 @@ func TestEvaluator_Generate_Input(t *testing.T) {
 	pd := test.GetParentDir(t)
 	schema := loadSchema(t, pd, "test/input/input.graphql")
 	query := loadQuery(t, pd, schema, "test/input/input_query.graphql")
-	e := New(pd, schema, query)
+	e := New(pd, schema, query, "")
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with ggrafik. DO NOT EDIT
-
-type Query interface {
-	All(company Company) string
-}
 
 type Company struct {
 	Code int    %[1]cjson:"code"%[1]c
@@ -199,6 +229,20 @@ type Company struct {
 const getCompanyWithCode123 = %[1]cquery getCompanyWithCode123 {
     all(company: {code: 123})
 }%[1]c
+
+type InputGraphql interface {
+	GetCompanyWithCode123() (*http.Response, error)
+}
+
+type inputGraphql struct {
+	ctrl graphqlClient.Client
+}
+
+func New(endpoint string, client *http.Client) *inputGraphql {
+	return &inputGraphql{
+		ctrl: graphqlClient.New(endpoint, client),
+	}
+}
 `, '`'))
 
 	assert.Equal(t, expOut, out)
