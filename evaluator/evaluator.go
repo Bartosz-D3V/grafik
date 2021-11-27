@@ -17,7 +17,6 @@ type evaluator struct {
 	schema        *ast.Schema
 	queryDocument *ast.QueryDocument
 	clientName    string
-	queryFuncs    []generator.Func
 }
 
 func New(fptr string, schema *ast.Schema, queryDocument *ast.QueryDocument, clientName string) Evaluator {
@@ -27,7 +26,6 @@ func New(fptr string, schema *ast.Schema, queryDocument *ast.QueryDocument, clie
 		schema:        schema,
 		queryDocument: queryDocument,
 		clientName:    parseClientName(clientName, schema),
-		queryFuncs:    make([]generator.Func, 0),
 	}
 }
 
