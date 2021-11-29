@@ -22,7 +22,7 @@ jobs:
         run: go build -v ./...
 
       - name: Lint
-        uses: matoous/golangci-lint-action@latest
+        uses: matoous/golangci-lint-action
 
       - name: Test
         run: go test -v ./...
