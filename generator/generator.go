@@ -17,6 +17,7 @@ type Generator interface {
 	WriteEnum(e Enum)
 	WriteConst(c Const)
 	WriteClientConstructor(clientName string)
+	WriteInterfaceImplementation(clientName string, f Func)
 	Generate() []byte
 }
 
@@ -26,13 +27,16 @@ type generator struct {
 }
 
 func New(fptr string) Generator {
-	tmpl, err := template.ParseGlob(filepath.Join(fptr, "templates/*.tmpl"))
+	funcMap := template.FuncMap{
+		"title": strings.Title,
+	}
+	tmpl, err := template.New("codeTemplate").Funcs(funcMap).ParseGlob(filepath.Join(fptr, "templates/*.tmpl"))
 	if err != nil {
 		panic(err)
 	}
 	return &generator{
 		stream:   &bytes.Buffer{},
-		template: tmpl,
+		template: tmpl.Funcs(funcMap),
 	}
 }
 
@@ -93,6 +97,17 @@ func (g *generator) WriteConst(c Const) {
 
 func (g *generator) WriteClientConstructor(clientName string) {
 	err := g.template.ExecuteTemplate(g.stream, "constructor.tmpl", clientName)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (g *generator) WriteInterfaceImplementation(clientName string, f Func) {
+	config := map[string]interface{}{
+		"ClientName": clientName,
+		"Func":       f,
+	}
+	err := g.template.ExecuteTemplate(g.stream, "interface_impl.tmpl", config)
 	if err != nil {
 		panic(err)
 	}

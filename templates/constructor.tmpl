@@ -1,4 +1,4 @@
-func New(endpoint string, client *http.Client) *{{.}}Graphql {
+func New(endpoint string, client *http.Client) {{title .}}Graphql {
     return &{{.}}Graphql{
         ctrl: graphqlClient.New(endpoint, client),
     }

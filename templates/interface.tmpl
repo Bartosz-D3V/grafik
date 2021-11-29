@@ -1,4 +1,4 @@
-type {{.InterfaceName}} interface {
+type {{title .InterfaceName}} interface {
 {{range .Functions}}{{template "function_header" .}}{{"\n"}}{{end}}
 }
-{{- define "function_header" -}}{{.ExportName}}({{.JoinArgsBy ", "}}) {{.Type}}{{end}}
+{{- define "function_header" -}}{{.ExportName}}({{.JoinArgsBy ", "}}{{if .Args}}, header *http.Header{{else}} header *http.Header{{end}}) {{.Type}}{{end}}

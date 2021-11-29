@@ -5,6 +5,7 @@ import (
 	"github.com/Bartosz-D3V/ggrafik/visitor"
 	"github.com/vektah/gqlparser/ast"
 	"strings"
+	"unicode"
 )
 
 type Evaluator interface {
@@ -48,7 +49,14 @@ func (e *evaluator) Generate() []byte {
 
 func parseClientName(name string, schema *ast.Schema) string {
 	if name != "" {
-		return name
+		return lowercaseFirstChar(name)
 	}
-	return strings.Split(schema.Query.Position.Src.Name, ".")[0]
+	fileName := schema.Query.Position.Src.Name
+	return lowercaseFirstChar(strings.Split(fileName, ".")[0])
+}
+
+func lowercaseFirstChar(s string) string {
+	r := []rune(s)
+	r[0] = unicode.ToLower(r[0])
+	return string(r)
 }

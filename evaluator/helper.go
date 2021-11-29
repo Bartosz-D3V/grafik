@@ -170,18 +170,23 @@ func (e *evaluator) genClientCode() {
 
 func (e *evaluator) genOpsInterface() {
 	ops := e.queryDocument.Operations
-	interfaceName := fmt.Sprintf("%sGraphql", strings.Title(e.clientName))
+	interfaceName := fmt.Sprintf("%sGraphql", e.clientName)
 
 	var funcs []generator.Func
 	for _, op := range ops {
 		f := generator.Func{
-			Name: strings.Title(op.Name),
+			Name: op.Name,
 			Args: e.parseFnArgs(&op.VariableDefinitions),
 			Type: "(*http.Response, error)",
 		}
 		funcs = append(funcs, f)
 	}
 	e.generator.WriteInterface(interfaceName, funcs...)
+	e.generator.WriteLineBreak(2)
+	for _, f := range funcs {
+		e.generator.WriteInterfaceImplementation(e.clientName, f)
+		e.generator.WriteLineBreak(2)
+	}
 }
 
 func (e *evaluator) genClientStruct() {
