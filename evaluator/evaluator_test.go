@@ -32,15 +32,21 @@ const getFile = %[1]cquery getFile {
 }%[1]c
 
 type SimpleTypeGraphql interface {
-	GetFile() (*http.Response, error)
+	GetFile(header *http.Header) (*http.Response, error)
 }
 
-type SimpleTypeGraphql struct {
+func (c *simpleTypeGraphql) GetFile(header *http.Header) (*http.Response, error) {
+	params := make(map[string]interface{}, 0)
+
+	return c.ctrl.Execute(getFile, params, header)
+}
+
+type simpleTypeGraphql struct {
 	ctrl graphqlClient.Client
 }
 
-func New(endpoint string, client *http.Client) *SimpleTypeGraphql {
-	return &SimpleTypeGraphql{
+func New(endpoint string, client *http.Client) SimpleTypeGraphql {
+	return &simpleTypeGraphql{
 		ctrl: graphqlClient.New(endpoint, client),
 	}
 }
@@ -78,14 +84,20 @@ const getBookTags = %[1]cquery getBookTags {
 }%[1]c
 
 type ArrayGraphql interface {
-	GetBookTags() (*http.Response, error)
+	GetBookTags(header *http.Header) (*http.Response, error)
+}
+
+func (c *arrayGraphql) GetBookTags(header *http.Header) (*http.Response, error) {
+	params := make(map[string]interface{}, 0)
+
+	return c.ctrl.Execute(getBookTags, params, header)
 }
 
 type arrayGraphql struct {
 	ctrl graphqlClient.Client
 }
 
-func New(endpoint string, client *http.Client) *arrayGraphql {
+func New(endpoint string, client *http.Client) ArrayGraphql {
 	return &arrayGraphql{
 		ctrl: graphqlClient.New(endpoint, client),
 	}
@@ -99,7 +111,7 @@ func TestEvaluator_Generate_NestedStructure(t *testing.T) {
 	pd := test.GetParentDir(t)
 	schema := loadSchema(t, pd, "test/nested_type/nested_type.graphql")
 	query := loadQuery(t, pd, schema, "test/nested_type/nested_type_query.graphql")
-	e := New(pd, schema, query, "NestedType")
+	e := New(pd, schema, query, "nestedType")
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
@@ -147,15 +159,21 @@ const getHero = %[1]cquery getHero {
 }%[1]c
 
 type NestedTypeGraphql interface {
-	GetHero() (*http.Response, error)
+	GetHero(header *http.Header) (*http.Response, error)
 }
 
-type NestedTypeGraphql struct {
+func (c *nestedTypeGraphql) GetHero(header *http.Header) (*http.Response, error) {
+	params := make(map[string]interface{}, 0)
+
+	return c.ctrl.Execute(getHero, params, header)
+}
+
+type nestedTypeGraphql struct {
 	ctrl graphqlClient.Client
 }
 
-func New(endpoint string, client *http.Client) *NestedTypeGraphql {
-	return &NestedTypeGraphql{
+func New(endpoint string, client *http.Client) NestedTypeGraphql {
+	return &nestedTypeGraphql{
 		ctrl: graphqlClient.New(endpoint, client),
 	}
 }
@@ -194,14 +212,20 @@ const getDepartment = %[1]cquery getDepartment {
 }%[1]c
 
 type EnumGraphql interface {
-	GetDepartment() (*http.Response, error)
+	GetDepartment(header *http.Header) (*http.Response, error)
+}
+
+func (c *enumGraphql) GetDepartment(header *http.Header) (*http.Response, error) {
+	params := make(map[string]interface{}, 0)
+
+	return c.ctrl.Execute(getDepartment, params, header)
 }
 
 type enumGraphql struct {
 	ctrl graphqlClient.Client
 }
 
-func New(endpoint string, client *http.Client) *enumGraphql {
+func New(endpoint string, client *http.Client) EnumGraphql {
 	return &enumGraphql{
 		ctrl: graphqlClient.New(endpoint, client),
 	}
@@ -231,14 +255,20 @@ const getCompanyWithCode123 = %[1]cquery getCompanyWithCode123 {
 }%[1]c
 
 type InputGraphql interface {
-	GetCompanyWithCode123() (*http.Response, error)
+	GetCompanyWithCode123(header *http.Header) (*http.Response, error)
+}
+
+func (c *inputGraphql) GetCompanyWithCode123(header *http.Header) (*http.Response, error) {
+	params := make(map[string]interface{}, 0)
+
+	return c.ctrl.Execute(getCompanyWithCode123, params, header)
 }
 
 type inputGraphql struct {
 	ctrl graphqlClient.Client
 }
 
-func New(endpoint string, client *http.Client) *inputGraphql {
+func New(endpoint string, client *http.Client) InputGraphql {
 	return &inputGraphql{
 		ctrl: graphqlClient.New(endpoint, client),
 	}

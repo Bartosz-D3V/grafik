@@ -21,7 +21,7 @@ func TestGenerator_WriteInterface_NoArgWithReturn(t *testing.T) {
 	out := string(g.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 type BookService interface {
-	FindBook() Book
+	FindBook(header *http.Header) Book
 }`))
 
 	assert.Equal(t, expOut, out)
@@ -41,7 +41,7 @@ func TestGenerator_WriteInterface_SingleArgWithReturn(t *testing.T) {
 	out := string(g.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 type BookService interface {
-	FindBook(isbn string) Book
+	FindBook(isbn string, header *http.Header) Book
 }`))
 
 	assert.Equal(t, expOut, out)
@@ -65,7 +65,7 @@ func TestGenerator_WriteInterface_MultiArgWithReturn(t *testing.T) {
 	out := string(g.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 type EmployeeService interface {
-	FindEmployee(name string, department string, age int) Employee
+	FindEmployee(name string, department string, age int, header *http.Header) Employee
 }`))
 
 	assert.Equal(t, expOut, out)
@@ -94,8 +94,8 @@ func TestGenerator_WriteInterface_MultiMethods(t *testing.T) {
 	out := string(g.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 type BookService interface {
-	FindBook() Book
-	FindEmployee(name string, department string, age int) Employee
+	FindBook(header *http.Header) Book
+	FindEmployee(name string, department string, age int, header *http.Header) Employee
 }`))
 
 	assert.Equal(t, expOut, out)
