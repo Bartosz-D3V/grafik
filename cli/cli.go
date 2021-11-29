@@ -11,6 +11,9 @@ import (
 
 func main() {
 	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
 	fptr := flag.String("fpath", wd, "file path to read from")
 	flag.Parse()
 
@@ -23,9 +26,14 @@ func main() {
 		Input: string(file),
 		Name:  clientName,
 	})
+	print(err.Error())
 
 	fileQuery, err := ioutil.ReadFile("test/countries/countries_query.graphql")
+	if err != nil {
+		panic(err)
+	}
 	query, err := gqlparser.LoadQuery(schema, string(fileQuery))
+	print(err.Error())
 
 	e := evaluator.New(*fptr, schema, query, clientName)
 

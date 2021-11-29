@@ -25,9 +25,10 @@ func TestClient_Execute_DefaultHeader_Success(t *testing.T) {
     }
 `
 	client := New(svr.URL, svr.Client())
-	params := make(map[string]interface{}, 0)
+	params := make(map[string]interface{})
 	params["code"] = "EU"
 	res, err := client.Execute(query, params, nil)
+	assert.NoError(t, err)
 
 	b, err := io.ReadAll(res.Body)
 	assert.NoError(t, err)
@@ -60,9 +61,10 @@ func TestClient_Execute_CustomHeader_Success(t *testing.T) {
     }
 `
 	client := New(svr.URL, svr.Client())
-	params := make(map[string]interface{}, 0)
+	params := make(map[string]interface{})
 	params["code"] = "EU"
 	res, err := client.Execute(query, params, &expHeader)
+	assert.NoError(t, err)
 
 	b, err := io.ReadAll(res.Body)
 	assert.NoError(t, err)
@@ -74,7 +76,7 @@ func TestClient_Execute_CustomHeader_Success(t *testing.T) {
 
 func TestClient_Execute_Marshall_Error(t *testing.T) {
 	client := New("localhost:8080", http.DefaultClient)
-	params := make(map[string]interface{}, 0)
+	params := make(map[string]interface{})
 	params["breakingParam"] = make(chan int)
 	res, err := client.Execute("", params, nil)
 
@@ -88,7 +90,7 @@ func TestClient_Execute_Marshall_Error(t *testing.T) {
 
 func TestClient_Execute_NewRequest_Error(t *testing.T) {
 	client := New("http://localhost:%%%8080", http.DefaultClient)
-	params := make(map[string]interface{}, 0)
+	params := make(map[string]interface{})
 	res, err := client.Execute("", params, nil)
 
 	assert.Nil(t, res)
@@ -104,7 +106,7 @@ func TestClient_Execute_HttpDo_Error(t *testing.T) {
 	svr.URL = "smtp://localhost:8000"
 
 	client := New(svr.URL, svr.Client())
-	params := make(map[string]interface{}, 0)
+	params := make(map[string]interface{})
 	res, err := client.Execute("", params, nil)
 
 	assert.Nil(t, res)
