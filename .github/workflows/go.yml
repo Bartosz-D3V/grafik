@@ -21,9 +21,6 @@ jobs:
       - name: Build
         run: go build -v ./...
 
-      - name: Lint
-        uses: matoous/golangci-lint-action@v1.23.3
-
       - name: Test
         run: go test -v ./...
 
@@ -36,4 +33,4 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           version: latest
-          skip-go-installation: true
+          skip-go-installation: false
