@@ -26,18 +26,12 @@ func main() {
 		Input: string(file),
 		Name:  clientName,
 	})
-	if err != nil {
-		panic(err)
-	}
 
 	fileQuery, err := ioutil.ReadFile("test/countries/countries_query.graphql")
 	if err != nil {
 		panic(err)
 	}
 	query, err := gqlparser.LoadQuery(schema, string(fileQuery))
-	if err != nil {
-		panic(err)
-	}
 
 	e := evaluator.New(*fptr, schema, query, clientName)
 

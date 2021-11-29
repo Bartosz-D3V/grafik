@@ -28,6 +28,7 @@ func TestClient_Execute_DefaultHeader_Success(t *testing.T) {
 	params := make(map[string]interface{})
 	params["code"] = "EU"
 	res, err := client.Execute(query, params, nil)
+	assert.NoError(t, err)
 
 	b, err := io.ReadAll(res.Body)
 	assert.NoError(t, err)
@@ -63,6 +64,7 @@ func TestClient_Execute_CustomHeader_Success(t *testing.T) {
 	params := make(map[string]interface{})
 	params["code"] = "EU"
 	res, err := client.Execute(query, params, &expHeader)
+	assert.NoError(t, err)
 
 	b, err := io.ReadAll(res.Body)
 	assert.NoError(t, err)
