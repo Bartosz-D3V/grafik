@@ -41,6 +41,14 @@ func (c *simpleTypeGraphql) GetFile(header *http.Header) (*http.Response, error)
 	return c.ctrl.Execute(getFile, params, header)
 }
 
+type GetFileResponse struct {
+	Data GetFileData %[1]cjson:"data"%[1]c
+}
+
+type GetFileData struct {
+	File File %[1]cjson:"file"%[1]c
+}
+
 type simpleTypeGraphql struct {
 	ctrl graphqlClient.Client
 }
@@ -91,6 +99,14 @@ func (c *arrayGraphql) GetBookTags(header *http.Header) (*http.Response, error) 
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(getBookTags, params, header)
+}
+
+type GetBookTagsResponse struct {
+	Data GetBookTagsData %[1]cjson:"data"%[1]c
+}
+
+type GetBookTagsData struct {
+	GetBook Book %[1]cjson:"getBook"%[1]c
 }
 
 type arrayGraphql struct {
@@ -168,6 +184,14 @@ func (c *nestedTypeGraphql) GetHero(header *http.Header) (*http.Response, error)
 	return c.ctrl.Execute(getHero, params, header)
 }
 
+type GetHeroResponse struct {
+	Data GetHeroData %[1]cjson:"data"%[1]c
+}
+
+type GetHeroData struct {
+	GetHero Character %[1]cjson:"getHero"%[1]c
+}
+
 type nestedTypeGraphql struct {
 	ctrl graphqlClient.Client
 }
@@ -221,6 +245,14 @@ func (c *enumGraphql) GetDepartment(header *http.Header) (*http.Response, error)
 	return c.ctrl.Execute(getDepartment, params, header)
 }
 
+type GetDepartmentResponse struct {
+	Data GetDepartmentData %[1]cjson:"data"%[1]c
+}
+
+type GetDepartmentData struct {
+	GetDepartment Department %[1]cjson:"getDepartment"%[1]c
+}
+
 type enumGraphql struct {
 	ctrl graphqlClient.Client
 }
@@ -262,6 +294,14 @@ func (c *inputGraphql) GetCompanyWithCode123(header *http.Header) (*http.Respons
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(getCompanyWithCode123, params, header)
+}
+
+type GetCompanyWithCode123Response struct {
+	Data GetCompanyWithCode123Data %[1]cjson:"data"%[1]c
+}
+
+type GetCompanyWithCode123Data struct {
+	All string %[1]cjson:"all"%[1]c
 }
 
 type inputGraphql struct {

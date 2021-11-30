@@ -5,6 +5,9 @@ query getCountriesByContinentCode($code: String) {
             name
         }
     }
+    country(code: "PL") {
+        capital
+    }
 }
 
 mutation deleteCountriesInAN {
