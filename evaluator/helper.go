@@ -67,6 +67,18 @@ func (e *evaluator) createStruct(cType *ast.Definition) {
 	e.generator.WritePublicStruct(s)
 }
 
+func (e *evaluator) parseSelectionSet(set ast.SelectionSet) []generator.TypeArg {
+	selectionSet := make([]generator.TypeArg, len(set))
+	for i, s := range set {
+		astField := s.(*ast.Field)
+		selectionSet[i] = generator.TypeArg{
+			Name: astField.Alias,
+			Type: e.convGoType(astField.Definition.Type),
+		}
+	}
+	return selectionSet
+}
+
 func (e *evaluator) parseFnArgs(args *ast.VariableDefinitionList) []generator.TypeArg {
 	var funcArgs []generator.TypeArg
 	for _, arg := range *args {
@@ -175,9 +187,10 @@ func (e *evaluator) genOpsInterface() {
 	var funcs []generator.Func
 	for _, op := range ops {
 		f := generator.Func{
-			Name: op.Name,
-			Args: e.parseFnArgs(&op.VariableDefinitions),
-			Type: "(*http.Response, error)",
+			Name:        op.Name,
+			Args:        e.parseFnArgs(&op.VariableDefinitions),
+			Type:        "(*http.Response, error)",
+			WrapperArgs: e.parseSelectionSet(op.SelectionSet),
 		}
 		funcs = append(funcs, f)
 	}
@@ -187,6 +200,33 @@ func (e *evaluator) genOpsInterface() {
 		e.generator.WriteInterfaceImplementation(e.clientName, f)
 		e.generator.WriteLineBreak(2)
 	}
+
+	for _, f := range funcs {
+		e.genWrapperResponseStruct(f)
+	}
+}
+
+func (e *evaluator) genWrapperResponseStruct(f generator.Func) {
+	dataStructName := fmt.Sprintf("%sData", strings.Title(f.Name))
+	responseStructName := fmt.Sprintf("%sResponse", strings.Title(f.Name))
+	structWrapper := generator.Struct{
+		Name: responseStructName,
+		Fields: []generator.TypeArg{
+			{
+				Name: "data",
+				Type: dataStructName,
+			},
+		},
+	}
+	e.generator.WritePublicStruct(structWrapper)
+	e.generator.WriteLineBreak(2)
+
+	s := generator.Struct{
+		Name:   dataStructName,
+		Fields: f.WrapperArgs,
+	}
+	e.generator.WritePublicStruct(s)
+	e.generator.WriteLineBreak(2)
 }
 
 func (e *evaluator) genClientStruct() {

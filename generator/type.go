@@ -15,9 +15,10 @@ func (t TypeArg) ExportName() string {
 }
 
 type Func struct {
-	Name string
-	Args []TypeArg
-	Type string
+	Name        string
+	Args        []TypeArg
+	Type        string
+	WrapperArgs []TypeArg
 }
 
 func (f Func) JoinArgsBy(s string) string {
