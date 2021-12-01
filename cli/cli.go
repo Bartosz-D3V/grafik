@@ -9,6 +9,12 @@ import (
 	"os"
 )
 
+type cli struct {
+	src        string
+	dst        string
+	clientName string
+}
+
 func main() {
 	wd, err := os.Getwd()
 	if err != nil {
@@ -18,6 +24,15 @@ func main() {
 	flag.Parse()
 
 	clientName := "countries"
+
+	pkgName := "client_graphql"
+
+	cli := cli{
+		src:        *fptr,
+		dst:        "./generated_client/",
+		clientName: clientName,
+	}
+
 	file, err := ioutil.ReadFile("test/countries/countries.graphql")
 	if err != nil {
 		panic(err)
@@ -35,7 +50,6 @@ func main() {
 	query, err := gqlparser.LoadQuery(schema, string(fileQuery))
 	print(err.Error())
 
-	e := evaluator.New(*fptr, schema, query, clientName)
-
-	print(string(e.Generate()))
+	e := evaluator.New(*fptr, schema, query, clientName, pkgName)
+	cli.writeFile(e.Generate())
 }

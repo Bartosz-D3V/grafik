@@ -2,6 +2,7 @@ package generator
 
 import (
 	"bytes"
+	"fmt"
 	"go/format"
 	"path/filepath"
 	"strings"
@@ -10,6 +11,8 @@ import (
 
 type Generator interface {
 	WriteHeader()
+	WritePackage(pkgName string)
+	WriteImports()
 	WriteLineBreak(r int)
 	WriteInterface(name string, fn ...Func)
 	WritePublicStruct(s Struct)
@@ -42,6 +45,17 @@ func New(fptr string) Generator {
 
 func (g *generator) WriteHeader() {
 	g.write(Header)
+}
+
+func (g *generator) WritePackage(pkgName string) {
+	g.write(fmt.Sprintf("package %s", pkgName))
+}
+
+func (g *generator) WriteImports() {
+	err := g.template.ExecuteTemplate(g.stream, "imports.tmpl", make(map[string]interface{}))
+	if err != nil {
+		panic(err)
+	}
 }
 
 func (g *generator) WriteLineBreak(r int) {
