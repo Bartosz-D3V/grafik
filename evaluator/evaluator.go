@@ -18,21 +18,28 @@ type evaluator struct {
 	schema        *ast.Schema
 	queryDocument *ast.QueryDocument
 	clientName    string
+	pkgName       string
 }
 
-func New(fptr string, schema *ast.Schema, queryDocument *ast.QueryDocument, clientName string) Evaluator {
+func New(fptr string, schema *ast.Schema, queryDocument *ast.QueryDocument, clientName string, pkgName string) Evaluator {
 	return &evaluator{
 		generator:     generator.New(fptr),
 		visitor:       visitor.New(schema, queryDocument),
 		schema:        schema,
 		queryDocument: queryDocument,
 		clientName:    parseClientName(clientName, schema),
+		pkgName:       pkgName,
 	}
 }
 
 func (e *evaluator) Generate() []byte {
 	e.generator.WriteHeader()
+	e.generator.WriteLineBreak(2)
 
+	e.generator.WritePackage(e.pkgName)
+	e.generator.WriteLineBreak(2)
+
+	e.generator.WriteImports()
 	e.generator.WriteLineBreak(2)
 
 	e.genSchemaDef()

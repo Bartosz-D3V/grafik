@@ -15,11 +15,18 @@ func TestEvaluator_Generate_FlatStructure(t *testing.T) {
 	pd := test.GetParentDir(t)
 	schema := loadSchema(t, pd, "test/simple_type/simple_type.graphql")
 	query := loadQuery(t, pd, schema, "test/simple_type/simple_type_query.graphql")
-	e := New(pd, schema, query, "SimpleType")
+	e := New(pd, schema, query, "SimpleType", "ggrafik_client")
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with ggrafik. DO NOT EDIT
+
+package ggrafik_client
+
+import (
+	graphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	"net/http"
+)
 
 type File struct {
 	Name string %[1]cjson:"name"%[1]c
@@ -67,11 +74,18 @@ func TestEvaluator_Generate_ArrayStructure(t *testing.T) {
 	pd := test.GetParentDir(t)
 	schema := loadSchema(t, pd, "test/array/array.graphql")
 	query := loadQuery(t, pd, schema, "test/array/array_query.graphql")
-	e := New(pd, schema, query, "")
+	e := New(pd, schema, query, "", "ggrafik_client")
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with ggrafik. DO NOT EDIT
+
+package ggrafik_client
+
+import (
+	graphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	"net/http"
+)
 
 type Book struct {
 	Name string %[1]cjson:"name"%[1]c
@@ -127,11 +141,18 @@ func TestEvaluator_Generate_NestedStructure(t *testing.T) {
 	pd := test.GetParentDir(t)
 	schema := loadSchema(t, pd, "test/nested_type/nested_type.graphql")
 	query := loadQuery(t, pd, schema, "test/nested_type/nested_type_query.graphql")
-	e := New(pd, schema, query, "nestedType")
+	e := New(pd, schema, query, "nestedType", "ggrafik_client")
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with ggrafik. DO NOT EDIT
+
+package ggrafik_client
+
+import (
+	graphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	"net/http"
+)
 
 type Character struct {
 	Name      string  %[1]cjson:"name"%[1]c
@@ -210,11 +231,18 @@ func TestEvaluator_Generate_Enum(t *testing.T) {
 	pd := test.GetParentDir(t)
 	schema := loadSchema(t, pd, "test/enum/enum.graphql")
 	query := loadQuery(t, pd, schema, "test/enum/enum_query.graphql")
-	e := New(pd, schema, query, "")
+	e := New(pd, schema, query, "", "ggrafik_client")
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with ggrafik. DO NOT EDIT
+
+package ggrafik_client
+
+import (
+	graphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	"net/http"
+)
 
 type DepartmentName string
 
@@ -271,11 +299,18 @@ func TestEvaluator_Generate_Input(t *testing.T) {
 	pd := test.GetParentDir(t)
 	schema := loadSchema(t, pd, "test/input/input.graphql")
 	query := loadQuery(t, pd, schema, "test/input/input_query.graphql")
-	e := New(pd, schema, query, "")
+	e := New(pd, schema, query, "", "ggrafik_client")
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with ggrafik. DO NOT EDIT
+
+package ggrafik_client
+
+import (
+	graphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	"net/http"
+)
 
 type Company struct {
 	Code int    %[1]cjson:"code"%[1]c
