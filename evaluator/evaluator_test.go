@@ -15,7 +15,7 @@ func TestEvaluator_Generate_FlatStructure(t *testing.T) {
 	pd := test.GetParentDir(t)
 	schema := loadSchema(t, pd, "test/simple_type/simple_type.graphql")
 	query := loadQuery(t, pd, schema, "test/simple_type/simple_type_query.graphql")
-	e := New(pd, schema, query, "SimpleType", "ggrafik_client")
+	e := New(pd, schema, query, "SimpleTypeClient", "ggrafik_client")
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
@@ -38,11 +38,11 @@ const getFile = %[1]cquery getFile {
     }
 }%[1]c
 
-type SimpleTypeGraphql interface {
+type SimpleTypeClient interface {
 	GetFile(header *http.Header) (*http.Response, error)
 }
 
-func (c *simpleTypeGraphql) GetFile(header *http.Header) (*http.Response, error) {
+func (c *simpleTypeClient) GetFile(header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(getFile, params, header)
@@ -56,12 +56,12 @@ type GetFileData struct {
 	File File %[1]cjson:"file"%[1]c
 }
 
-type simpleTypeGraphql struct {
+type simpleTypeClient struct {
 	ctrl graphqlClient.Client
 }
 
-func New(endpoint string, client *http.Client) SimpleTypeGraphql {
-	return &simpleTypeGraphql{
+func New(endpoint string, client *http.Client) SimpleTypeClient {
+	return &simpleTypeClient{
 		ctrl: graphqlClient.New(endpoint, client),
 	}
 }
@@ -74,7 +74,7 @@ func TestEvaluator_Generate_ArrayStructure(t *testing.T) {
 	pd := test.GetParentDir(t)
 	schema := loadSchema(t, pd, "test/array/array.graphql")
 	query := loadQuery(t, pd, schema, "test/array/array_query.graphql")
-	e := New(pd, schema, query, "", "ggrafik_client")
+	e := New(pd, schema, query, "ArrayQueryClient", "ggrafik_client")
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
@@ -105,11 +105,11 @@ const getBookTags = %[1]cquery getBookTags {
     }
 }%[1]c
 
-type ArrayGraphql interface {
+type ArrayQueryClient interface {
 	GetBookTags(header *http.Header) (*http.Response, error)
 }
 
-func (c *arrayGraphql) GetBookTags(header *http.Header) (*http.Response, error) {
+func (c *arrayQueryClient) GetBookTags(header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(getBookTags, params, header)
@@ -123,12 +123,12 @@ type GetBookTagsData struct {
 	GetBook Book %[1]cjson:"getBook"%[1]c
 }
 
-type arrayGraphql struct {
+type arrayQueryClient struct {
 	ctrl graphqlClient.Client
 }
 
-func New(endpoint string, client *http.Client) ArrayGraphql {
-	return &arrayGraphql{
+func New(endpoint string, client *http.Client) ArrayQueryClient {
+	return &arrayQueryClient{
 		ctrl: graphqlClient.New(endpoint, client),
 	}
 }
@@ -141,7 +141,7 @@ func TestEvaluator_Generate_NestedStructure(t *testing.T) {
 	pd := test.GetParentDir(t)
 	schema := loadSchema(t, pd, "test/nested_type/nested_type.graphql")
 	query := loadQuery(t, pd, schema, "test/nested_type/nested_type_query.graphql")
-	e := New(pd, schema, query, "nestedType", "ggrafik_client")
+	e := New(pd, schema, query, "NestedTypeClient", "ggrafik_client")
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
@@ -195,11 +195,11 @@ const getHero = %[1]cquery getHero {
     }
 }%[1]c
 
-type NestedTypeGraphql interface {
+type NestedTypeClient interface {
 	GetHero(header *http.Header) (*http.Response, error)
 }
 
-func (c *nestedTypeGraphql) GetHero(header *http.Header) (*http.Response, error) {
+func (c *nestedTypeClient) GetHero(header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(getHero, params, header)
@@ -213,12 +213,12 @@ type GetHeroData struct {
 	GetHero Character %[1]cjson:"getHero"%[1]c
 }
 
-type nestedTypeGraphql struct {
+type nestedTypeClient struct {
 	ctrl graphqlClient.Client
 }
 
-func New(endpoint string, client *http.Client) NestedTypeGraphql {
-	return &nestedTypeGraphql{
+func New(endpoint string, client *http.Client) NestedTypeClient {
+	return &nestedTypeClient{
 		ctrl: graphqlClient.New(endpoint, client),
 	}
 }
@@ -231,7 +231,7 @@ func TestEvaluator_Generate_Enum(t *testing.T) {
 	pd := test.GetParentDir(t)
 	schema := loadSchema(t, pd, "test/enum/enum.graphql")
 	query := loadQuery(t, pd, schema, "test/enum/enum_query.graphql")
-	e := New(pd, schema, query, "", "ggrafik_client")
+	e := New(pd, schema, query, "EnumQueryClient", "ggrafik_client")
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
@@ -263,11 +263,11 @@ const getDepartment = %[1]cquery getDepartment {
     }
 }%[1]c
 
-type EnumGraphql interface {
+type EnumQueryClient interface {
 	GetDepartment(header *http.Header) (*http.Response, error)
 }
 
-func (c *enumGraphql) GetDepartment(header *http.Header) (*http.Response, error) {
+func (c *enumQueryClient) GetDepartment(header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(getDepartment, params, header)
@@ -281,12 +281,12 @@ type GetDepartmentData struct {
 	GetDepartment Department %[1]cjson:"getDepartment"%[1]c
 }
 
-type enumGraphql struct {
+type enumQueryClient struct {
 	ctrl graphqlClient.Client
 }
 
-func New(endpoint string, client *http.Client) EnumGraphql {
-	return &enumGraphql{
+func New(endpoint string, client *http.Client) EnumQueryClient {
+	return &enumQueryClient{
 		ctrl: graphqlClient.New(endpoint, client),
 	}
 }
@@ -299,7 +299,7 @@ func TestEvaluator_Generate_Input(t *testing.T) {
 	pd := test.GetParentDir(t)
 	schema := loadSchema(t, pd, "test/input/input.graphql")
 	query := loadQuery(t, pd, schema, "test/input/input_query.graphql")
-	e := New(pd, schema, query, "", "ggrafik_client")
+	e := New(pd, schema, query, "InputQueryClient", "ggrafik_client")
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
@@ -321,11 +321,11 @@ const getCompanyWithCode123 = %[1]cquery getCompanyWithCode123 {
     all(company: {code: 123})
 }%[1]c
 
-type InputGraphql interface {
+type InputQueryClient interface {
 	GetCompanyWithCode123(header *http.Header) (*http.Response, error)
 }
 
-func (c *inputGraphql) GetCompanyWithCode123(header *http.Header) (*http.Response, error) {
+func (c *inputQueryClient) GetCompanyWithCode123(header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(getCompanyWithCode123, params, header)
@@ -339,12 +339,12 @@ type GetCompanyWithCode123Data struct {
 	All string %[1]cjson:"all"%[1]c
 }
 
-type inputGraphql struct {
+type inputQueryClient struct {
 	ctrl graphqlClient.Client
 }
 
-func New(endpoint string, client *http.Client) InputGraphql {
-	return &inputGraphql{
+func New(endpoint string, client *http.Client) InputQueryClient {
+	return &inputQueryClient{
 		ctrl: graphqlClient.New(endpoint, client),
 	}
 }

@@ -4,8 +4,6 @@ import (
 	"github.com/Bartosz-D3V/ggrafik/generator"
 	"github.com/Bartosz-D3V/ggrafik/visitor"
 	"github.com/vektah/gqlparser/ast"
-	"strings"
-	"unicode"
 )
 
 type Evaluator interface {
@@ -21,13 +19,13 @@ type evaluator struct {
 	pkgName       string
 }
 
-func New(fptr string, schema *ast.Schema, queryDocument *ast.QueryDocument, clientName string, pkgName string) Evaluator {
+func New(rootLoc string, schema *ast.Schema, queryDocument *ast.QueryDocument, clientName string, pkgName string) Evaluator {
 	return &evaluator{
-		generator:     generator.New(fptr),
+		generator:     generator.New(rootLoc),
 		visitor:       visitor.New(schema, queryDocument),
 		schema:        schema,
 		queryDocument: queryDocument,
-		clientName:    parseClientName(clientName, schema),
+		clientName:    clientName,
 		pkgName:       pkgName,
 	}
 }
@@ -52,18 +50,4 @@ func (e *evaluator) Generate() []byte {
 	e.generator.WriteLineBreak(1)
 
 	return e.generator.Generate()
-}
-
-func parseClientName(name string, schema *ast.Schema) string {
-	if name != "" {
-		return lowercaseFirstChar(name)
-	}
-	fileName := schema.Query.Position.Src.Name
-	return lowercaseFirstChar(strings.Split(fileName, ".")[0])
-}
-
-func lowercaseFirstChar(s string) string {
-	r := []rune(s)
-	r[0] = unicode.ToLower(r[0])
-	return string(r)
 }
