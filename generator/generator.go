@@ -3,6 +3,7 @@ package generator
 import (
 	"bytes"
 	"fmt"
+	"github.com/Bartosz-D3V/ggrafik/common"
 	"go/format"
 	"path/filepath"
 	"strings"
@@ -29,11 +30,12 @@ type generator struct {
 	template *template.Template
 }
 
-func New(fptr string) Generator {
+func New(rootLoc string) Generator {
 	funcMap := template.FuncMap{
-		"title": strings.Title,
+		"title":        strings.Title,
+		"sentenceCase": common.SentenceCase,
 	}
-	tmpl, err := template.New("codeTemplate").Funcs(funcMap).ParseGlob(filepath.Join(fptr, "templates/*.tmpl"))
+	tmpl, err := template.New("codeTemplate").Funcs(funcMap).ParseGlob(filepath.Join(rootLoc, "templates/*.tmpl"))
 	if err != nil {
 		panic(err)
 	}

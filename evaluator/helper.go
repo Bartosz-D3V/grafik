@@ -182,7 +182,6 @@ func (e *evaluator) genClientCode() {
 
 func (e *evaluator) genOpsInterface() {
 	ops := e.queryDocument.Operations
-	interfaceName := fmt.Sprintf("%sGraphql", e.clientName)
 
 	var funcs []generator.Func
 	for _, op := range ops {
@@ -194,7 +193,7 @@ func (e *evaluator) genOpsInterface() {
 		}
 		funcs = append(funcs, f)
 	}
-	e.generator.WriteInterface(interfaceName, funcs...)
+	e.generator.WriteInterface(e.clientName, funcs...)
 	e.generator.WriteLineBreak(2)
 	for _, f := range funcs {
 		e.generator.WriteInterfaceImplementation(e.clientName, f)
@@ -231,7 +230,7 @@ func (e *evaluator) genWrapperResponseStruct(f generator.Func) {
 
 func (e *evaluator) genClientStruct() {
 	s := generator.Struct{
-		Name: fmt.Sprintf("%sGraphql", e.clientName),
+		Name: e.clientName,
 		Fields: []generator.TypeArg{
 			{
 				Name: "ctrl",
