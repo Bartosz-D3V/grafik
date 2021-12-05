@@ -1,0 +1,29 @@
+{
+  "name": "GraphQL schemas used for testing",
+  "projects": {
+    "array": {
+      "includes": ["./test/array/**"]
+    },
+    "circular_type": {
+      "includes": ["./test/circular_type/**"]
+    },
+    "countries": {
+      "includes": ["./test/countries/**"]
+    },
+    "enum": {
+      "includes": ["./test/enum/**"]
+    },
+    "fragment": {
+      "includes": ["./test/fragment/**"]
+    },
+    "input": {
+      "includes": ["./test/input/**"]
+    },
+    "nested_type": {
+      "includes": ["./test/nested_type/**"]
+    },
+    "simple_type": {
+      "includes": ["./test/simple_type/**"]
+    }
+  }
+}

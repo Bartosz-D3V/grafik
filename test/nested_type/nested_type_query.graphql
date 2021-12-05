@@ -1,4 +1,4 @@
-query getHero {
+query GetHeroWithId123ABC {
     getHero(characterSelector: {idSelector: {id: "123ABC"}}) {
         homeWorld {
             location {

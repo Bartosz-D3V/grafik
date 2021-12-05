@@ -1,8 +1,7 @@
-query getBookTags {
-    getBook {
-        tags {
-            name
+query GetAllFilmsProducers {
+    allFilms {
+        films {
+            producers
         }
-        name
     }
 }

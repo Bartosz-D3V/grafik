@@ -12,9 +12,8 @@ func TestGenerator_WriteInterface_NoArgWithReturn(t *testing.T) {
 		Args: make([]TypeArg, 0),
 		Type: "Book",
 	}
-	pd := test.GetParentDir(t)
 
-	g := New(pd)
+	g := New("../")
 	g.WriteInterface("BookService", fn)
 
 	out := string(g.Generate())
@@ -32,9 +31,8 @@ func TestGenerator_WriteInterface_SingleArgWithReturn(t *testing.T) {
 		Args: []TypeArg{{Name: "isbn", Type: "string"}},
 		Type: "Book",
 	}
-	pd := test.GetParentDir(t)
 
-	g := New(pd)
+	g := New("../")
 	g.WriteInterface("BookService", fn)
 
 	out := string(g.Generate())
@@ -56,9 +54,8 @@ func TestGenerator_WriteInterface_MultiArgWithReturn(t *testing.T) {
 		},
 		Type: "Employee",
 	}
-	pd := test.GetParentDir(t)
 
-	g := New(pd)
+	g := New("../")
 	g.WriteInterface("EmployeeService", fn)
 
 	out := string(g.Generate())
@@ -85,9 +82,8 @@ func TestGenerator_WriteInterface_MultiMethods(t *testing.T) {
 		},
 		Type: "Employee",
 	}
-	pd := test.GetParentDir(t)
 
-	g := New(pd)
+	g := New("../")
 	g.WriteInterface("BookService", fn1, fn2)
 
 	out := string(g.Generate())

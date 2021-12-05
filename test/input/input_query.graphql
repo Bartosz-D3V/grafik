@@ -1,3 +1,6 @@
-query getCompanyWithCode123 {
-    all(company: {code: 123})
+query GetCapsulesByFullSelector($order: String, $mission: String, $originalLaunch: Date, $id: ID, $sort: String) {
+    capsules(order: $order, find: {landings: 10, mission: $mission, original_launch: $originalLaunch, id: $id}, sort: $sort) {
+        id
+        type
+    }
 }

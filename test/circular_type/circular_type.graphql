@@ -1,0 +1,17 @@
+schema {
+    query: Query
+}
+
+type Query {
+    movie(title: String!): Movie
+}
+
+type Movie {
+    title: String
+    actor: Actor
+}
+
+type Actor {
+    name: String
+    actedIn: [Movie!]!
+}

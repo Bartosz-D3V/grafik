@@ -1,0 +1,22 @@
+schema {
+    query: Query
+}
+
+type Query {
+    rockets(limit: Int, offset: Int): [Rocket]
+}
+
+type Rocket {
+    active: Boolean
+    boosters: Int
+    company: String
+    costPerLaunch: Int
+    country: String
+    description: String
+    id: ID
+    name: String
+    stages: Int
+    successRatePct: Int
+    type: String
+    wikipedia: String
+}

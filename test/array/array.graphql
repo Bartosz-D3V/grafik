@@ -1,12 +1,15 @@
+schema {
+    query: Query
+}
+
 type Query {
-    getBook: Book
+    allFilms(after: String, before: String, first: Int, last: Int): FilmsConnection
 }
 
-type Book {
-    name: String
-    tags: [Tag]!
+type FilmsConnection {
+    films: [Film]
 }
 
-type Tag {
-    name: String
+type Film {
+    producers: [String]
 }
