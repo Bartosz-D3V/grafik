@@ -13,11 +13,15 @@ func (v *visitor) IntrospectTypes() []string {
 }
 
 func (v *visitor) parseOpTypes(query *ast.Definition) {
-	usrFields := query.Fields[:common.NumOfBuiltIns(query)]
+	usrFields := common.FilterCustomFields(query.Fields)
 	for _, field := range usrFields {
 		v.findSubTypes(v.schema.Types[field.Type.NamedType])
 		for _, arg := range field.Arguments {
 			v.findSubTypes(v.schema.Types[arg.Type.NamedType])
+		}
+
+		if common.IsList(field.Type) {
+			v.registerType(field.Type.Elem.NamedType)
 		}
 	}
 }

@@ -1,3 +1,7 @@
+schema {
+    query: Query
+}
+
 type Query {
     getHero(characterSelector: CharacterSelector): Character
 }
@@ -11,14 +15,11 @@ input IdSelector {
 }
 
 type Character {
-    name: String
     homeWorld: Planet
     species: Species
 }
 
 type Planet {
-    name: String
-    climate: String
     location: Location
 }
 
@@ -28,7 +29,5 @@ type Location {
 }
 
 type Species {
-    name: String
-    lifespan: Int
     origin: Planet
 }

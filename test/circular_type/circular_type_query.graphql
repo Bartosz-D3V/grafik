@@ -1,0 +1,9 @@
+query GetAllMoviesWhereActorsOfTheMovieActedIn($title: String!) {
+    movie(title: $title) {
+        actor {
+            actedIn {
+                title
+            }
+        }
+    }
+}

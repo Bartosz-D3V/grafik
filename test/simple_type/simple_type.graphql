@@ -1,16 +1,16 @@
+schema {
+    query: Query
+    mutation: Mutation
+}
+
 type Query {
-    file(id: ID!): File
-    files: [File!]!
+    getFile(id: ID!): File
 }
 
 type Mutation {
     renameFile(
         id: ID!
         name: String!
-    ): File
-
-    deleteFile(
-        id: ID!
     ): File
 }
 

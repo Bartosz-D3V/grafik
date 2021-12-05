@@ -6,13 +6,14 @@ func IsList(astType *ast.Type) bool {
 	return astType.IsCompatible(ast.ListType(astType.Elem, astType.Position))
 }
 
-func NumOfBuiltIns(query *ast.Definition) int {
-	if query.OneOf("Query") {
-		const numOfPredefinedQueryDefs = 2
-		return len(query.Fields) - numOfPredefinedQueryDefs
-	} else {
-		return len(query.Fields)
+func FilterCustomFields(fieldList ast.FieldList) []ast.FieldDefinition {
+	cFields := make([]ast.FieldDefinition, 0)
+	for _, field := range fieldList {
+		if field.Position != nil && field.Position.Src != nil && field.Position.Src.BuiltIn == false {
+			cFields = append(cFields, *field)
+		}
 	}
+	return cFields
 }
 
 func IsComplex(t *ast.Type) bool {

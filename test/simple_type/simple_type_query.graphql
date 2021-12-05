@@ -1,5 +1,11 @@
-query getFile {
-    file(id: "123-ABC") {
+query GetFileNameWithId($id: ID!) {
+    getFile(id: $id) {
+        name
+    }
+}
+
+mutation RenameFileWithId($id: ID!, $name: String!) {
+    renameFile(id: $id, name: $name) {
         name
     }
 }
