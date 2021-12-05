@@ -14,6 +14,13 @@ func (t TypeArg) ExportName() string {
 	return strings.Title(t.Name)
 }
 
+func (t TypeArg) PointerType() string {
+	if strings.Contains(t.Type, "[]") {
+		return t.Type
+	}
+	return fmt.Sprintf("*%s", t.Type)
+}
+
 type Func struct {
 	Name        string
 	Args        []TypeArg

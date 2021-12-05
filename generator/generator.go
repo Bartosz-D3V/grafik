@@ -16,7 +16,7 @@ type Generator interface {
 	WriteImports()
 	WriteLineBreak(r int)
 	WriteInterface(name string, fn ...Func)
-	WritePublicStruct(s Struct)
+	WritePublicStruct(s Struct, usePointers bool)
 	WritePrivateStruct(s Struct)
 	WriteEnum(e Enum)
 	WriteConst(c Const)
@@ -75,10 +75,11 @@ func (g *generator) WriteInterface(name string, fn ...Func) {
 	}
 }
 
-func (g *generator) WritePublicStruct(s Struct) {
+func (g *generator) WritePublicStruct(s Struct, usePointers bool) {
 	config := map[string]interface{}{
-		"Struct": s,
-		"Public": true,
+		"Struct":      s,
+		"Public":      true,
+		"UsePointers": usePointers,
 	}
 	err := g.template.ExecuteTemplate(g.stream, "struct.tmpl", config)
 	if err != nil {

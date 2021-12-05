@@ -14,7 +14,12 @@ import (
 func TestEvaluator_Generate_FlatStructure(t *testing.T) {
 	schema := loadSchema(t, "test/simple_type/simple_type.graphql")
 	query := loadQuery(t, schema, "test/simple_type/simple_type_query.graphql")
-	e := New("../", schema, query, "FilesClient", "ggrafik_client")
+	info := AdditionalInfo{
+		PackageName: "ggrafik_client",
+		ClientName:  "FilesClient",
+		UsePointers: false,
+	}
+	e := New("../", schema, query, info)
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
@@ -98,7 +103,12 @@ func New(endpoint string, client *http.Client) FilesClient {
 func TestEvaluator_Generate_ArrayStructure(t *testing.T) {
 	schema := loadSchema(t, "test/array/array.graphql")
 	query := loadQuery(t, schema, "test/array/array_query.graphql")
-	e := New("../", schema, query, "FilmsClient", "ggrafik_client")
+	info := AdditionalInfo{
+		PackageName: "ggrafik_client",
+		ClientName:  "FilmsClient",
+		UsePointers: false,
+	}
+	e := New("../", schema, query, info)
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
@@ -162,7 +172,12 @@ func New(endpoint string, client *http.Client) FilmsClient {
 func TestEvaluator_Generate_NestedStructure(t *testing.T) {
 	schema := loadSchema(t, "test/nested_type/nested_type.graphql")
 	query := loadQuery(t, schema, "test/nested_type/nested_type_query.graphql")
-	e := New("../", schema, query, "SpecificHeroClient", "ggrafik_client")
+	info := AdditionalInfo{
+		PackageName: "ggrafik_client",
+		ClientName:  "SpecificHeroClient",
+		UsePointers: false,
+	}
+	e := New("../", schema, query, info)
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
@@ -246,7 +261,12 @@ func New(endpoint string, client *http.Client) SpecificHeroClient {
 func TestEvaluator_Generate_Enum(t *testing.T) {
 	schema := loadSchema(t, "test/enum/enum.graphql")
 	query := loadQuery(t, schema, "test/enum/enum_query.graphql")
-	e := New("../", schema, query, "CompanyClient", "ggrafik_client")
+	info := AdditionalInfo{
+		PackageName: "ggrafik_client",
+		ClientName:  "CompanyClient",
+		UsePointers: false,
+	}
+	e := New("../", schema, query, info)
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
@@ -313,7 +333,12 @@ func New(endpoint string, client *http.Client) CompanyClient {
 func TestEvaluator_Generate_Input(t *testing.T) {
 	schema := loadSchema(t, "test/input/input.graphql")
 	query := loadQuery(t, schema, "test/input/input_query.graphql")
-	e := New("../", schema, query, "CapsulesClient", "ggrafik_client")
+	info := AdditionalInfo{
+		PackageName: "ggrafik_client",
+		ClientName:  "CapsulesClient",
+		UsePointers: false,
+	}
+	e := New("../", schema, query, info)
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
@@ -391,7 +416,12 @@ func New(endpoint string, client *http.Client) CapsulesClient {
 func TestEvaluator_CircularType(t *testing.T) {
 	schema := loadSchema(t, "test/circular_type/circular_type.graphql")
 	query := loadQuery(t, schema, "test/circular_type/circular_type_query.graphql")
-	e := New("../", schema, query, "MovieClient", "ggrafik_client")
+	info := AdditionalInfo{
+		PackageName: "ggrafik_client",
+		ClientName:  "MovieClient",
+		UsePointers: false,
+	}
+	e := New("../", schema, query, info)
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
@@ -460,7 +490,12 @@ func New(endpoint string, client *http.Client) MovieClient {
 func TestEvaluator_FragmentType(t *testing.T) {
 	schema := loadSchema(t, "test/fragment/fragment.graphql")
 	query := loadQuery(t, schema, "test/fragment/fragment_query.graphql")
-	e := New("../", schema, query, "RocketClient", "ggrafik_client")
+	info := AdditionalInfo{
+		PackageName: "ggrafik_client",
+		ClientName:  "RocketClient",
+		UsePointers: false,
+	}
+	e := New("../", schema, query, info)
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
@@ -512,6 +547,86 @@ func (c *rocketClient) GetShortRocketInfo(header *http.Header) (*http.Response, 
 
 type GetShortRocketInfoResponse struct {
 	Data GetShortRocketInfoData %[1]cjson:"data"%[1]c
+}
+
+type GetShortRocketInfoData struct {
+	Rockets []Rocket %[1]cjson:"rockets"%[1]c
+}
+
+type rocketClient struct {
+	ctrl graphqlClient.Client
+}
+
+func New(endpoint string, client *http.Client) RocketClient {
+	return &rocketClient{
+		ctrl: graphqlClient.New(endpoint, client),
+	}
+}
+`, '`'))
+
+	assert.Equal(t, expOut, out)
+}
+
+func TestEvaluator_WithPointers(t *testing.T) {
+	schema := loadSchema(t, "test/fragment/fragment.graphql")
+	query := loadQuery(t, schema, "test/fragment/fragment_query.graphql")
+	info := AdditionalInfo{
+		PackageName: "ggrafik_client",
+		ClientName:  "RocketClient",
+		UsePointers: true,
+	}
+	e := New("../", schema, query, info)
+
+	out := string(e.Generate())
+	expOut := test.PrepExpCode(t, fmt.Sprintf(`
+// Generated with ggrafik. DO NOT EDIT
+
+package ggrafik_client
+
+import (
+	graphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	"net/http"
+)
+
+type Rocket struct {
+	Active         *bool   %[1]cjson:"active"%[1]c
+	Boosters       *int    %[1]cjson:"boosters"%[1]c
+	Company        *string %[1]cjson:"company"%[1]c
+	CostPerLaunch  *int    %[1]cjson:"costPerLaunch"%[1]c
+	Country        *string %[1]cjson:"country"%[1]c
+	Description    *string %[1]cjson:"description"%[1]c
+	Id             *string %[1]cjson:"id"%[1]c
+	Name           *string %[1]cjson:"name"%[1]c
+	Stages         *int    %[1]cjson:"stages"%[1]c
+	SuccessRatePct *int    %[1]cjson:"successRatePct"%[1]c
+	Type           *string %[1]cjson:"type"%[1]c
+	Wikipedia      *string %[1]cjson:"wikipedia"%[1]c
+}
+
+const getShortRocketInfo = %[1]cquery GetShortRocketInfo {
+    rockets {
+        ...RocketShortInfo
+    }
+}
+
+fragment RocketShortInfo on Rocket {
+    id
+    name
+    description
+}%[1]c
+
+type RocketClient interface {
+	GetShortRocketInfo(header *http.Header) (*http.Response, error)
+}
+
+func (c *rocketClient) GetShortRocketInfo(header *http.Header) (*http.Response, error) {
+	params := make(map[string]interface{}, 0)
+
+	return c.ctrl.Execute(getShortRocketInfo, params, header)
+}
+
+type GetShortRocketInfoResponse struct {
+	Data *GetShortRocketInfoData %[1]cjson:"data"%[1]c
 }
 
 type GetShortRocketInfoData struct {

@@ -8,14 +8,14 @@ import (
 	"strings"
 )
 
-func (e *evaluator) genSchemaDef() {
+func (e *evaluator) genSchemaDef(usePointers bool) {
 	e.generator.WriteLineBreak(2)
 
 	e.generator.WriteLineBreak(2)
 
 	e.generateEnumTypesFromDefinition(e.schema.Types)
 
-	e.generateStructs()
+	e.generateStructs(usePointers)
 
 	e.generator.WriteLineBreak(2)
 }
@@ -28,7 +28,7 @@ func (e *evaluator) generateEnumTypesFromDefinition(types map[string]*ast.Defini
 	}
 }
 
-func (e *evaluator) generateStructs() {
+func (e *evaluator) generateStructs(usePointers bool) {
 	cTypes := e.visitor.IntrospectTypes()
 	for _, customType := range cTypes {
 		cType := e.schema.Types[customType]
@@ -36,7 +36,7 @@ func (e *evaluator) generateStructs() {
 		switch cType.Kind {
 		case ast.Object,
 			ast.InputObject:
-			e.createStruct(cType)
+			e.createStruct(cType, usePointers)
 		default:
 			//panic(fmt.Errorf("%s type not supported", cType.Kind))
 		}
@@ -58,13 +58,13 @@ func (e *evaluator) createEnum(cType *ast.Definition) {
 	e.generator.WriteEnum(en)
 }
 
-func (e *evaluator) createStruct(cType *ast.Definition) {
+func (e *evaluator) createStruct(cType *ast.Definition, usePointers bool) {
 	s := generator.Struct{
 		Name:   cType.Name,
 		Fields: e.parseFieldArgs(&cType.Fields),
 	}
 	e.generator.WriteLineBreak(2)
-	e.generator.WritePublicStruct(s)
+	e.generator.WritePublicStruct(s, usePointers)
 }
 
 func (e *evaluator) parseSelectionSet(set ast.SelectionSet) []generator.TypeArg {
@@ -177,7 +177,7 @@ func (e *evaluator) genClientCode() {
 	e.genClientStruct()
 	e.generator.WriteLineBreak(2)
 
-	e.generator.WriteClientConstructor(e.clientName)
+	e.generator.WriteClientConstructor(e.AdditionalInfo.ClientName)
 }
 
 func (e *evaluator) genOpsInterface() {
@@ -193,10 +193,10 @@ func (e *evaluator) genOpsInterface() {
 		}
 		funcs = append(funcs, f)
 	}
-	e.generator.WriteInterface(e.clientName, funcs...)
+	e.generator.WriteInterface(e.AdditionalInfo.ClientName, funcs...)
 	e.generator.WriteLineBreak(2)
 	for _, f := range funcs {
-		e.generator.WriteInterfaceImplementation(e.clientName, f)
+		e.generator.WriteInterfaceImplementation(e.AdditionalInfo.ClientName, f)
 		e.generator.WriteLineBreak(2)
 	}
 
@@ -217,20 +217,20 @@ func (e *evaluator) genWrapperResponseStruct(f generator.Func) {
 			},
 		},
 	}
-	e.generator.WritePublicStruct(structWrapper)
+	e.generator.WritePublicStruct(structWrapper, e.AdditionalInfo.UsePointers)
 	e.generator.WriteLineBreak(2)
 
 	s := generator.Struct{
 		Name:   dataStructName,
 		Fields: f.WrapperArgs,
 	}
-	e.generator.WritePublicStruct(s)
+	e.generator.WritePublicStruct(s, e.AdditionalInfo.UsePointers)
 	e.generator.WriteLineBreak(2)
 }
 
 func (e *evaluator) genClientStruct() {
 	s := generator.Struct{
-		Name: e.clientName,
+		Name: e.AdditionalInfo.ClientName,
 		Fields: []generator.TypeArg{
 			{
 				Name: "ctrl",
