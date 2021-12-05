@@ -9,7 +9,7 @@ func IsList(astType *ast.Type) bool {
 func FilterCustomFields(fieldList ast.FieldList) []ast.FieldDefinition {
 	cFields := make([]ast.FieldDefinition, 0)
 	for _, field := range fieldList {
-		if field.Position != nil && field.Position.Src != nil && field.Position.Src.BuiltIn == false {
+		if field.Position != nil && field.Position.Src != nil && !field.Position.Src.BuiltIn {
 			cFields = append(cFields, *field)
 		}
 	}
