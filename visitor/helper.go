@@ -34,7 +34,7 @@ func (v *visitor) findSubTypes(t *ast.Definition) {
 				if !v.typeRegistered(field.Type.NamedType) {
 					v.findSubTypes(v.schema.Types[field.Type.NamedType])
 				}
-				if common.IsList(field.Type) {
+				if common.IsList(field.Type) && common.IsComplex(field.Type.Elem) {
 					v.registerType(field.Type.Elem.NamedType)
 				}
 			} else {

@@ -15,6 +15,7 @@ type cli struct {
 	packageName  *string
 	clientName   *string
 	destination  *string
+	usePointers  *bool
 }
 
 func main() {
@@ -24,6 +25,7 @@ func main() {
 	genPackageName := genCmd.String("package_name", "", "[optional] Name of the generated Go GraphQL client package; defaults to the name of the GraphQL query file with 'ggrafik_' prefix.")
 	genClientName := genCmd.String("client_name", "", "[optional] Name of the generated Go GraphQL client; defaults to the name of the GraphQL query file with 'Ggrafik' prefix and 'Client' postfix.")
 	genDestination := genCmd.String("destination", "./", "[optional] Output filename with path. Either absolute or relative; defaults to the current directory and client name.")
+	genUsePointers := genCmd.Bool("use_pointers", false, "[optional] Generate public GraphQL structs' fields as pointers; defaults to false")
 
 	if len(os.Args) < 2 {
 		fmt.Println("gen or help subcommand is required")
@@ -57,6 +59,7 @@ func main() {
 		packageName:  genPackageName,
 		clientName:   genClientName,
 		destination:  genDestination,
+		usePointers:  genUsePointers,
 	}
 
 	schemaContent, err := getFileContent(cli.schemaSource)
@@ -77,11 +80,14 @@ func main() {
 	query, err := gqlparser.LoadQuery(schema, string(queryContent))
 	print(err.Error())
 
-	clientName := cli.parseClientName()
-	packageName := cli.parsePackageName()
+	additionalInfo := evaluator.AdditionalInfo{
+		PackageName: cli.parsePackageName(),
+		ClientName:  cli.parseClientName(),
+		UsePointers: *genUsePointers,
+	}
 
-	e := evaluator.New("./", schema, query, clientName, packageName)
+	e := evaluator.New("./", schema, query, additionalInfo)
 
-	fileName := getFileDestName(clientName, cli.destination)
+	fileName := getFileDestName(additionalInfo.ClientName, cli.destination)
 	writeFile(e.Generate(), fileName)
 }

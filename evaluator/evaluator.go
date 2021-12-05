@@ -11,22 +11,20 @@ type Evaluator interface {
 }
 
 type evaluator struct {
-	generator     generator.Generator
-	visitor       visitor.Visitor
-	schema        *ast.Schema
-	queryDocument *ast.QueryDocument
-	clientName    string
-	pkgName       string
+	generator      generator.Generator
+	visitor        visitor.Visitor
+	schema         *ast.Schema
+	queryDocument  *ast.QueryDocument
+	AdditionalInfo AdditionalInfo
 }
 
-func New(rootLoc string, schema *ast.Schema, queryDocument *ast.QueryDocument, clientName string, pkgName string) Evaluator {
+func New(rootLoc string, schema *ast.Schema, queryDocument *ast.QueryDocument, additionalInfo AdditionalInfo) Evaluator {
 	return &evaluator{
-		generator:     generator.New(rootLoc),
-		visitor:       visitor.New(schema, queryDocument),
-		schema:        schema,
-		queryDocument: queryDocument,
-		clientName:    clientName,
-		pkgName:       pkgName,
+		generator:      generator.New(rootLoc),
+		visitor:        visitor.New(schema, queryDocument),
+		schema:         schema,
+		queryDocument:  queryDocument,
+		AdditionalInfo: additionalInfo,
 	}
 }
 
@@ -34,13 +32,13 @@ func (e *evaluator) Generate() []byte {
 	e.generator.WriteHeader()
 	e.generator.WriteLineBreak(2)
 
-	e.generator.WritePackage(e.pkgName)
+	e.generator.WritePackage(e.AdditionalInfo.PackageName)
 	e.generator.WriteLineBreak(2)
 
 	e.generator.WriteImports()
 	e.generator.WriteLineBreak(2)
 
-	e.genSchemaDef()
+	e.genSchemaDef(e.AdditionalInfo.UsePointers)
 	e.generator.WriteLineBreak(1)
 
 	e.genOperations()
