@@ -1,0 +1,11 @@
+query getPolandInfo {
+    country(code: "PL") {
+        name
+        native
+        emoji
+        currency
+        languages {
+            name
+        }
+    }
+}

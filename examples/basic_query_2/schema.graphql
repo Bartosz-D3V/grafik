@@ -1,0 +1,16 @@
+type Query {
+    country(code: ID!): Country
+}
+
+type Country {
+    name: String!
+    native: String!
+    capital: String
+    currency: String
+    languages: [Language!]!
+    emoji: String!
+}
+
+type Language {
+    name: String
+}

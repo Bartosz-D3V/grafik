@@ -1,5 +1,5 @@
-type {{.Name}} string
+type {{title (camelCase .Name)}} string
 
 const (
-{{range .Fields}}{{.}} {{$.Name}} = "{{.}}"{{"\n"}}{{end}}
+{{range .Fields}}{{title (camelCase .)}} {{title (camelCase $.Name)}} = "{{.}}"{{"\n"}}{{end}}
 )
