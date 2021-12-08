@@ -1,0 +1,34 @@
+type Mutation {
+    insert_users(objects: [users_insert_input!]!, on_conflict: users_on_conflict): users_mutation_response
+}
+
+input users_insert_input {
+    id: String
+    rocket: String
+}
+
+input users_on_conflict {
+    constraint: users_constraint!
+    update_columns: [users_update_column!]!
+}
+
+enum users_constraint {
+    users_pkey
+}
+
+enum users_update_column {
+    id
+    name
+    rocket
+    timestamp
+    twitter
+}
+
+type users_mutation_response {
+    affected_rows: Int!
+    returning: [users!]!
+}
+
+type users {
+    id: String!
+}

@@ -9,6 +9,9 @@ func (v *visitor) IntrospectTypes() []string {
 	if v.schema.Query != nil {
 		v.parseOpTypes(v.schema.Query)
 	}
+	if v.schema.Mutation != nil {
+		v.parseOpTypes(v.schema.Mutation)
+	}
 	return v.customTypes
 }
 

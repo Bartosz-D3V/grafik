@@ -28,7 +28,7 @@ func TestEvaluator_Generate_FlatStructure(t *testing.T) {
 package ggrafik_client
 
 import (
-	graphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	GraphqlClient "github.com/Bartosz-D3V/ggrafik/client"
 	"net/http"
 )
 
@@ -87,12 +87,12 @@ type RenameFileWithIdData struct {
 }
 
 type filesClient struct {
-	ctrl graphqlClient.Client
+	ctrl GraphqlClient.Client
 }
 
 func New(endpoint string, client *http.Client) FilesClient {
 	return &filesClient{
-		ctrl: graphqlClient.New(endpoint, client),
+		ctrl: GraphqlClient.New(endpoint, client),
 	}
 }
 `, '`'))
@@ -117,7 +117,7 @@ func TestEvaluator_Generate_ArrayStructure(t *testing.T) {
 package ggrafik_client
 
 import (
-	graphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	GraphqlClient "github.com/Bartosz-D3V/ggrafik/client"
 	"net/http"
 )
 
@@ -156,12 +156,12 @@ type GetAllFilmsProducersData struct {
 }
 
 type filmsClient struct {
-	ctrl graphqlClient.Client
+	ctrl GraphqlClient.Client
 }
 
 func New(endpoint string, client *http.Client) FilmsClient {
 	return &filmsClient{
-		ctrl: graphqlClient.New(endpoint, client),
+		ctrl: GraphqlClient.New(endpoint, client),
 	}
 }
 `, '`'))
@@ -186,7 +186,7 @@ func TestEvaluator_Generate_NestedStructure(t *testing.T) {
 package ggrafik_client
 
 import (
-	graphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	GraphqlClient "github.com/Bartosz-D3V/ggrafik/client"
 	"net/http"
 )
 
@@ -245,12 +245,12 @@ type GetHeroWithId123ABCData struct {
 }
 
 type specificHeroClient struct {
-	ctrl graphqlClient.Client
+	ctrl GraphqlClient.Client
 }
 
 func New(endpoint string, client *http.Client) SpecificHeroClient {
 	return &specificHeroClient{
-		ctrl: graphqlClient.New(endpoint, client),
+		ctrl: GraphqlClient.New(endpoint, client),
 	}
 }
 `, '`'))
@@ -275,7 +275,7 @@ func TestEvaluator_Generate_Enum(t *testing.T) {
 package ggrafik_client
 
 import (
-	graphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	GraphqlClient "github.com/Bartosz-D3V/ggrafik/client"
 	"net/http"
 )
 
@@ -317,12 +317,12 @@ type GetDepartmentData struct {
 }
 
 type companyClient struct {
-	ctrl graphqlClient.Client
+	ctrl GraphqlClient.Client
 }
 
 func New(endpoint string, client *http.Client) CompanyClient {
 	return &companyClient{
-		ctrl: graphqlClient.New(endpoint, client),
+		ctrl: GraphqlClient.New(endpoint, client),
 	}
 }
 `, '`'))
@@ -347,7 +347,7 @@ func TestEvaluator_Generate_Input(t *testing.T) {
 package ggrafik_client
 
 import (
-	graphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	GraphqlClient "github.com/Bartosz-D3V/ggrafik/client"
 	"net/http"
 )
 
@@ -355,8 +355,8 @@ type CapsulesFind struct {
 	Id              string %[1]cjson:"id"%[1]c
 	Landings        int    %[1]cjson:"landings"%[1]c
 	Mission         string %[1]cjson:"mission"%[1]c
-	Original_launch Date   %[1]cjson:"original_launch"%[1]c
-	Reuse_count     int    %[1]cjson:"reuse_count"%[1]c
+	OriginalLaunch  Date   %[1]cjson:"original_launch"%[1]c
+	ReuseCount     int    %[1]cjson:"reuse_count"%[1]c
 	Status          string %[1]cjson:"status"%[1]c
 	Type            string %[1]cjson:"type"%[1]c
 }
@@ -364,7 +364,7 @@ type CapsulesFind struct {
 type Capsule struct {
 	Id          string %[1]cjson:"id"%[1]c
 	Landings    int    %[1]cjson:"landings"%[1]c
-	Reuse_count int    %[1]cjson:"reuse_count"%[1]c
+	ReuseCount  int    %[1]cjson:"reuse_count"%[1]c
 	Status      string %[1]cjson:"status"%[1]c
 	Type        string %[1]cjson:"type"%[1]c
 }
@@ -400,12 +400,12 @@ type GetCapsulesByFullSelectorData struct {
 }
 
 type capsulesClient struct {
-	ctrl graphqlClient.Client
+	ctrl GraphqlClient.Client
 }
 
 func New(endpoint string, client *http.Client) CapsulesClient {
 	return &capsulesClient{
-		ctrl: graphqlClient.New(endpoint, client),
+		ctrl: GraphqlClient.New(endpoint, client),
 	}
 }
 `, '`'))
@@ -430,7 +430,7 @@ func TestEvaluator_CircularType(t *testing.T) {
 package ggrafik_client
 
 import (
-	graphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	GraphqlClient "github.com/Bartosz-D3V/ggrafik/client"
 	"net/http"
 )
 
@@ -474,12 +474,12 @@ type GetAllMoviesWhereActorsOfTheMovieActedInData struct {
 }
 
 type movieClient struct {
-	ctrl graphqlClient.Client
+	ctrl GraphqlClient.Client
 }
 
 func New(endpoint string, client *http.Client) MovieClient {
 	return &movieClient{
-		ctrl: graphqlClient.New(endpoint, client),
+		ctrl: GraphqlClient.New(endpoint, client),
 	}
 }
 `, '`'))
@@ -504,7 +504,7 @@ func TestEvaluator_FragmentType(t *testing.T) {
 package ggrafik_client
 
 import (
-	graphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	GraphqlClient "github.com/Bartosz-D3V/ggrafik/client"
 	"net/http"
 )
 
@@ -554,12 +554,12 @@ type GetShortRocketInfoData struct {
 }
 
 type rocketClient struct {
-	ctrl graphqlClient.Client
+	ctrl GraphqlClient.Client
 }
 
 func New(endpoint string, client *http.Client) RocketClient {
 	return &rocketClient{
-		ctrl: graphqlClient.New(endpoint, client),
+		ctrl: GraphqlClient.New(endpoint, client),
 	}
 }
 `, '`'))
@@ -584,7 +584,7 @@ func TestEvaluator_WithPointers(t *testing.T) {
 package ggrafik_client
 
 import (
-	graphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	GraphqlClient "github.com/Bartosz-D3V/ggrafik/client"
 	"net/http"
 )
 
@@ -634,12 +634,12 @@ type GetShortRocketInfoData struct {
 }
 
 type rocketClient struct {
-	ctrl graphqlClient.Client
+	ctrl GraphqlClient.Client
 }
 
 func New(endpoint string, client *http.Client) RocketClient {
 	return &rocketClient{
-		ctrl: graphqlClient.New(endpoint, client),
+		ctrl: GraphqlClient.New(endpoint, client),
 	}
 }
 `, '`'))

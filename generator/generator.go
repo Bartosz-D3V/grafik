@@ -34,6 +34,7 @@ func New(rootLoc string) Generator {
 	funcMap := template.FuncMap{
 		"title":        strings.Title,
 		"sentenceCase": common.SentenceCase,
+		"camelCase":    common.SnakeCaseToCamelCase,
 	}
 	tmpl, err := template.New("codeTemplate").Funcs(funcMap).ParseGlob(filepath.Join(rootLoc, "templates/*.tmpl"))
 	if err != nil {

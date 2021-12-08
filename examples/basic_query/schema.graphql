@@ -1,0 +1,18 @@
+type Query {
+    rocketsResult(limit: Int, offset: Int): RocketsResult
+}
+
+type RocketsResult {
+    result: Result
+    data: [Rocket]
+}
+
+type Result {
+    totalCount: Int
+}
+
+type Rocket {
+    cost_per_launch: Int
+    country: String
+    name: String
+}

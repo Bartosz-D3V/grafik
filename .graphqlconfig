@@ -24,6 +24,18 @@
     },
     "simple_type": {
       "includes": ["./test/simple_type/**"]
+    },
+    "example/basic_query": {
+      "schemaPath": "./examples/basic_query/schema.graphql",
+      "excludes": ["../"]
+    },
+    "example/basic_query_2": {
+      "schemaPath": "./examples/basic_query_2/schema.graphql",
+      "excludes": ["../"]
+    },
+    "example/basic_mutation": {
+      "includes": ["./examples/basic_mutation/schema.graphql"],
+      "excludes": ["../"]
     }
   }
 }

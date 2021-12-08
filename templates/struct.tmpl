@@ -1,3 +1,3 @@
-type {{if $.Public}} {{title .Struct.Name}} {{else}} {{sentenceCase .Struct.Name}} {{end}} struct {
-{{range .Struct.Fields}} {{if $.Public}} {{.ExportName}} {{else}} {{.Name}} {{end}} {{if $.UsePointers}}{{.PointerType}}{{else}}{{.Type}}{{end}} {{if $.Public}} `json:"{{sentenceCase .Name}}"` {{end}}{{"\n"}}{{end}}
+type {{if $.Public}} {{camelCase (title .Struct.Name)}} {{else}} {{sentenceCase .Struct.Name}} {{end}} struct {
+{{range .Struct.Fields}} {{if $.Public}} {{camelCase (.ExportName)}} {{else}} {{camelCase (.Name)}} {{end}} {{if $.UsePointers}}{{camelCase .TitleType.PointerType.Type}}{{else}}{{camelCase .TitleType.Type}}{{end}} {{if $.Public}} `json:"{{sentenceCase .Name}}"` {{end}}{{"\n"}}{{end}}
 }
