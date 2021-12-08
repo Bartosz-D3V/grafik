@@ -356,7 +356,7 @@ type CapsulesFind struct {
 	Landings        int    %[1]cjson:"landings"%[1]c
 	Mission         string %[1]cjson:"mission"%[1]c
 	OriginalLaunch  Date   %[1]cjson:"original_launch"%[1]c
-	ReuseCount     int    %[1]cjson:"reuse_count"%[1]c
+	ReuseCount      int    %[1]cjson:"reuse_count"%[1]c
 	Status          string %[1]cjson:"status"%[1]c
 	Type            string %[1]cjson:"type"%[1]c
 }
