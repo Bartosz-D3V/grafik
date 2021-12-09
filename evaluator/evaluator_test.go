@@ -71,7 +71,8 @@ func (c *filesClient) RenameFileWithId(id string, name string, header *http.Head
 }
 
 type GetFileNameWithIdResponse struct {
-	Data GetFileNameWithIdData %[1]cjson:"data"%[1]c
+	Data   GetFileNameWithIdData %[1]cjson:"data"%[1]c
+	Errors []Error               %[1]cjson:"errors"%[1]c
 }
 
 type GetFileNameWithIdData struct {
@@ -79,11 +80,27 @@ type GetFileNameWithIdData struct {
 }
 
 type RenameFileWithIdResponse struct {
-	Data RenameFileWithIdData %[1]cjson:"data"%[1]c
+	Data   RenameFileWithIdData %[1]cjson:"data"%[1]c
+	Errors []Error              %[1]cjson:"errors"%[1]c
 }
 
 type RenameFileWithIdData struct {
 	RenameFile File %[1]cjson:"renameFile"%[1]c
+}
+
+type Error struct {
+	Message    string     %[1]cjson:"message"%[1]c
+	Locations  []Location %[1]cjson:"locations"%[1]c
+	Extensions Extension  %[1]cjson:"extensions"%[1]c
+}
+
+type Location struct {
+	Line   int %[1]cjson:"line"%[1]c
+	Column int %[1]cjson:"column"%[1]c
+}
+
+type Extension struct {
+	Code string %[1]cjson:"code"%[1]c
 }
 
 type filesClient struct {
@@ -148,11 +165,27 @@ func (c *filmsClient) GetAllFilmsProducers(header *http.Header) (*http.Response,
 }
 
 type GetAllFilmsProducersResponse struct {
-	Data GetAllFilmsProducersData %[1]cjson:"data"%[1]c
+	Data   GetAllFilmsProducersData %[1]cjson:"data"%[1]c
+	Errors []Error                  %[1]cjson:"errors"%[1]c
 }
 
 type GetAllFilmsProducersData struct {
 	AllFilms FilmsConnection %[1]cjson:"allFilms"%[1]c
+}
+
+type Error struct {
+	Message    string     %[1]cjson:"message"%[1]c
+	Locations  []Location %[1]cjson:"locations"%[1]c
+	Extensions Extension  %[1]cjson:"extensions"%[1]c
+}
+
+type Location struct {
+	Line   int %[1]cjson:"line"%[1]c
+	Column int %[1]cjson:"column"%[1]c
+}
+
+type Extension struct {
+	Code string %[1]cjson:"code"%[1]c
 }
 
 type filmsClient struct {
@@ -237,11 +270,27 @@ func (c *specificHeroClient) GetHeroWithId123ABC(header *http.Header) (*http.Res
 }
 
 type GetHeroWithId123ABCResponse struct {
-	Data GetHeroWithId123ABCData %[1]cjson:"data"%[1]c
+	Data   GetHeroWithId123ABCData %[1]cjson:"data"%[1]c
+	Errors []Error                 %[1]cjson:"errors"%[1]c
 }
 
 type GetHeroWithId123ABCData struct {
 	GetHero Character %[1]cjson:"getHero"%[1]c
+}
+
+type Error struct {
+	Message    string     %[1]cjson:"message"%[1]c
+	Locations  []Location %[1]cjson:"locations"%[1]c
+	Extensions Extension  %[1]cjson:"extensions"%[1]c
+}
+
+type Location struct {
+	Line   int %[1]cjson:"line"%[1]c
+	Column int %[1]cjson:"column"%[1]c
+}
+
+type Extension struct {
+	Code string %[1]cjson:"code"%[1]c
 }
 
 type specificHeroClient struct {
@@ -309,11 +358,27 @@ func (c *companyClient) GetDepartment(header *http.Header) (*http.Response, erro
 }
 
 type GetDepartmentResponse struct {
-	Data GetDepartmentData %[1]cjson:"data"%[1]c
+	Data   GetDepartmentData %[1]cjson:"data"%[1]c
+	Errors []Error           %[1]cjson:"errors"%[1]c
 }
 
 type GetDepartmentData struct {
 	GetDepartment Department %[1]cjson:"getDepartment"%[1]c
+}
+
+type Error struct {
+	Message    string     %[1]cjson:"message"%[1]c
+	Locations  []Location %[1]cjson:"locations"%[1]c
+	Extensions Extension  %[1]cjson:"extensions"%[1]c
+}
+
+type Location struct {
+	Line   int %[1]cjson:"line"%[1]c
+	Column int %[1]cjson:"column"%[1]c
+}
+
+type Extension struct {
+	Code string %[1]cjson:"code"%[1]c
 }
 
 type companyClient struct {
@@ -352,21 +417,21 @@ import (
 )
 
 type CapsulesFind struct {
-	Id              string %[1]cjson:"id"%[1]c
-	Landings        int    %[1]cjson:"landings"%[1]c
-	Mission         string %[1]cjson:"mission"%[1]c
-	OriginalLaunch  Date   %[1]cjson:"original_launch"%[1]c
-	ReuseCount      int    %[1]cjson:"reuse_count"%[1]c
-	Status          string %[1]cjson:"status"%[1]c
-	Type            string %[1]cjson:"type"%[1]c
+	Id             string %[1]cjson:"id"%[1]c
+	Landings       int    %[1]cjson:"landings"%[1]c
+	Mission        string %[1]cjson:"mission"%[1]c
+	OriginalLaunch Date   %[1]cjson:"original_launch"%[1]c
+	ReuseCount     int    %[1]cjson:"reuse_count"%[1]c
+	Status         string %[1]cjson:"status"%[1]c
+	Type           string %[1]cjson:"type"%[1]c
 }
 
 type Capsule struct {
-	Id          string %[1]cjson:"id"%[1]c
-	Landings    int    %[1]cjson:"landings"%[1]c
-	ReuseCount  int    %[1]cjson:"reuse_count"%[1]c
-	Status      string %[1]cjson:"status"%[1]c
-	Type        string %[1]cjson:"type"%[1]c
+	Id         string %[1]cjson:"id"%[1]c
+	Landings   int    %[1]cjson:"landings"%[1]c
+	ReuseCount int    %[1]cjson:"reuse_count"%[1]c
+	Status     string %[1]cjson:"status"%[1]c
+	Type       string %[1]cjson:"type"%[1]c
 }
 
 const getCapsulesByFullSelector = %[1]cquery GetCapsulesByFullSelector($order: String, $mission: String, $originalLaunch: Date, $id: ID, $sort: String) {
@@ -392,11 +457,27 @@ func (c *capsulesClient) GetCapsulesByFullSelector(order string, mission string,
 }
 
 type GetCapsulesByFullSelectorResponse struct {
-	Data GetCapsulesByFullSelectorData %[1]cjson:"data"%[1]c
+	Data   GetCapsulesByFullSelectorData %[1]cjson:"data"%[1]c
+	Errors []Error                       %[1]cjson:"errors"%[1]c
 }
 
 type GetCapsulesByFullSelectorData struct {
 	Capsules []Capsule %[1]cjson:"capsules"%[1]c
+}
+
+type Error struct {
+	Message    string     %[1]cjson:"message"%[1]c
+	Locations  []Location %[1]cjson:"locations"%[1]c
+	Extensions Extension  %[1]cjson:"extensions"%[1]c
+}
+
+type Location struct {
+	Line   int %[1]cjson:"line"%[1]c
+	Column int %[1]cjson:"column"%[1]c
+}
+
+type Extension struct {
+	Code string %[1]cjson:"code"%[1]c
 }
 
 type capsulesClient struct {
@@ -466,11 +547,27 @@ func (c *movieClient) GetAllMoviesWhereActorsOfTheMovieActedIn(title string, hea
 }
 
 type GetAllMoviesWhereActorsOfTheMovieActedInResponse struct {
-	Data GetAllMoviesWhereActorsOfTheMovieActedInData %[1]cjson:"data"%[1]c
+	Data   GetAllMoviesWhereActorsOfTheMovieActedInData %[1]cjson:"data"%[1]c
+	Errors []Error                                      %[1]cjson:"errors"%[1]c
 }
 
 type GetAllMoviesWhereActorsOfTheMovieActedInData struct {
 	Movie Movie %[1]cjson:"movie"%[1]c
+}
+
+type Error struct {
+	Message    string     %[1]cjson:"message"%[1]c
+	Locations  []Location %[1]cjson:"locations"%[1]c
+	Extensions Extension  %[1]cjson:"extensions"%[1]c
+}
+
+type Location struct {
+	Line   int %[1]cjson:"line"%[1]c
+	Column int %[1]cjson:"column"%[1]c
+}
+
+type Extension struct {
+	Code string %[1]cjson:"code"%[1]c
 }
 
 type movieClient struct {
@@ -546,11 +643,27 @@ func (c *rocketClient) GetShortRocketInfo(header *http.Header) (*http.Response, 
 }
 
 type GetShortRocketInfoResponse struct {
-	Data GetShortRocketInfoData %[1]cjson:"data"%[1]c
+	Data   GetShortRocketInfoData %[1]cjson:"data"%[1]c
+	Errors []Error                %[1]cjson:"errors"%[1]c
 }
 
 type GetShortRocketInfoData struct {
 	Rockets []Rocket %[1]cjson:"rockets"%[1]c
+}
+
+type Error struct {
+	Message    string     %[1]cjson:"message"%[1]c
+	Locations  []Location %[1]cjson:"locations"%[1]c
+	Extensions Extension  %[1]cjson:"extensions"%[1]c
+}
+
+type Location struct {
+	Line   int %[1]cjson:"line"%[1]c
+	Column int %[1]cjson:"column"%[1]c
+}
+
+type Extension struct {
+	Code string %[1]cjson:"code"%[1]c
 }
 
 type rocketClient struct {
@@ -626,11 +739,27 @@ func (c *rocketClient) GetShortRocketInfo(header *http.Header) (*http.Response, 
 }
 
 type GetShortRocketInfoResponse struct {
-	Data *GetShortRocketInfoData %[1]cjson:"data"%[1]c
+	Data   *GetShortRocketInfoData %[1]cjson:"data"%[1]c
+	Errors []Error                 %[1]cjson:"errors"%[1]c
 }
 
 type GetShortRocketInfoData struct {
 	Rockets []Rocket %[1]cjson:"rockets"%[1]c
+}
+
+type Error struct {
+	Message    *string    %[1]cjson:"message"%[1]c
+	Locations  []Location %[1]cjson:"locations"%[1]c
+	Extensions *Extension %[1]cjson:"extensions"%[1]c
+}
+
+type Location struct {
+	Line   *int %[1]cjson:"line"%[1]c
+	Column *int %[1]cjson:"column"%[1]c
+}
+
+type Extension struct {
+	Code *string %[1]cjson:"code"%[1]c
 }
 
 type rocketClient struct {

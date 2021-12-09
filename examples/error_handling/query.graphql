@@ -1,0 +1,12 @@
+query getRocketResults($limit: Int){
+    rocketsResult(limit: $limit) {
+        result {
+            totalCount
+        }
+        data {
+            name
+            country
+            total_per_launch
+        }
+    }
+}

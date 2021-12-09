@@ -15,8 +15,7 @@ func main() {
 	}
 	client := New(spacexUrl, httpClient)
 	headers := &http.Header{
-		"Date":      []string{time.Now().String()},
-		"X-Comment": []string{"You're doing great Elon!"},
+		"Date": []string{time.Now().String()},
 	}
 	onConflict := UsersOnConflict{
 		Constraint: UsersPkey,

@@ -7,12 +7,6 @@ import (
 	"net/http"
 )
 
-type UsersConstraint string
-
-const (
-	UsersPkey UsersConstraint = "users_pkey"
-)
-
 type UsersUpdateColumn string
 
 const (
@@ -21,6 +15,12 @@ const (
 	Rocket    UsersUpdateColumn = "rocket"
 	Timestamp UsersUpdateColumn = "timestamp"
 	Twitter   UsersUpdateColumn = "twitter"
+)
+
+type UsersConstraint string
+
+const (
+	UsersPkey UsersConstraint = "users_pkey"
 )
 
 type UsersMutationResponse struct {
@@ -59,11 +59,27 @@ func (c *usersClient) AddOrUpdateHardcodedUser(rocketName string, usersOnConflic
 }
 
 type AddOrUpdateHardcodedUserResponse struct {
-	Data AddOrUpdateHardcodedUserData `json:"data"`
+	Data   AddOrUpdateHardcodedUserData `json:"data"`
+	Errors []Error                      `json:"errors"`
 }
 
 type AddOrUpdateHardcodedUserData struct {
 	InsertUsers UsersMutationResponse `json:"insert_users"`
+}
+
+type Error struct {
+	Message    string     `json:"message"`
+	Locations  []Location `json:"locations"`
+	Extensions Extension  `json:"extensions"`
+}
+
+type Location struct {
+	Line   int `json:"line"`
+	Column int `json:"column"`
+}
+
+type Extension struct {
+	Code string `json:"code"`
 }
 
 type usersClient struct {
