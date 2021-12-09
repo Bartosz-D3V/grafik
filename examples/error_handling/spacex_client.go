@@ -17,9 +17,9 @@ type Result struct {
 }
 
 type Rocket struct {
-	CostPerLaunch int    `json:"cost_per_launch"`
-	Country       string `json:"country"`
-	Name          string `json:"name"`
+	TotalPerLaunch int    `json:"total_per_launch"`
+	Country        string `json:"country"`
+	Name           string `json:"name"`
 }
 
 const getRocketResults = `query getRocketResults($limit: Int){
@@ -30,17 +30,17 @@ const getRocketResults = `query getRocketResults($limit: Int){
         data {
             name
             country
-            cost_per_launch
+            total_per_launch
         }
     }
 }
 `
 
-type RocketsClient interface {
+type UserssClient interface {
 	GetRocketResults(limit int, header *http.Header) (*http.Response, error)
 }
 
-func (c *rocketsClient) GetRocketResults(limit int, header *http.Header) (*http.Response, error) {
+func (c *userssClient) GetRocketResults(limit int, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 1)
 	params["limit"] = limit
 
@@ -71,12 +71,12 @@ type Extension struct {
 	Code string `json:"code"`
 }
 
-type rocketsClient struct {
+type userssClient struct {
 	ctrl GraphqlClient.Client
 }
 
-func New(endpoint string, client *http.Client) RocketsClient {
-	return &rocketsClient{
+func New(endpoint string, client *http.Client) UserssClient {
+	return &userssClient{
 		ctrl: GraphqlClient.New(endpoint, client),
 	}
 }

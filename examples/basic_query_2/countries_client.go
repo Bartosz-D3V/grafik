@@ -32,30 +32,46 @@ const getPolandInfo = `query getPolandInfo {
     }
 }`
 
-type UsersClient interface {
+type CountriesClient interface {
 	GetPolandInfo(header *http.Header) (*http.Response, error)
 }
 
-func (c *usersClient) GetPolandInfo(header *http.Header) (*http.Response, error) {
+func (c *countriesClient) GetPolandInfo(header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(getPolandInfo, params, header)
 }
 
 type GetPolandInfoResponse struct {
-	Data GetPolandInfoData `json:"data"`
+	Data   GetPolandInfoData `json:"data"`
+	Errors []Error           `json:"errors"`
 }
 
 type GetPolandInfoData struct {
 	Country Country `json:"country"`
 }
 
-type usersClient struct {
+type Error struct {
+	Message    string     `json:"message"`
+	Locations  []Location `json:"locations"`
+	Extensions Extension  `json:"extensions"`
+}
+
+type Location struct {
+	Line   int `json:"line"`
+	Column int `json:"column"`
+}
+
+type Extension struct {
+	Code string `json:"code"`
+}
+
+type countriesClient struct {
 	ctrl GraphqlClient.Client
 }
 
-func New(endpoint string, client *http.Client) UsersClient {
-	return &usersClient{
+func New(endpoint string, client *http.Client) CountriesClient {
+	return &countriesClient{
 		ctrl: GraphqlClient.New(endpoint, client),
 	}
 }

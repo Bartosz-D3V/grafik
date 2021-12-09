@@ -1,0 +1,19 @@
+type Query {
+    rocketsResult(limit: Int, offset: Int): RocketsResult
+}
+
+type RocketsResult {
+    result: Result
+    data: [Rocket]
+}
+
+type Result {
+    totalCount: Int
+}
+
+type Rocket {
+#   Typo made for purpose of error handling demonstration
+    total_per_launch: Int
+    country: String
+    name: String
+}
