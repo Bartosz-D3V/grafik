@@ -72,7 +72,7 @@ func (c *filesClient) RenameFileWithId(id string, name string, header *http.Head
 
 type GetFileNameWithIdResponse struct {
 	Data   GetFileNameWithIdData %[1]cjson:"data"%[1]c
-	Errors []Error               %[1]cjson:"errors"%[1]c
+	Errors []GraphQLError        %[1]cjson:"errors"%[1]c
 }
 
 type GetFileNameWithIdData struct {
@@ -81,25 +81,25 @@ type GetFileNameWithIdData struct {
 
 type RenameFileWithIdResponse struct {
 	Data   RenameFileWithIdData %[1]cjson:"data"%[1]c
-	Errors []Error              %[1]cjson:"errors"%[1]c
+	Errors []GraphQLError       %[1]cjson:"errors"%[1]c
 }
 
 type RenameFileWithIdData struct {
 	RenameFile File %[1]cjson:"renameFile"%[1]c
 }
 
-type Error struct {
-	Message    string     %[1]cjson:"message"%[1]c
-	Locations  []Location %[1]cjson:"locations"%[1]c
-	Extensions Extension  %[1]cjson:"extensions"%[1]c
+type GraphQLError struct {
+	Message    string                 %[1]cjson:"message"%[1]c
+	Locations  []GraphQLErrorLocation %[1]cjson:"locations"%[1]c
+	Extensions GraphQLErrorExtensions %[1]cjson:"extensions"%[1]c
 }
 
-type Location struct {
+type GraphQLErrorLocation struct {
 	Line   int %[1]cjson:"line"%[1]c
 	Column int %[1]cjson:"column"%[1]c
 }
 
-type Extension struct {
+type GraphQLErrorExtensions struct {
 	Code string %[1]cjson:"code"%[1]c
 }
 
@@ -166,25 +166,25 @@ func (c *filmsClient) GetAllFilmsProducers(header *http.Header) (*http.Response,
 
 type GetAllFilmsProducersResponse struct {
 	Data   GetAllFilmsProducersData %[1]cjson:"data"%[1]c
-	Errors []Error                  %[1]cjson:"errors"%[1]c
+	Errors []GraphQLError           %[1]cjson:"errors"%[1]c
 }
 
 type GetAllFilmsProducersData struct {
 	AllFilms FilmsConnection %[1]cjson:"allFilms"%[1]c
 }
 
-type Error struct {
-	Message    string     %[1]cjson:"message"%[1]c
-	Locations  []Location %[1]cjson:"locations"%[1]c
-	Extensions Extension  %[1]cjson:"extensions"%[1]c
+type GraphQLError struct {
+	Message    string                 %[1]cjson:"message"%[1]c
+	Locations  []GraphQLErrorLocation %[1]cjson:"locations"%[1]c
+	Extensions GraphQLErrorExtensions %[1]cjson:"extensions"%[1]c
 }
 
-type Location struct {
+type GraphQLErrorLocation struct {
 	Line   int %[1]cjson:"line"%[1]c
 	Column int %[1]cjson:"column"%[1]c
 }
 
-type Extension struct {
+type GraphQLErrorExtensions struct {
 	Code string %[1]cjson:"code"%[1]c
 }
 
@@ -271,25 +271,25 @@ func (c *specificHeroClient) GetHeroWithId123ABC(header *http.Header) (*http.Res
 
 type GetHeroWithId123ABCResponse struct {
 	Data   GetHeroWithId123ABCData %[1]cjson:"data"%[1]c
-	Errors []Error                 %[1]cjson:"errors"%[1]c
+	Errors []GraphQLError          %[1]cjson:"errors"%[1]c
 }
 
 type GetHeroWithId123ABCData struct {
 	GetHero Character %[1]cjson:"getHero"%[1]c
 }
 
-type Error struct {
-	Message    string     %[1]cjson:"message"%[1]c
-	Locations  []Location %[1]cjson:"locations"%[1]c
-	Extensions Extension  %[1]cjson:"extensions"%[1]c
+type GraphQLError struct {
+	Message    string                 %[1]cjson:"message"%[1]c
+	Locations  []GraphQLErrorLocation %[1]cjson:"locations"%[1]c
+	Extensions GraphQLErrorExtensions %[1]cjson:"extensions"%[1]c
 }
 
-type Location struct {
+type GraphQLErrorLocation struct {
 	Line   int %[1]cjson:"line"%[1]c
 	Column int %[1]cjson:"column"%[1]c
 }
 
-type Extension struct {
+type GraphQLErrorExtensions struct {
 	Code string %[1]cjson:"code"%[1]c
 }
 
@@ -359,25 +359,25 @@ func (c *companyClient) GetDepartment(header *http.Header) (*http.Response, erro
 
 type GetDepartmentResponse struct {
 	Data   GetDepartmentData %[1]cjson:"data"%[1]c
-	Errors []Error           %[1]cjson:"errors"%[1]c
+	Errors []GraphQLError    %[1]cjson:"errors"%[1]c
 }
 
 type GetDepartmentData struct {
 	GetDepartment Department %[1]cjson:"getDepartment"%[1]c
 }
 
-type Error struct {
-	Message    string     %[1]cjson:"message"%[1]c
-	Locations  []Location %[1]cjson:"locations"%[1]c
-	Extensions Extension  %[1]cjson:"extensions"%[1]c
+type GraphQLError struct {
+	Message    string                 %[1]cjson:"message"%[1]c
+	Locations  []GraphQLErrorLocation %[1]cjson:"locations"%[1]c
+	Extensions GraphQLErrorExtensions %[1]cjson:"extensions"%[1]c
 }
 
-type Location struct {
+type GraphQLErrorLocation struct {
 	Line   int %[1]cjson:"line"%[1]c
 	Column int %[1]cjson:"column"%[1]c
 }
 
-type Extension struct {
+type GraphQLErrorExtensions struct {
 	Code string %[1]cjson:"code"%[1]c
 }
 
@@ -458,25 +458,25 @@ func (c *capsulesClient) GetCapsulesByFullSelector(order string, mission string,
 
 type GetCapsulesByFullSelectorResponse struct {
 	Data   GetCapsulesByFullSelectorData %[1]cjson:"data"%[1]c
-	Errors []Error                       %[1]cjson:"errors"%[1]c
+	Errors []GraphQLError                %[1]cjson:"errors"%[1]c
 }
 
 type GetCapsulesByFullSelectorData struct {
 	Capsules []Capsule %[1]cjson:"capsules"%[1]c
 }
 
-type Error struct {
-	Message    string     %[1]cjson:"message"%[1]c
-	Locations  []Location %[1]cjson:"locations"%[1]c
-	Extensions Extension  %[1]cjson:"extensions"%[1]c
+type GraphQLError struct {
+	Message    string                 %[1]cjson:"message"%[1]c
+	Locations  []GraphQLErrorLocation %[1]cjson:"locations"%[1]c
+	Extensions GraphQLErrorExtensions %[1]cjson:"extensions"%[1]c
 }
 
-type Location struct {
+type GraphQLErrorLocation struct {
 	Line   int %[1]cjson:"line"%[1]c
 	Column int %[1]cjson:"column"%[1]c
 }
 
-type Extension struct {
+type GraphQLErrorExtensions struct {
 	Code string %[1]cjson:"code"%[1]c
 }
 
@@ -548,25 +548,25 @@ func (c *movieClient) GetAllMoviesWhereActorsOfTheMovieActedIn(title string, hea
 
 type GetAllMoviesWhereActorsOfTheMovieActedInResponse struct {
 	Data   GetAllMoviesWhereActorsOfTheMovieActedInData %[1]cjson:"data"%[1]c
-	Errors []Error                                      %[1]cjson:"errors"%[1]c
+	Errors []GraphQLError                               %[1]cjson:"errors"%[1]c
 }
 
 type GetAllMoviesWhereActorsOfTheMovieActedInData struct {
 	Movie Movie %[1]cjson:"movie"%[1]c
 }
 
-type Error struct {
-	Message    string     %[1]cjson:"message"%[1]c
-	Locations  []Location %[1]cjson:"locations"%[1]c
-	Extensions Extension  %[1]cjson:"extensions"%[1]c
+type GraphQLError struct {
+	Message    string                 %[1]cjson:"message"%[1]c
+	Locations  []GraphQLErrorLocation %[1]cjson:"locations"%[1]c
+	Extensions GraphQLErrorExtensions %[1]cjson:"extensions"%[1]c
 }
 
-type Location struct {
+type GraphQLErrorLocation struct {
 	Line   int %[1]cjson:"line"%[1]c
 	Column int %[1]cjson:"column"%[1]c
 }
 
-type Extension struct {
+type GraphQLErrorExtensions struct {
 	Code string %[1]cjson:"code"%[1]c
 }
 
@@ -644,25 +644,25 @@ func (c *rocketClient) GetShortRocketInfo(header *http.Header) (*http.Response, 
 
 type GetShortRocketInfoResponse struct {
 	Data   GetShortRocketInfoData %[1]cjson:"data"%[1]c
-	Errors []Error                %[1]cjson:"errors"%[1]c
+	Errors []GraphQLError         %[1]cjson:"errors"%[1]c
 }
 
 type GetShortRocketInfoData struct {
 	Rockets []Rocket %[1]cjson:"rockets"%[1]c
 }
 
-type Error struct {
-	Message    string     %[1]cjson:"message"%[1]c
-	Locations  []Location %[1]cjson:"locations"%[1]c
-	Extensions Extension  %[1]cjson:"extensions"%[1]c
+type GraphQLError struct {
+	Message    string                 %[1]cjson:"message"%[1]c
+	Locations  []GraphQLErrorLocation %[1]cjson:"locations"%[1]c
+	Extensions GraphQLErrorExtensions %[1]cjson:"extensions"%[1]c
 }
 
-type Location struct {
+type GraphQLErrorLocation struct {
 	Line   int %[1]cjson:"line"%[1]c
 	Column int %[1]cjson:"column"%[1]c
 }
 
-type Extension struct {
+type GraphQLErrorExtensions struct {
 	Code string %[1]cjson:"code"%[1]c
 }
 
@@ -740,25 +740,25 @@ func (c *rocketClient) GetShortRocketInfo(header *http.Header) (*http.Response, 
 
 type GetShortRocketInfoResponse struct {
 	Data   *GetShortRocketInfoData %[1]cjson:"data"%[1]c
-	Errors []Error                 %[1]cjson:"errors"%[1]c
+	Errors []GraphQLError          %[1]cjson:"errors"%[1]c
 }
 
 type GetShortRocketInfoData struct {
 	Rockets []Rocket %[1]cjson:"rockets"%[1]c
 }
 
-type Error struct {
-	Message    *string    %[1]cjson:"message"%[1]c
-	Locations  []Location %[1]cjson:"locations"%[1]c
-	Extensions *Extension %[1]cjson:"extensions"%[1]c
+type GraphQLError struct {
+	Message    *string                 %[1]cjson:"message"%[1]c
+	Locations  []GraphQLErrorLocation  %[1]cjson:"locations"%[1]c
+	Extensions *GraphQLErrorExtensions %[1]cjson:"extensions"%[1]c
 }
 
-type Location struct {
+type GraphQLErrorLocation struct {
 	Line   *int %[1]cjson:"line"%[1]c
 	Column *int %[1]cjson:"column"%[1]c
 }
 
-type Extension struct {
+type GraphQLErrorExtensions struct {
 	Code *string %[1]cjson:"code"%[1]c
 }
 

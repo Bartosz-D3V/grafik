@@ -219,7 +219,7 @@ func (e *evaluator) genWrapperResponseStruct(f generator.Func) {
 			},
 			{
 				Name: "errors",
-				Type: fmt.Sprintf("[]%s", generator.ErrorStructName),
+				Type: fmt.Sprintf("[]%s", generator.GraphQLErrorStructName),
 			},
 		},
 	}
@@ -235,61 +235,7 @@ func (e *evaluator) genWrapperResponseStruct(f generator.Func) {
 }
 
 func (e *evaluator) genErrorStructs() {
-	errStruct := generator.Struct{
-		Name: generator.ErrorStructName,
-		Fields: []generator.TypeArg{
-			{
-				Name: "message",
-				Type: "string",
-			},
-			{
-				Name: "locations",
-				Type: "[]location",
-			},
-			{
-				Name: "extensions",
-				Type: "extension",
-			},
-		},
-	}
-	e.generator.WritePublicStruct(errStruct, e.AdditionalInfo.UsePointers)
-	e.generator.WriteLineBreak(2)
-
-	e.genLocation()
-	e.generator.WriteLineBreak(2)
-
-	e.genExtension()
-	e.generator.WriteLineBreak(2)
-}
-
-func (e *evaluator) genLocation() {
-	locStruct := generator.Struct{
-		Name: "location",
-		Fields: []generator.TypeArg{
-			{
-				Name: "line",
-				Type: "int",
-			},
-			{
-				Name: "column",
-				Type: "int",
-			},
-		},
-	}
-	e.generator.WritePublicStruct(locStruct, e.AdditionalInfo.UsePointers)
-}
-
-func (e *evaluator) genExtension() {
-	extStruct := generator.Struct{
-		Name: "extension",
-		Fields: []generator.TypeArg{
-			{
-				Name: "code",
-				Type: "string",
-			},
-		},
-	}
-	e.generator.WritePublicStruct(extStruct, e.AdditionalInfo.UsePointers)
+	e.generator.WriteGraphqlErrorStructs(e.AdditionalInfo.UsePointers)
 }
 
 func (e *evaluator) genClientStruct() {

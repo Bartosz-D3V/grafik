@@ -22,6 +22,7 @@ type Generator interface {
 	WriteConst(c Const)
 	WriteClientConstructor(clientName string)
 	WriteInterfaceImplementation(clientName string, f Func)
+	WriteGraphqlErrorStructs(usePointers bool)
 	Generate() []byte
 }
 
@@ -126,6 +127,16 @@ func (g *generator) WriteInterfaceImplementation(clientName string, f Func) {
 		"Func":       f,
 	}
 	err := g.template.ExecuteTemplate(g.stream, "interface_impl.tmpl", config)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (g *generator) WriteGraphqlErrorStructs(usePointers bool) {
+	config := map[string]interface{}{
+		"UsePointers": usePointers,
+	}
+	err := g.template.ExecuteTemplate(g.stream, "graphql_error.tmpl", config)
 	if err != nil {
 		panic(err)
 	}

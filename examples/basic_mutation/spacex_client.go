@@ -7,6 +7,12 @@ import (
 	"net/http"
 )
 
+type UsersConstraint string
+
+const (
+	UsersPkey UsersConstraint = "users_pkey"
+)
+
 type UsersUpdateColumn string
 
 const (
@@ -15,12 +21,6 @@ const (
 	Rocket    UsersUpdateColumn = "rocket"
 	Timestamp UsersUpdateColumn = "timestamp"
 	Twitter   UsersUpdateColumn = "twitter"
-)
-
-type UsersConstraint string
-
-const (
-	UsersPkey UsersConstraint = "users_pkey"
 )
 
 type UsersMutationResponse struct {
@@ -46,11 +46,11 @@ const addOrUpdateHardcodedUser = `mutation addOrUpdateHardcodedUser($rocketName:
         }
 }`
 
-type UsersClient interface {
+type SpaceXClient interface {
 	AddOrUpdateHardcodedUser(rocketName string, usersOnConflict UsersOnConflict, header *http.Header) (*http.Response, error)
 }
 
-func (c *usersClient) AddOrUpdateHardcodedUser(rocketName string, usersOnConflict UsersOnConflict, header *http.Header) (*http.Response, error) {
+func (c *spaceXClient) AddOrUpdateHardcodedUser(rocketName string, usersOnConflict UsersOnConflict, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 2)
 	params["rocketName"] = rocketName
 	params["usersOnConflict"] = usersOnConflict
@@ -60,34 +60,34 @@ func (c *usersClient) AddOrUpdateHardcodedUser(rocketName string, usersOnConflic
 
 type AddOrUpdateHardcodedUserResponse struct {
 	Data   AddOrUpdateHardcodedUserData `json:"data"`
-	Errors []Error                      `json:"errors"`
+	Errors []GraphQLError               `json:"errors"`
 }
 
 type AddOrUpdateHardcodedUserData struct {
 	InsertUsers UsersMutationResponse `json:"insert_users"`
 }
 
-type Error struct {
-	Message    string     `json:"message"`
-	Locations  []Location `json:"locations"`
-	Extensions Extension  `json:"extensions"`
+type GraphQLError struct {
+	Message    string                 `json:"message"`
+	Locations  []GraphQLErrorLocation `json:"locations"`
+	Extensions GraphQLErrorExtensions `json:"extensions"`
 }
 
-type Location struct {
+type GraphQLErrorLocation struct {
 	Line   int `json:"line"`
 	Column int `json:"column"`
 }
 
-type Extension struct {
+type GraphQLErrorExtensions struct {
 	Code string `json:"code"`
 }
 
-type usersClient struct {
+type spaceXClient struct {
 	ctrl GraphqlClient.Client
 }
 
-func New(endpoint string, client *http.Client) UsersClient {
-	return &usersClient{
+func New(endpoint string, client *http.Client) SpaceXClient {
+	return &spaceXClient{
 		ctrl: GraphqlClient.New(endpoint, client),
 	}
 }

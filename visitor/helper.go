@@ -24,7 +24,7 @@ func (v *visitor) parseOpTypes(query *ast.Definition) {
 		}
 
 		if common.IsList(field.Type) {
-			v.registerType(field.Type.Elem.NamedType)
+			v.findSubTypes(v.schema.Types[field.Type.Elem.NamedType])
 		}
 	}
 }

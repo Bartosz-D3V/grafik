@@ -44,25 +44,25 @@ func (c *countriesClient) GetPolandInfo(header *http.Header) (*http.Response, er
 
 type GetPolandInfoResponse struct {
 	Data   GetPolandInfoData `json:"data"`
-	Errors []Error           `json:"errors"`
+	Errors []GraphQLError    `json:"errors"`
 }
 
 type GetPolandInfoData struct {
 	Country Country `json:"country"`
 }
 
-type Error struct {
-	Message    string     `json:"message"`
-	Locations  []Location `json:"locations"`
-	Extensions Extension  `json:"extensions"`
+type GraphQLError struct {
+	Message    string                 `json:"message"`
+	Locations  []GraphQLErrorLocation `json:"locations"`
+	Extensions GraphQLErrorExtensions `json:"extensions"`
 }
 
-type Location struct {
+type GraphQLErrorLocation struct {
 	Line   int `json:"line"`
 	Column int `json:"column"`
 }
 
-type Extension struct {
+type GraphQLErrorExtensions struct {
 	Code string `json:"code"`
 }
 
