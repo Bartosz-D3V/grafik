@@ -18,4 +18,4 @@ grafik is a schema based GraphQL [Go][golang] code generator & HTTP client.
 
 [pr-welcome-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
 
-[gb-contribute]: https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github
+[gh-contribute]: https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github
