@@ -12,9 +12,9 @@ grafik is a schema based GraphQL [Go][golang] code generator & HTTP client.
 
 [ci-yml]:   https://github.com/Bartosz-D3V/grafik/actions/workflows/go.yml
 
-[mit-license]: https://img.shields.io/github/license/mashape/apistatus.svg
+[mit-badge]: https://img.shields.io/github/license/mashape/apistatus.svg
 
-[mit-badge]: https://opensource.org/licenses/MIT
+[mit-link]: https://opensource.org/licenses/MIT
 
 [pr-welcome-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
 
