@@ -36,11 +36,11 @@ const getRocketResults = `query getRocketResults($limit: Int){
 }
 `
 
-type UserssClient interface {
+type SpaceXClient interface {
 	GetRocketResults(limit int, header *http.Header) (*http.Response, error)
 }
 
-func (c *userssClient) GetRocketResults(limit int, header *http.Header) (*http.Response, error) {
+func (c *spaceXClient) GetRocketResults(limit int, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 1)
 	params["limit"] = limit
 
@@ -49,34 +49,34 @@ func (c *userssClient) GetRocketResults(limit int, header *http.Header) (*http.R
 
 type GetRocketResultsResponse struct {
 	Data   GetRocketResultsData `json:"data"`
-	Errors []Error              `json:"errors"`
+	Errors []GraphQLError       `json:"errors"`
 }
 
 type GetRocketResultsData struct {
 	RocketsResult RocketsResult `json:"rocketsResult"`
 }
 
-type Error struct {
-	Message    string     `json:"message"`
-	Locations  []Location `json:"locations"`
-	Extensions Extension  `json:"extensions"`
+type GraphQLError struct {
+	Message    string                 `json:"message"`
+	Locations  []GraphQLErrorLocation `json:"locations"`
+	Extensions GraphQLErrorExtensions `json:"extensions"`
 }
 
-type Location struct {
+type GraphQLErrorLocation struct {
 	Line   int `json:"line"`
 	Column int `json:"column"`
 }
 
-type Extension struct {
+type GraphQLErrorExtensions struct {
 	Code string `json:"code"`
 }
 
-type userssClient struct {
+type spaceXClient struct {
 	ctrl GraphqlClient.Client
 }
 
-func New(endpoint string, client *http.Client) UserssClient {
-	return &userssClient{
+func New(endpoint string, client *http.Client) SpaceXClient {
+	return &spaceXClient{
 		ctrl: GraphqlClient.New(endpoint, client),
 	}
 }

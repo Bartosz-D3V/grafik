@@ -1,0 +1,44 @@
+type Query {
+    missions(limit: Int, offset: Int): [Mission]
+    launchpads(limit: Int, offset: Int): [Launchpad]
+    roadster: Roadster
+    company: Info
+    dragons(limit: Int, offset: Int): [Dragon]
+}
+
+type Mission {
+    manufacturers: [String]
+}
+
+type Launchpad {
+    name: String
+    location: Location
+}
+
+type Location {
+    name: String
+}
+
+type Roadster {
+    name: String
+    wikipedia: String
+}
+
+type Info {
+    ceo: String
+}
+
+type Dragon {
+    name: String
+    type: String
+    wikipedia: String
+    pressurized_capsule: DragonPressurizedCapsule
+}
+
+type DragonPressurizedCapsule {
+    payload_volume: Volume
+}
+
+type Volume {
+    cubic_meters: Int
+}

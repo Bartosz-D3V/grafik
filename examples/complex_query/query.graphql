@@ -1,0 +1,28 @@
+query getBatchInfo($limit: Int) {
+    missions(limit: $limit) {
+        manufacturers
+    }
+    launchpads(limit: $limit) {
+        name
+        location {
+            name
+        }
+    }
+    roadster {
+        name
+        wikipedia
+    }
+    company {
+        ceo
+    }
+    dragons(limit: $limit) {
+        wikipedia
+        name
+        type
+        pressurized_capsule {
+            payload_volume {
+                cubic_meters
+            }
+        }
+    }
+}
