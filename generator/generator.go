@@ -3,7 +3,7 @@ package generator
 import (
 	"bytes"
 	"fmt"
-	"github.com/Bartosz-D3V/ggrafik/common"
+	"github.com/Bartosz-D3V/grafik/common"
 	"go/format"
 	"path/filepath"
 	"strings"

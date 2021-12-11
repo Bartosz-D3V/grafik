@@ -1,16 +1,10 @@
-// Generated with ggrafik. DO NOT EDIT
+// Generated with grafik. DO NOT EDIT
 
 package main
 
 import (
-	GraphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
-)
-
-type UsersConstraint string
-
-const (
-	UsersPkey UsersConstraint = "users_pkey"
 )
 
 type UsersUpdateColumn string
@@ -21,6 +15,12 @@ const (
 	Rocket    UsersUpdateColumn = "rocket"
 	Timestamp UsersUpdateColumn = "timestamp"
 	Twitter   UsersUpdateColumn = "twitter"
+)
+
+type UsersConstraint string
+
+const (
+	UsersPkey UsersConstraint = "users_pkey"
 )
 
 type UsersMutationResponse struct {

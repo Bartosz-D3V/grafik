@@ -1,8 +1,8 @@
 package evaluator
 
 import (
-	"github.com/Bartosz-D3V/ggrafik/generator"
-	"github.com/Bartosz-D3V/ggrafik/visitor"
+	"github.com/Bartosz-D3V/grafik/generator"
+	"github.com/Bartosz-D3V/grafik/visitor"
 	"github.com/vektah/gqlparser/ast"
 )
 

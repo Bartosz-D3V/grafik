@@ -1,7 +1,7 @@
 package generator
 
 import (
-	"github.com/Bartosz-D3V/ggrafik/test"
+	"github.com/Bartosz-D3V/grafik/test"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
