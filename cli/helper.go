@@ -4,7 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/Bartosz-D3V/ggrafik/common"
+	"github.com/Bartosz-D3V/grafik/common"
 	"io"
 	"io/ioutil"
 	"os"
@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-const usageTxt = `ggrafik is GraphQL schema based client and generator.
+const usageTxt = `grafik is GraphQL schema based client and generator.
 
 Supported commands:
 	help - prints this message
@@ -21,11 +21,11 @@ Supported commands:
 
 Generate Go GraphQL client by providing location of GraphQL schema and GraphQL queries file.
 Example:
-	ggrafik gen -schema_source=./schemas/my_schema.graphql -query_source=./schemas/my_query.graphql [other options]
+	grafik gen -schema_source=./schemas/my_schema.graphql -query_source=./schemas/my_query.graphql [other options]
 
 To customize generated Go GraphQL client provide auxiliary options for client name, package and destination folder.
 Example:
-	ggrafik gen -schema_source=./schemas/my_schema.graphql -query_source=./schemas/my_query.graphql -package=app -client_name=MyGraphqlClient -destination=./app/my_client.go
+	grafik gen -schema_source=./schemas/my_schema.graphql -query_source=./schemas/my_query.graphql -package=app -client_name=MyGraphqlClient -destination=./app/my_client.go
 
 `
 
@@ -52,7 +52,7 @@ func (c cli) parsePackageName() string {
 	if c.packageName != nil && *c.packageName != "" {
 		return *c.packageName
 	}
-	return fmt.Sprintf("ggrafik_%s", c.queryFileName())
+	return fmt.Sprintf("grafik_%s", c.queryFileName())
 }
 
 func (c cli) parseClientName() string {
@@ -60,7 +60,7 @@ func (c cli) parseClientName() string {
 		return *c.clientName
 	}
 	schemaName := c.parseSchemaName()
-	return fmt.Sprintf("Ggrafik%sClient", strings.Title(schemaName))
+	return fmt.Sprintf("Grafik%sClient", strings.Title(schemaName))
 }
 
 func (c cli) parseSchemaName() string {

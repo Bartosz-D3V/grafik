@@ -1,4 +1,4 @@
-module github.com/Bartosz-D3V/ggrafik
+module github.com/Bartosz-D3V/grafik
 
 go 1.17
 

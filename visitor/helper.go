@@ -1,7 +1,7 @@
 package visitor
 
 import (
-	"github.com/Bartosz-D3V/ggrafik/common"
+	"github.com/Bartosz-D3V/grafik/common"
 	"github.com/vektah/gqlparser/ast"
 )
 

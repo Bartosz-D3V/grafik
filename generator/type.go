@@ -2,7 +2,7 @@ package generator
 
 import (
 	"fmt"
-	"github.com/Bartosz-D3V/ggrafik/common"
+	"github.com/Bartosz-D3V/grafik/common"
 	"strings"
 )
 

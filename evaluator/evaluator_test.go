@@ -2,7 +2,7 @@ package evaluator
 
 import (
 	"fmt"
-	"github.com/Bartosz-D3V/ggrafik/test"
+	"github.com/Bartosz-D3V/grafik/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/vektah/gqlparser"
 	"github.com/vektah/gqlparser/ast"
@@ -15,7 +15,7 @@ func TestEvaluator_Generate_FlatStructure(t *testing.T) {
 	schema := loadSchema(t, "test/simple_type/simple_type.graphql")
 	query := loadQuery(t, schema, "test/simple_type/simple_type_query.graphql")
 	info := AdditionalInfo{
-		PackageName: "ggrafik_client",
+		PackageName: "grafik_client",
 		ClientName:  "FilesClient",
 		UsePointers: false,
 	}
@@ -23,12 +23,12 @@ func TestEvaluator_Generate_FlatStructure(t *testing.T) {
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
-// Generated with ggrafik. DO NOT EDIT
+// Generated with grafik. DO NOT EDIT
 
-package ggrafik_client
+package grafik_client
 
 import (
-	GraphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
 
@@ -121,7 +121,7 @@ func TestEvaluator_Generate_ArrayStructure(t *testing.T) {
 	schema := loadSchema(t, "test/array/array.graphql")
 	query := loadQuery(t, schema, "test/array/array_query.graphql")
 	info := AdditionalInfo{
-		PackageName: "ggrafik_client",
+		PackageName: "grafik_client",
 		ClientName:  "FilmsClient",
 		UsePointers: false,
 	}
@@ -129,12 +129,12 @@ func TestEvaluator_Generate_ArrayStructure(t *testing.T) {
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
-// Generated with ggrafik. DO NOT EDIT
+// Generated with grafik. DO NOT EDIT
 
-package ggrafik_client
+package grafik_client
 
 import (
-	GraphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
 
@@ -206,7 +206,7 @@ func TestEvaluator_Generate_NestedStructure(t *testing.T) {
 	schema := loadSchema(t, "test/nested_type/nested_type.graphql")
 	query := loadQuery(t, schema, "test/nested_type/nested_type_query.graphql")
 	info := AdditionalInfo{
-		PackageName: "ggrafik_client",
+		PackageName: "grafik_client",
 		ClientName:  "SpecificHeroClient",
 		UsePointers: false,
 	}
@@ -214,12 +214,12 @@ func TestEvaluator_Generate_NestedStructure(t *testing.T) {
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
-// Generated with ggrafik. DO NOT EDIT
+// Generated with grafik. DO NOT EDIT
 
-package ggrafik_client
+package grafik_client
 
 import (
-	GraphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
 
@@ -311,7 +311,7 @@ func TestEvaluator_Generate_Enum(t *testing.T) {
 	schema := loadSchema(t, "test/enum/enum.graphql")
 	query := loadQuery(t, schema, "test/enum/enum_query.graphql")
 	info := AdditionalInfo{
-		PackageName: "ggrafik_client",
+		PackageName: "grafik_client",
 		ClientName:  "CompanyClient",
 		UsePointers: false,
 	}
@@ -319,12 +319,12 @@ func TestEvaluator_Generate_Enum(t *testing.T) {
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
-// Generated with ggrafik. DO NOT EDIT
+// Generated with grafik. DO NOT EDIT
 
-package ggrafik_client
+package grafik_client
 
 import (
-	GraphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
 
@@ -399,7 +399,7 @@ func TestEvaluator_Generate_Input(t *testing.T) {
 	schema := loadSchema(t, "test/input/input.graphql")
 	query := loadQuery(t, schema, "test/input/input_query.graphql")
 	info := AdditionalInfo{
-		PackageName: "ggrafik_client",
+		PackageName: "grafik_client",
 		ClientName:  "CapsulesClient",
 		UsePointers: false,
 	}
@@ -407,12 +407,12 @@ func TestEvaluator_Generate_Input(t *testing.T) {
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
-// Generated with ggrafik. DO NOT EDIT
+// Generated with grafik. DO NOT EDIT
 
-package ggrafik_client
+package grafik_client
 
 import (
-	GraphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
 
@@ -498,7 +498,7 @@ func TestEvaluator_CircularType(t *testing.T) {
 	schema := loadSchema(t, "test/circular_type/circular_type.graphql")
 	query := loadQuery(t, schema, "test/circular_type/circular_type_query.graphql")
 	info := AdditionalInfo{
-		PackageName: "ggrafik_client",
+		PackageName: "grafik_client",
 		ClientName:  "MovieClient",
 		UsePointers: false,
 	}
@@ -506,12 +506,12 @@ func TestEvaluator_CircularType(t *testing.T) {
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
-// Generated with ggrafik. DO NOT EDIT
+// Generated with grafik. DO NOT EDIT
 
-package ggrafik_client
+package grafik_client
 
 import (
-	GraphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
 
@@ -588,7 +588,7 @@ func TestEvaluator_FragmentType(t *testing.T) {
 	schema := loadSchema(t, "test/fragment/fragment.graphql")
 	query := loadQuery(t, schema, "test/fragment/fragment_query.graphql")
 	info := AdditionalInfo{
-		PackageName: "ggrafik_client",
+		PackageName: "grafik_client",
 		ClientName:  "RocketClient",
 		UsePointers: false,
 	}
@@ -596,12 +596,12 @@ func TestEvaluator_FragmentType(t *testing.T) {
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
-// Generated with ggrafik. DO NOT EDIT
+// Generated with grafik. DO NOT EDIT
 
-package ggrafik_client
+package grafik_client
 
 import (
-	GraphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
 
@@ -684,7 +684,7 @@ func TestEvaluator_WithPointers(t *testing.T) {
 	schema := loadSchema(t, "test/fragment/fragment.graphql")
 	query := loadQuery(t, schema, "test/fragment/fragment_query.graphql")
 	info := AdditionalInfo{
-		PackageName: "ggrafik_client",
+		PackageName: "grafik_client",
 		ClientName:  "RocketClient",
 		UsePointers: true,
 	}
@@ -692,12 +692,12 @@ func TestEvaluator_WithPointers(t *testing.T) {
 
 	out := string(e.Generate())
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
-// Generated with ggrafik. DO NOT EDIT
+// Generated with grafik. DO NOT EDIT
 
-package ggrafik_client
+package grafik_client
 
 import (
-	GraphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
 

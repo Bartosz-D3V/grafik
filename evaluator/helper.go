@@ -2,8 +2,8 @@ package evaluator
 
 import (
 	"fmt"
-	"github.com/Bartosz-D3V/ggrafik/common"
-	"github.com/Bartosz-D3V/ggrafik/generator"
+	"github.com/Bartosz-D3V/grafik/common"
+	"github.com/Bartosz-D3V/grafik/generator"
 	"github.com/vektah/gqlparser/ast"
 	"strings"
 )

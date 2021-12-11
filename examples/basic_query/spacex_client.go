@@ -1,9 +1,9 @@
-// Generated with ggrafik. DO NOT EDIT
+// Generated with grafik. DO NOT EDIT
 
 package main
 
 import (
-	GraphqlClient "github.com/Bartosz-D3V/ggrafik/client"
+	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
 
