@@ -1,14 +1,14 @@
-type GraphQLError struct {
+type {{.GraphQLErrorStructName}} struct {
     Message    {{if $.UsePointers}}*string{{else}}string{{end}} `json:"message"`
-    Locations  []GraphQLErrorLocation `json:"locations"`
-    Extensions {{if $.UsePointers}}*GraphQLErrorExtensions{{else}}GraphQLErrorExtensions{{end}} `json:"extensions"`
+    Locations  []{{.GraphQLErrorStructName}}Location `json:"locations"`
+    Extensions {{if $.UsePointers}}*{{.GraphQLErrorStructName}}Extensions{{else}}{{.GraphQLErrorStructName}}Extensions{{end}} `json:"extensions"`
 }
 
-type GraphQLErrorLocation struct {
+type {{.GraphQLErrorStructName}}Location struct {
     Line   {{if $.UsePointers}}*int{{else}}int{{end}} `json:"line"`
     Column {{if $.UsePointers}}*int{{else}}int{{end}} `json:"column"`
 }
 
-type GraphQLErrorExtensions struct {
+type {{.GraphQLErrorStructName}}Extensions struct {
     Code {{if $.UsePointers}}*string{{else}}string{{end}} `json:"code"`
 }

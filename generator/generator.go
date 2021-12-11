@@ -134,7 +134,8 @@ func (g *generator) WriteInterfaceImplementation(clientName string, f Func) {
 
 func (g *generator) WriteGraphqlErrorStructs(usePointers bool) {
 	config := map[string]interface{}{
-		"UsePointers": usePointers,
+		"UsePointers":            usePointers,
+		"GraphQLErrorStructName": GraphQLErrorStructName,
 	}
 	err := g.template.ExecuteTemplate(g.stream, "graphql_error.tmpl", config)
 	if err != nil {
