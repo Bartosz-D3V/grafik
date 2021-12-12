@@ -4,15 +4,17 @@
 [![GitHub][mit-badge]][mit-link]
 [![PRs Welcome][pr-welcome-badge]][gh-contribute]
 
-grafik is a schema based GraphQL [Go][golang] code generator & HTTP client.
+Grafik is a schema based GraphQL [Go][golang] code generator & HTTP client.
 
 # Foreword
-grafik is still in **early stage** and under **active development**. If you notice a bug, or you would like to request a new feature, please raise an issue/PR.
+Grafik is still in **early stage** and under **active development**. If you notice a bug, or you would like to request a new feature, please raise an issue/PR.
 
-# Installation
+## Installation
 Assuming you have [Go][golang] installed on your machine, install `grafik`.
 
 **Note**: Make sure to add `$GOPATH/bin` to your `PATH`.
+
+### Go version < 1.16
 
 ```bash
 GO111MODULE=on go get github.com/Bartosz-D3V/grafik@latest
@@ -24,9 +26,9 @@ GO111MODULE=on go get github.com/Bartosz-D3V/grafik@latest
 go install github.com/Bartosz-D3V/grafik@latest
 ```
 
-# Running grafikgen
-grafik requires two types of GraphQL files - `schema.graphql` that represents the schema of the GraphQL endpoint and `query.graphql` that holds all the queries and mutations.
-grafik will parse GraphQL files, create AST using [gqlparser][gqlparser-link] and then generate GraphQL Go client that can be used programmatically.
+## Running grafikgen
+Grafik requires two types of GraphQL files - `schema.graphql` that represents the schema of the GraphQL endpoint and `query.graphql` that holds all the queries and mutations.
+Grafik will parse GraphQL files, create AST using [gqlparser][gqlparser-link] and then generate GraphQL Go client that can be used programmatically.
 
 ## Example
 `schema.graphql`
@@ -52,7 +54,7 @@ query countResults($condition: Condition!){
     }
 }
 ```
-
+Command to generate GraphQL client
 ```shell
 gen
     --schema_source=./graphql/schema.graphql \
@@ -135,10 +137,12 @@ func New(endpoint string, client *http.Client) GraphqlClient {
 ```
 
 Use the `New` function from generated code to create instance of your GraphQL client by providing endpoint and HTTP client.
-grafik generates the GraphQL types used by operations defined in `query.graphql` file.
+
+Grafik generates the GraphQL types used by operations defined in `query.graphql` file.
+
 See more [examples][examples-link] and how to use the client programmatically.
 
-# Flags
+## Flags
 The graffikgen tool is used to generate GraphQL clients in Go. It supports the following flags:
 
 - `-schema_source`: [required] Location of the GraphQL schema file. Either absolute or relative.
@@ -148,7 +152,7 @@ The graffikgen tool is used to generate GraphQL clients in Go. It supports the f
 - `-destination`: [optional] Output filename with path. Either absolute or relative; defaults to the current directory and client name.
 - `-use_pointers`: [optional] [optional] Generate public GraphQL structs' fields as pointers; defaults to false.
 
-# Help
+## Help
 To view the help run `grafikgen help` command.
 
 [golang]:   http://golang.org/
