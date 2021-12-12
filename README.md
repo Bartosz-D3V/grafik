@@ -142,6 +142,13 @@ Grafik generates the GraphQL types used by operations defined in `query.graphql`
 
 See more [examples][examples-link] and how to use the client programmatically.
 
+## Authorization
+Grafik does not provide any direct authorization mechanism because it accepts `http.Client`.
+
+For example - `http.Client` can be configured with `CookieJar` to provide appropriate cookies.
+
+If GraphQL endpoint requires JWT inside an HTTP header, it can be passed as a `http.Header` argument.
+
 ## Flags
 The graffikgen tool is used to generate GraphQL clients in Go. It supports the following flags:
 
