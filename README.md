@@ -6,7 +6,7 @@
 
 Grafik is a schema based GraphQL [Go][golang] code generator & HTTP client.
 
-# Foreword
+## Foreword
 Grafik is still in **early stage** and under **active development**. If you notice a bug, or you would like to request a new feature, please raise an issue/PR.
 
 ## Installation
