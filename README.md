@@ -10,20 +10,26 @@ Grafik is a schema based GraphQL [Go][golang] code generator & HTTP client.
 Grafik is still in **early stage** and under **active development**. If you notice a bug, or you would like to request a new feature, please raise an issue/PR.
 
 ## Installation
-Assuming you have [Go][golang] installed on your machine, install `grafik`.
+Assuming you have [Go][golang] installed on your machine, first install `grafikgen`.
 
 **Note**: Make sure to add `$GOPATH/bin` to your `PATH`.
 
 ### Go version < 1.16
 
 ```bash
-GO111MODULE=on go get github.com/Bartosz-D3V/grafik@latest
+GO111MODULE=on go get github.com/Bartosz-D3V/grafik/grafikgen@latest
 ```
 
 ### Go 1.16+
 
 ```bash
-go install github.com/Bartosz-D3V/grafik@latest
+go install github.com/Bartosz-D3V/grafik/grafikgen@latest
+```
+
+To add grafik GraphQL client add grafik as a dependency to the project:
+
+```shell
+go get github.com/Bartosz-D3V/grafik@latest
 ```
 
 ## Running grafikgen
