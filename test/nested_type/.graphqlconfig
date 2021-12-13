@@ -1,0 +1,8 @@
+{
+  "name": "Nested type test",
+  "projects": {
+    "array": {
+      "includes": ["./**"]
+    }
+   }
+}

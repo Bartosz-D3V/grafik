@@ -1,0 +1,8 @@
+{
+  "name": "Fragment type test",
+  "projects": {
+    "array": {
+      "includes": ["./**"]
+    }
+   }
+}

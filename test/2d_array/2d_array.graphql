@@ -1,0 +1,14 @@
+schema {
+    query: Query
+}
+
+type Query {
+    allResults: [[Result]]
+    allResultsSimplified: [[String]]
+}
+
+type Result {
+    x: Float
+    y: Float
+    z: Float
+}

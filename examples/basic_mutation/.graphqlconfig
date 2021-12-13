@@ -1,0 +1,8 @@
+{
+  "name": "Basic mutation example",
+  "projects": {
+    "array": {
+      "includes": ["./**"]
+    }
+   }
+}

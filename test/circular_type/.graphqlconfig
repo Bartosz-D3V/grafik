@@ -1,0 +1,8 @@
+{
+  "name": "Circular type test",
+  "projects": {
+    "array": {
+      "includes": ["./**"]
+    }
+   }
+}

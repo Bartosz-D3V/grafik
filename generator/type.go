@@ -16,14 +16,16 @@ func (t TypeArg) ExportName() string {
 }
 
 func (t TypeArg) TitleType() TypeArg {
-	if strings.Contains(t.Type, "[]") {
-		elType := strings.TrimPrefix(t.Type, "[]")
+	const sliceTok = "[]"
+	if strings.Contains(t.Type, sliceTok) {
+		dim := strings.Count(t.Type, sliceTok)
+		elType := strings.TrimLeft(t.Type, sliceTok)
 		if isPrimitive(elType) {
 			return t
 		}
 		return TypeArg{
 			Name: t.Name,
-			Type: fmt.Sprintf("[]%s", strings.Title(elType)),
+			Type: fmt.Sprintf("%s%s", strings.Repeat(sliceTok, dim), strings.Title(elType)),
 		}
 	}
 	if isPrimitive(t.Type) {

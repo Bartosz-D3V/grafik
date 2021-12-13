@@ -1,0 +1,8 @@
+{
+  "name": "2D array test",
+  "projects": {
+    "array": {
+      "includes": ["./**"]
+    }
+   }
+}

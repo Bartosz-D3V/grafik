@@ -1,0 +1,8 @@
+query GetAllResults {
+    allResults {
+        x,
+        y,
+        z
+    }
+    allResultsSimplified
+}

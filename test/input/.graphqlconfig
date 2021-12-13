@@ -1,0 +1,8 @@
+{
+  "name": "Input type test",
+  "projects": {
+    "array": {
+      "includes": ["./**"]
+    }
+   }
+}
