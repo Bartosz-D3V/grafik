@@ -121,7 +121,7 @@ func (e *evaluator) convGoType(astType *ast.Type) string {
 
 func (e *evaluator) convComplexType(astType *ast.Type) string {
 	if common.IsList(astType) {
-		if nt := astType.Elem; common.IsComplex(nt) {
+		if nt := astType.Elem; common.IsComplex(nt) && !common.IsList(nt) {
 			return fmt.Sprintf("[]%s", nt.NamedType)
 		} else {
 			return fmt.Sprintf("[]%s", strings.ToLower(e.convGoType(nt)))
