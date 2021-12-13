@@ -1,3 +1,5 @@
+// Package evaluator contains the logic responsible for evaluating schema & query GraphQL Abstract Syntax Tree [AST]
+// It orchestrates the generation of the code by using visitor & generator packages.
 package evaluator
 
 import (
@@ -6,6 +8,7 @@ import (
 	"github.com/vektah/gqlparser/ast"
 )
 
+// Evaluator provides a contract for evaluator and is being used as a return type of New instead of a pointer
 type Evaluator interface {
 	Generate() []byte
 }
