@@ -1,0 +1,8 @@
+{
+  "name": "Complete schema test",
+  "projects": {
+    "array": {
+      "includes": ["./**"]
+    }
+   }
+}

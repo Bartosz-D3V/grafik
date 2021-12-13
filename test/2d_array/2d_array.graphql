@@ -4,6 +4,7 @@ schema {
 
 type Query {
     allResults: [[Result]]
+    allResultsSimplified: [[String]]
 }
 
 type Result {

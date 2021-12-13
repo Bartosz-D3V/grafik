@@ -1,0 +1,8 @@
+{
+  "name": "Input type 3D array test",
+  "projects": {
+    "array": {
+      "includes": ["./**"]
+    }
+   }
+}

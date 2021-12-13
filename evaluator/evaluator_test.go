@@ -202,6 +202,91 @@ func New(endpoint string, client *http.Client) FilmsClient {
 	assert.Equal(t, expOut, out)
 }
 
+func TestEvaluator_Generate_2DArrayStructure(t *testing.T) {
+	schema := loadSchema(t, "test/2d_array/2d_array.graphql")
+	query := loadQuery(t, schema, "test/2d_array/2d_array_query.graphql")
+	info := AdditionalInfo{
+		PackageName: "grafik_client",
+		ClientName:  "MathClient",
+		UsePointers: false,
+	}
+	e := New("../", schema, query, info)
+
+	out := string(e.Generate())
+	expOut := test.PrepExpCode(t, fmt.Sprintf(`
+// Generated with grafik. DO NOT EDIT
+
+package grafik_client
+
+import (
+	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
+	"net/http"
+)
+
+type Result struct {
+	X int %[1]cjson:"x"%[1]c
+	Y int %[1]cjson:"y"%[1]c
+	Z int %[1]cjson:"z"%[1]c
+}
+
+const getAllResults = %[1]cquery GetAllResults {
+    allResults {
+        x,
+        y,
+        z
+    }
+    allResultsSimplified
+}%[1]c
+
+type MathClient interface {
+	GetAllResults(header *http.Header) (*http.Response, error)
+}
+
+func (c *mathClient) GetAllResults(header *http.Header) (*http.Response, error) {
+	params := make(map[string]interface{}, 0)
+
+	return c.ctrl.Execute(getAllResults, params, header)
+}
+
+type GetAllResultsResponse struct {
+	Data   GetAllResultsData %[1]cjson:"data"%[1]c
+	Errors []GraphQLError    %[1]cjson:"errors"%[1]c
+}
+
+type GetAllResultsData struct {
+	AllResults           [][]Result %[1]cjson:"allResults"%[1]c
+	AllResultsSimplified [][]string %[1]cjson:"allResultsSimplified"%[1]c
+}
+
+type GraphQLError struct {
+	Message    string                 %[1]cjson:"message"%[1]c
+	Locations  []GraphQLErrorLocation %[1]cjson:"locations"%[1]c
+	Extensions GraphQLErrorExtensions %[1]cjson:"extensions"%[1]c
+}
+
+type GraphQLErrorLocation struct {
+	Line   int %[1]cjson:"line"%[1]c
+	Column int %[1]cjson:"column"%[1]c
+}
+
+type GraphQLErrorExtensions struct {
+	Code string %[1]cjson:"code"%[1]c
+}
+
+type mathClient struct {
+	ctrl GraphqlClient.Client
+}
+
+func New(endpoint string, client *http.Client) MathClient {
+	return &mathClient{
+		ctrl: GraphqlClient.New(endpoint, client),
+	}
+}
+`, '`'))
+
+	assert.Equal(t, expOut, out)
+}
+
 func TestEvaluator_Generate_3DArrayStructure(t *testing.T) {
 	schema := loadSchema(t, "test/3d_array/3d_array.graphql")
 	query := loadQuery(t, schema, "test/3d_array/3d_array_query.graphql")
@@ -254,89 +339,6 @@ type GetAllResultsResponse struct {
 
 type GetAllResultsData struct {
 	AllResults [][][]Result %[1]cjson:"allResults"%[1]c
-}
-
-type GraphQLError struct {
-	Message    string                 %[1]cjson:"message"%[1]c
-	Locations  []GraphQLErrorLocation %[1]cjson:"locations"%[1]c
-	Extensions GraphQLErrorExtensions %[1]cjson:"extensions"%[1]c
-}
-
-type GraphQLErrorLocation struct {
-	Line   int %[1]cjson:"line"%[1]c
-	Column int %[1]cjson:"column"%[1]c
-}
-
-type GraphQLErrorExtensions struct {
-	Code string %[1]cjson:"code"%[1]c
-}
-
-type mathClient struct {
-	ctrl GraphqlClient.Client
-}
-
-func New(endpoint string, client *http.Client) MathClient {
-	return &mathClient{
-		ctrl: GraphqlClient.New(endpoint, client),
-	}
-}
-`, '`'))
-
-	assert.Equal(t, expOut, out)
-}
-
-func TestEvaluator_Generate_2DArrayStructure(t *testing.T) {
-	schema := loadSchema(t, "test/2d_array/2d_array.graphql")
-	query := loadQuery(t, schema, "test/2d_array/2d_array_query.graphql")
-	info := AdditionalInfo{
-		PackageName: "grafik_client",
-		ClientName:  "MathClient",
-		UsePointers: false,
-	}
-	e := New("../", schema, query, info)
-
-	out := string(e.Generate())
-	expOut := test.PrepExpCode(t, fmt.Sprintf(`
-// Generated with grafik. DO NOT EDIT
-
-package grafik_client
-
-import (
-	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
-	"net/http"
-)
-
-type Result struct {
-	X int %[1]cjson:"x"%[1]c
-	Y int %[1]cjson:"y"%[1]c
-	Z int %[1]cjson:"z"%[1]c
-}
-
-const getAllResults = %[1]cquery GetAllResults {
-    allResults {
-        x,
-        y,
-        z
-    }
-}%[1]c
-
-type MathClient interface {
-	GetAllResults(header *http.Header) (*http.Response, error)
-}
-
-func (c *mathClient) GetAllResults(header *http.Header) (*http.Response, error) {
-	params := make(map[string]interface{}, 0)
-
-	return c.ctrl.Execute(getAllResults, params, header)
-}
-
-type GetAllResultsResponse struct {
-	Data   GetAllResultsData %[1]cjson:"data"%[1]c
-	Errors []GraphQLError    %[1]cjson:"errors"%[1]c
-}
-
-type GetAllResultsData struct {
-	AllResults [][]Result %[1]cjson:"allResults"%[1]c
 }
 
 type GraphQLError struct {
@@ -628,6 +630,196 @@ type GetCapsulesByFullSelectorResponse struct {
 }
 
 type GetCapsulesByFullSelectorData struct {
+	Capsules []Capsule %[1]cjson:"capsules"%[1]c
+}
+
+type GraphQLError struct {
+	Message    string                 %[1]cjson:"message"%[1]c
+	Locations  []GraphQLErrorLocation %[1]cjson:"locations"%[1]c
+	Extensions GraphQLErrorExtensions %[1]cjson:"extensions"%[1]c
+}
+
+type GraphQLErrorLocation struct {
+	Line   int %[1]cjson:"line"%[1]c
+	Column int %[1]cjson:"column"%[1]c
+}
+
+type GraphQLErrorExtensions struct {
+	Code string %[1]cjson:"code"%[1]c
+}
+
+type capsulesClient struct {
+	ctrl GraphqlClient.Client
+}
+
+func New(endpoint string, client *http.Client) CapsulesClient {
+	return &capsulesClient{
+		ctrl: GraphqlClient.New(endpoint, client),
+	}
+}
+`, '`'))
+
+	assert.Equal(t, expOut, out)
+}
+
+func TestEvaluator_Generate_Input_2DArray(t *testing.T) {
+	schema := loadSchema(t, "test/input_2d_array/input_2d_array.graphql")
+	query := loadQuery(t, schema, "test/input_2d_array/input_2d_array_query.graphql")
+	info := AdditionalInfo{
+		PackageName: "grafik_client",
+		ClientName:  "CapsulesClient",
+		UsePointers: false,
+	}
+	e := New("../", schema, query, info)
+
+	out := string(e.Generate())
+	expOut := test.PrepExpCode(t, fmt.Sprintf(`
+// Generated with grafik. DO NOT EDIT
+
+package grafik_client
+
+import (
+	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
+	"net/http"
+)
+
+type Capsule struct {
+	Id         string %[1]cjson:"id"%[1]c
+	Landings   int    %[1]cjson:"landings"%[1]c
+	ReuseCount int    %[1]cjson:"reuse_count"%[1]c
+	Status     string %[1]cjson:"status"%[1]c
+	Type       string %[1]cjson:"type"%[1]c
+}
+
+type Position struct {
+	X int %[1]cjson:"x"%[1]c
+	Y int %[1]cjson:"y"%[1]c
+}
+
+type Limit struct {
+	Size int %[1]cjson:"size"%[1]c
+}
+
+const getCapsulesByPositions = %[1]cquery GetCapsulesByPositions($find: [[Position]], $limit: [[Limit]], $selector: [[String]]) {
+   capsules(find: $find, limit: $limit, selector: $selector) {
+       id
+   }
+}%[1]c
+
+type CapsulesClient interface {
+	GetCapsulesByPositions(find [][]Position, limit [][]Limit, selector [][]string, header *http.Header) (*http.Response, error)
+}
+
+func (c *capsulesClient) GetCapsulesByPositions(find [][]Position, limit [][]Limit, selector [][]string, header *http.Header) (*http.Response, error) {
+	params := make(map[string]interface{}, 3)
+	params["find"] = find
+	params["limit"] = limit
+	params["selector"] = selector
+
+	return c.ctrl.Execute(getCapsulesByPositions, params, header)
+}
+
+type GetCapsulesByPositionsResponse struct {
+	Data   GetCapsulesByPositionsData %[1]cjson:"data"%[1]c
+	Errors []GraphQLError             %[1]cjson:"errors"%[1]c
+}
+
+type GetCapsulesByPositionsData struct {
+	Capsules []Capsule %[1]cjson:"capsules"%[1]c
+}
+
+type GraphQLError struct {
+	Message    string                 %[1]cjson:"message"%[1]c
+	Locations  []GraphQLErrorLocation %[1]cjson:"locations"%[1]c
+	Extensions GraphQLErrorExtensions %[1]cjson:"extensions"%[1]c
+}
+
+type GraphQLErrorLocation struct {
+	Line   int %[1]cjson:"line"%[1]c
+	Column int %[1]cjson:"column"%[1]c
+}
+
+type GraphQLErrorExtensions struct {
+	Code string %[1]cjson:"code"%[1]c
+}
+
+type capsulesClient struct {
+	ctrl GraphqlClient.Client
+}
+
+func New(endpoint string, client *http.Client) CapsulesClient {
+	return &capsulesClient{
+		ctrl: GraphqlClient.New(endpoint, client),
+	}
+}
+`, '`'))
+
+	assert.Equal(t, expOut, out)
+}
+
+func TestEvaluator_Generate_Input_3DArray(t *testing.T) {
+	schema := loadSchema(t, "test/input_3d_array/input_3d_array.graphql")
+	query := loadQuery(t, schema, "test/input_3d_array/input_3d_array_query.graphql")
+	info := AdditionalInfo{
+		PackageName: "grafik_client",
+		ClientName:  "CapsulesClient",
+		UsePointers: false,
+	}
+	e := New("../", schema, query, info)
+
+	out := string(e.Generate())
+	expOut := test.PrepExpCode(t, fmt.Sprintf(`
+// Generated with grafik. DO NOT EDIT
+
+package grafik_client
+
+import (
+	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
+	"net/http"
+)
+
+type Capsule struct {
+	Id         string %[1]cjson:"id"%[1]c
+	Landings   int    %[1]cjson:"landings"%[1]c
+	ReuseCount int    %[1]cjson:"reuse_count"%[1]c
+	Status     string %[1]cjson:"status"%[1]c
+	Type       string %[1]cjson:"type"%[1]c
+}
+
+type Position struct {
+	X int %[1]cjson:"x"%[1]c
+	Y int %[1]cjson:"y"%[1]c
+}
+
+type Limit struct {
+	Size int %[1]cjson:"size"%[1]c
+}
+
+const getCapsulesByPositions = %[1]cquery GetCapsulesByPositions($find: [[[Position]]], $limit: [[[Limit]]], $selector: [[[String]]]) {
+   capsules(find: $find, limit: $limit, selector: $selector) {
+       id
+   }
+}%[1]c
+
+type CapsulesClient interface {
+	GetCapsulesByPositions(find [][][]Position, limit [][][]Limit, selector [][][]string, header *http.Header) (*http.Response, error)
+}
+
+func (c *capsulesClient) GetCapsulesByPositions(find [][][]Position, limit [][][]Limit, selector [][][]string, header *http.Header) (*http.Response, error) {
+	params := make(map[string]interface{}, 3)
+	params["find"] = find
+	params["limit"] = limit
+	params["selector"] = selector
+
+	return c.ctrl.Execute(getCapsulesByPositions, params, header)
+}
+
+type GetCapsulesByPositionsResponse struct {
+	Data   GetCapsulesByPositionsData %[1]cjson:"data"%[1]c
+	Errors []GraphQLError             %[1]cjson:"errors"%[1]c
+}
+
+type GetCapsulesByPositionsData struct {
 	Capsules []Capsule %[1]cjson:"capsules"%[1]c
 }
 

@@ -1,0 +1,26 @@
+schema {
+    query: Query
+}
+
+type Query {
+    capsules(find: [[[Position]]], limit: [[[Limit]]], selector: [[[String]]]): [Capsule]
+}
+
+type Capsule {
+    id: ID
+    landings: Int
+    reuse_count: Int
+    status: String
+    type: String
+}
+
+input Position {
+    x: Float
+    y: Float
+}
+
+input Limit {
+    size: Int
+}
+
+scalar Date

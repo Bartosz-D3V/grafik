@@ -1,0 +1,5 @@
+query GetCapsulesByPositions($find: [[[Position]]], $limit: [[[Limit]]], $selector: [[[String]]]) {
+   capsules(find: $find, limit: $limit, selector: $selector) {
+       id
+   }
+}

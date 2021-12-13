@@ -24,8 +24,13 @@ func (v *visitor) parseOpTypes(query *ast.Definition) {
 		}
 
 		if common.IsList(field.Type) {
-			leafType := v.findLeafType(field.Type.Elem)
-			v.findSubTypes(v.schema.Types[leafType.NamedType])
+			typeLeafType := v.findLeafType(field.Type.Elem)
+			v.findSubTypes(v.schema.Types[typeLeafType.NamedType])
+
+			for _, arg := range field.Arguments {
+				argLeafType := v.findLeafType(arg.Type)
+				v.findSubTypes(v.schema.Types[argLeafType.NamedType])
+			}
 		}
 	}
 }

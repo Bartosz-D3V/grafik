@@ -1,0 +1,8 @@
+{
+  "name": "Basic query example",
+  "projects": {
+    "array": {
+      "includes": ["./**"]
+    }
+   }
+}

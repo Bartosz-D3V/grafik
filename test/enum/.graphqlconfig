@@ -1,0 +1,8 @@
+{
+  "name": "Enum test",
+  "projects": {
+    "array": {
+      "includes": ["./**"]
+    }
+   }
+}
