@@ -29,6 +29,8 @@ Example:
 
 `
 
+// writeFile writes the whole slice of bytes to new file.
+// Used to create the generated grafik client file.
 func writeFile(content []byte, fullDist string) {
 	dir, _ := filepath.Split(fullDist)
 	err := os.MkdirAll(dir, 0777)
@@ -48,6 +50,7 @@ func writeFile(content []byte, fullDist string) {
 	}
 }
 
+// parsePackageName returns name of the package - either defined by user through CLI flag or GraphQL query file name with 'grafik_' prefix.
 func (c cli) parsePackageName() string {
 	if c.packageName != nil && *c.packageName != "" {
 		return *c.packageName
@@ -55,6 +58,7 @@ func (c cli) parsePackageName() string {
 	return fmt.Sprintf("grafik_%s", c.queryFileName())
 }
 
+// parseClientName returns name of grafik client - either defined by user through CLI flag or GraphQL schema ame with 'Grafik' prefix and 'Client' suffix.
 func (c cli) parseClientName() string {
 	if c.clientName != nil && *c.clientName != "" {
 		return *c.clientName
@@ -63,6 +67,7 @@ func (c cli) parseClientName() string {
 	return fmt.Sprintf("Grafik%sClient", strings.Title(schemaName))
 }
 
+// parseSchemaName returns schema name - either Capitalized client name or Capitalized GraphQL query file source.
 func (c cli) parseSchemaName() string {
 	if c.clientName != nil && *c.clientName != "" {
 		return common.SentenceCase(*c.clientName)
@@ -70,11 +75,13 @@ func (c cli) parseSchemaName() string {
 	return c.queryFileName()
 }
 
+// queryFileName parses GraphQL query file name
 func (c cli) queryFileName() string {
 	baseName := filepath.Base(*c.querySource)
 	return common.SentenceCase(strings.Split(baseName, ".")[0])
 }
 
+// getFileContent returns content of the file
 func getFileContent(src *string) ([]byte, error) {
 	if src == nil || *src == "" {
 		return nil, errors.New("provided source is empty")
@@ -91,6 +98,7 @@ func getFileContent(src *string) ([]byte, error) {
 	}
 }
 
+// getFileDestName returns destination file name - either defined thrugh CLI flag or same as client name.
 func getFileDestName(clientName string, dist *string) string {
 	if dist == nil || *dist == "" {
 		return clientName
@@ -102,6 +110,8 @@ func getFileDestName(clientName string, dist *string) string {
 	return fmt.Sprintf("%s.go", filepath.Join(dir, clientName))
 }
 
+// validateGenOptions returns error if any CLI flag is nil or empty.
+// Used to validate provided mandatory flags.
 func validateGenOptions(opts ...*string) error {
 	for _, opt := range opts {
 		if opt == nil || *opt == "" {
@@ -111,6 +121,7 @@ func validateGenOptions(opts ...*string) error {
 	return nil
 }
 
+// usage prints help usage text
 func usage(fs *flag.FlagSet) {
 	_, _ = io.WriteString(os.Stdout, usageTxt)
 	_, _ = io.WriteString(os.Stdout, fmt.Sprintf("Options for %s command: \n", fs.Name()))
