@@ -1038,6 +1038,98 @@ func New(endpoint string, client *http.Client) RocketClient {
 	assert.Equal(t, expOut, out)
 }
 
+func TestEvaluator_SelectionSet(t *testing.T) {
+	schema := loadSchema(t, "test/selection_set/selection_set.graphql")
+	query := loadQuery(t, schema, "test/selection_set/selection_set_query.graphql")
+	info := AdditionalInfo{
+		PackageName: "grafik_client",
+		ClientName:  "CountriesClient",
+		UsePointers: false,
+	}
+	e := New("../", schema, query, info)
+
+	out := string(e.Generate())
+	expOut := test.PrepExpCode(t, fmt.Sprintf(`
+// Generated with grafik. DO NOT EDIT
+
+package grafik_client
+
+import (
+	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
+	"net/http"
+)
+
+type Continent struct {
+	Code string %[1]cjson:"code"%[1]c
+	Name string %[1]cjson:"name"%[1]c
+}
+
+type Country struct {
+	Code string %[1]cjson:"code"%[1]c
+	Name string %[1]cjson:"name"%[1]c
+}
+
+const getCountriesAndContinents = %[1]cquery getCountriesAndContinents {
+    continents {
+        code
+        name
+    }
+    countries {
+        code
+        name
+    }
+}
+%[1]c
+
+type CountriesClient interface {
+	GetCountriesAndContinents(header *http.Header) (*http.Response, error)
+}
+
+func (c *countriesClient) GetCountriesAndContinents(header *http.Header) (*http.Response, error) {
+	params := make(map[string]interface{}, 0)
+
+	return c.ctrl.Execute(getCountriesAndContinents, params, header)
+}
+
+type GetCountriesAndContinentsResponse struct {
+	Data   GetCountriesAndContinentsData %[1]cjson:"data"%[1]c
+	Errors []GraphQLError                %[1]cjson:"errors"%[1]c
+}
+
+type GetCountriesAndContinentsData struct {
+	Continents []Continent %[1]cjson:"continents"%[1]c
+	Countries  []Country   %[1]cjson:"countries"%[1]c
+}
+
+type GraphQLError struct {
+	Message    string                 %[1]cjson:"message"%[1]c
+	Locations  []GraphQLErrorLocation %[1]cjson:"locations"%[1]c
+	Extensions GraphQLErrorExtensions %[1]cjson:"extensions"%[1]c
+}
+
+type GraphQLErrorLocation struct {
+	Line   int %[1]cjson:"line"%[1]c
+	Column int %[1]cjson:"column"%[1]c
+}
+
+type GraphQLErrorExtensions struct {
+	Code string %[1]cjson:"code"%[1]c
+}
+
+type countriesClient struct {
+	ctrl GraphqlClient.Client
+}
+
+func New(endpoint string, client *http.Client) CountriesClient {
+	return &countriesClient{
+		ctrl: GraphqlClient.New(endpoint, client),
+	}
+}
+`, '`'))
+
+	assert.Equal(t, expOut, out)
+}
+
 func TestEvaluator_WithPointers(t *testing.T) {
 	schema := loadSchema(t, "test/fragment/fragment.graphql")
 	query := loadQuery(t, schema, "test/fragment/fragment_query.graphql")

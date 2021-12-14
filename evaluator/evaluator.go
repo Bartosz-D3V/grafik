@@ -13,14 +13,16 @@ type Evaluator interface {
 	Generate() []byte
 }
 
+// evaluator is a struct used internally by grafikgen to wrap all required services and properties
 type evaluator struct {
-	generator      generator.Generator
-	visitor        visitor.Visitor
-	schema         *ast.Schema
-	queryDocument  *ast.QueryDocument
-	AdditionalInfo AdditionalInfo
+	generator      generator.Generator // Instance of generator to abstract logic responsible for generating Go code
+	visitor        visitor.Visitor     // Instance of visitor to obtain list of all used custom GraphQL types
+	schema         *ast.Schema         // GraphQL schema provided via CLI
+	queryDocument  *ast.QueryDocument  // GraphQL query document provided via CLI
+	AdditionalInfo AdditionalInfo      // Additional info provided via CLI
 }
 
+// New function creates an instance of evaluator
 func New(rootLoc string, schema *ast.Schema, queryDocument *ast.QueryDocument, additionalInfo AdditionalInfo) Evaluator {
 	return &evaluator{
 		generator:      generator.New(rootLoc),
@@ -31,6 +33,7 @@ func New(rootLoc string, schema *ast.Schema, queryDocument *ast.QueryDocument, a
 	}
 }
 
+// Generate is a root level function that generates the whole grafik client
 func (e *evaluator) Generate() []byte {
 	e.generator.WriteHeader()
 	e.generator.WriteLineBreak(2)

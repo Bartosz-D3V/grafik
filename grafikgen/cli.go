@@ -9,6 +9,7 @@ import (
 	"os"
 )
 
+// cli struct is a wrapper containing all fields required to generate grafik client provided through CLI arguments
 type cli struct {
 	schemaSource *string
 	querySource  *string

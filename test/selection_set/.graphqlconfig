@@ -1,0 +1,8 @@
+{
+  "name": "Multiple selection (selection set) test",
+  "projects": {
+    "array": {
+      "includes": ["./**"]
+    }
+   }
+}

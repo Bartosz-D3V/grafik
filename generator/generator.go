@@ -1,3 +1,4 @@
+// Package generator package abstracts writing specific Go constructs (interfaces, structs etc) into IO
 package generator
 
 import (
@@ -10,6 +11,7 @@ import (
 	"text/template"
 )
 
+// A Generator is an interface that provides contract for generator struct
 type Generator interface {
 	WriteHeader()
 	WritePackage(pkgName string)
@@ -26,11 +28,14 @@ type Generator interface {
 	Generate() []byte
 }
 
+// generator is a private struct that can be created with New function.
 type generator struct {
-	stream   *bytes.Buffer
-	template *template.Template
+	stream   *bytes.Buffer      // IO to write all code to and read from
+	template *template.Template // Predefined template defined in package templates
 }
 
+// New return instance of generator.
+// rootLoc is relative location of project root (grafik/)
 func New(rootLoc string) Generator {
 	funcMap := template.FuncMap{
 		"title":        strings.Title,
@@ -47,14 +52,17 @@ func New(rootLoc string) Generator {
 	}
 }
 
+// WriteHeader writes top level comment (grafik header)
 func (g *generator) WriteHeader() {
 	g.write(Header)
 }
 
+// WritePackage writes name of the package
 func (g *generator) WritePackage(pkgName string) {
 	g.write(fmt.Sprintf("package %s", pkgName))
 }
 
+// WriteImports writes list of all required imports
 func (g *generator) WriteImports() {
 	err := g.template.ExecuteTemplate(g.stream, "imports.tmpl", make(map[string]interface{}))
 	if err != nil {
@@ -62,10 +70,12 @@ func (g *generator) WriteImports() {
 	}
 }
 
+// WriteLineBreak writes number of line breaks based on provided number (r)
 func (g *generator) WriteLineBreak(r int) {
 	g.write(strings.Repeat("\n", r))
 }
 
+// WriteInterface writes interface of provided name and functions (fn)
 func (g *generator) WriteInterface(name string, fn ...Func) {
 	config := map[string]interface{}{
 		"InterfaceName": name,
@@ -77,6 +87,7 @@ func (g *generator) WriteInterface(name string, fn ...Func) {
 	}
 }
 
+// WritePublicStruct writes struct with capitalized name, fields and json tags based on generator.Struct
 func (g *generator) WritePublicStruct(s Struct, usePointers bool) {
 	config := map[string]interface{}{
 		"Struct":      s,
@@ -89,6 +100,7 @@ func (g *generator) WritePublicStruct(s Struct, usePointers bool) {
 	}
 }
 
+// WritePrivateStruct writes struct with lowercase name, fields and no json tags based on generator.Struct
 func (g *generator) WritePrivateStruct(s Struct) {
 	config := map[string]interface{}{
 		"Struct": s,
@@ -100,6 +112,7 @@ func (g *generator) WritePrivateStruct(s Struct) {
 	}
 }
 
+// WriteEnum writes Enum based on generator.Enum
 func (g *generator) WriteEnum(e Enum) {
 	err := g.template.ExecuteTemplate(g.stream, "enum.tmpl", e)
 	if err != nil {
@@ -107,6 +120,7 @@ func (g *generator) WriteEnum(e Enum) {
 	}
 }
 
+// WriteConst writes Const based on generator.Const
 func (g *generator) WriteConst(c Const) {
 	err := g.template.ExecuteTemplate(g.stream, "const.tmpl", c)
 	if err != nil {
@@ -114,6 +128,7 @@ func (g *generator) WriteConst(c Const) {
 	}
 }
 
+// WriteClientConstructor writes New function that serves as a constructor for grafik client
 func (g *generator) WriteClientConstructor(clientName string) {
 	err := g.template.ExecuteTemplate(g.stream, "constructor.tmpl", clientName)
 	if err != nil {
@@ -121,6 +136,7 @@ func (g *generator) WriteClientConstructor(clientName string) {
 	}
 }
 
+// WriteInterfaceImplementation writes implementation for earlier defined interface as function with receiver.
 func (g *generator) WriteInterfaceImplementation(clientName string, f Func) {
 	config := map[string]interface{}{
 		"ClientName": clientName,
@@ -132,6 +148,7 @@ func (g *generator) WriteInterfaceImplementation(clientName string, f Func) {
 	}
 }
 
+// WriteGraphqlErrorStructs writes predefined GraphQL error structs
 func (g *generator) WriteGraphqlErrorStructs(usePointers bool) {
 	config := map[string]interface{}{
 		"UsePointers":            usePointers,
@@ -143,6 +160,7 @@ func (g *generator) WriteGraphqlErrorStructs(usePointers bool) {
 	}
 }
 
+// Generate formats the generated code and returns it as a slice of bytes
 func (g *generator) Generate() []byte {
 	b := make([]byte, g.stream.Len())
 	_, err := g.stream.Read(b)
