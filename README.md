@@ -4,7 +4,7 @@
 [![GitHub][mit-badge]][mit-link]
 [![PRs Welcome][pr-welcome-badge]][gh-contribute]
 
-<p align="center"><img src="[logo-link]" width="300" alt="grafik logo"></p>
+<p align="center"><img src="docs/img/logo.png" width="300" alt="grafik logo"></p>
 
 **grafik** [*/ˈɡra.fik/*] (Origin: Polish): illustrator, graphic designer
 
@@ -189,5 +189,3 @@ To view the help run `grafikgen help` command.
 [gqlparser-link]: https://github.com/vektah/gqlparser
 
 [examples-link]: https://github.com/Bartosz-D3V/grafik/tree/master/examples
-
-[logo-link]: docs/img/logo.png
