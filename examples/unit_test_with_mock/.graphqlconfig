@@ -1,0 +1,8 @@
+{
+  "name": "Basic query example to demonstrate unit testing",
+  "projects": {
+    "array": {
+      "includes": ["./**"]
+    }
+   }
+}
