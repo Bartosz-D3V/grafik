@@ -1,6 +1,6 @@
 // Generated with grafik. DO NOT EDIT
 
-package main
+package unit_test_example_with_mock
 
 import (
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
