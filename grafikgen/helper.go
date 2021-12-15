@@ -29,7 +29,7 @@ Example:
 
 `
 
-const rwe = 0777
+const rwe = 0755
 
 // writeFile writes the whole slice of bytes to new file.
 // Used to create the generated grafik client file.
@@ -39,7 +39,7 @@ func writeFile(content []byte, fullDist string) {
 	if err != nil {
 		panic(err)
 	}
-	openFile, err := os.OpenFile(fullDist, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	openFile, err := os.OpenFile(fullDist, os.O_RDWR|os.O_CREATE|os.O_TRUNC, rwe)
 	if err != nil {
 		panic(err)
 	}

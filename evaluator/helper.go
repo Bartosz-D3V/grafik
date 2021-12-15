@@ -124,8 +124,8 @@ func (e *evaluator) parseFieldArgs(args *ast.FieldList) []generator.TypeArg {
 	return funcArgs
 }
 
-// convGoType maps GraphQL types into Go types
-// User defined types are returned as they are and defined later on
+// convGoType maps GraphQL types into Go types.
+// User defined types are returned as they are and defined later on.
 func (e *evaluator) convGoType(astType *ast.Type) string {
 	switch namedType := astType.NamedType; namedType {
 	case "String",
@@ -142,7 +142,7 @@ func (e *evaluator) convGoType(astType *ast.Type) string {
 	}
 }
 
-// convComplexType recursively checks GraphQL type and returns corresponding Go type
+// convComplexType recursively checks GraphQL type and returns corresponding Go type.
 func (e *evaluator) convComplexType(astType *ast.Type) string {
 	if common.IsList(astType) {
 		// If astType is not multi-dimensional array return '[]' with named type
