@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// genSchemaDef generates custom, user-defined structs and enums used in GraphQL query file.
 func (e *evaluator) genSchemaDef(usePointers bool) {
 	e.generator.WriteLineBreak(2)
 
@@ -20,6 +21,7 @@ func (e *evaluator) genSchemaDef(usePointers bool) {
 	e.generator.WriteLineBreak(2)
 }
 
+// generateEnumTypesFromDefinition generates enums based on GraphQL schema.
 func (e *evaluator) generateEnumTypesFromDefinition(types map[string]*ast.Definition) {
 	for _, definition := range types {
 		if definition.Kind == ast.Enum && !definition.BuiltIn {
@@ -28,6 +30,7 @@ func (e *evaluator) generateEnumTypesFromDefinition(types map[string]*ast.Defini
 	}
 }
 
+// generateEnumTypesFromDefinition generates structs based on GraphQL schema.
 func (e *evaluator) generateStructs(usePointers bool) {
 	cTypes := e.visitor.IntrospectTypes()
 	for _, customType := range cTypes {
@@ -37,12 +40,11 @@ func (e *evaluator) generateStructs(usePointers bool) {
 		case ast.Object,
 			ast.InputObject:
 			e.createStruct(cType, usePointers)
-		default:
-			//panic(fmt.Errorf("%s type not supported", cType.Kind))
 		}
 	}
 }
 
+// createEnum creates generator.Enum and writes to IO.
 func (e *evaluator) createEnum(cType *ast.Definition) {
 	fields := make([]string, len(cType.EnumValues))
 	for i, field := range cType.EnumValues {
@@ -58,6 +60,7 @@ func (e *evaluator) createEnum(cType *ast.Definition) {
 	e.generator.WriteEnum(en)
 }
 
+// createStruct creates generator.Struct and writes to IO.
 func (e *evaluator) createStruct(cType *ast.Definition, usePointers bool) {
 	s := generator.Struct{
 		Name:   cType.Name,
@@ -67,6 +70,19 @@ func (e *evaluator) createStruct(cType *ast.Definition, usePointers bool) {
 	e.generator.WritePublicStruct(s, usePointers)
 }
 
+// parseSelectionSet creates array of type generator.TypeArg based on selection set.
+// Consider this GraphQL query:
+// query getContinentsAndCountries {
+//    continents {
+//        code
+//    }
+//    country {
+//        name
+//    }
+// }
+// ast.SelectionSet is array of continents and country.
+// parseSelectionSet will return array of type generator.TypeArg with two elements - continents and country.
+// Name will be continents and country. Type will be introspected and either primitive or user defined struct.
 func (e *evaluator) parseSelectionSet(set ast.SelectionSet) []generator.TypeArg {
 	selectionSet := make([]generator.TypeArg, len(set))
 	for i, s := range set {
@@ -79,6 +95,7 @@ func (e *evaluator) parseSelectionSet(set ast.SelectionSet) []generator.TypeArg 
 	return selectionSet
 }
 
+// parseFnArgs converts GraphQL operation (query/mutation) arguments (ast.VariableDefinitionList) and returns slice of generator.TypeArg
 func (e *evaluator) parseFnArgs(args *ast.VariableDefinitionList) []generator.TypeArg {
 	var funcArgs []generator.TypeArg
 	for _, arg := range *args {
@@ -91,6 +108,7 @@ func (e *evaluator) parseFnArgs(args *ast.VariableDefinitionList) []generator.Ty
 	return funcArgs
 }
 
+// parseFieldArgs converts GraphQL fields (ast.FieldList) into generator.TypeArg
 func (e *evaluator) parseFieldArgs(args *ast.FieldList) []generator.TypeArg {
 	var funcArgs []generator.TypeArg
 	for _, arg := range *args {
@@ -103,6 +121,8 @@ func (e *evaluator) parseFieldArgs(args *ast.FieldList) []generator.TypeArg {
 	return funcArgs
 }
 
+// convGoType maps GraphQL types into Go types
+// User defined types are returned as they are and defined later on
 func (e *evaluator) convGoType(astType *ast.Type) string {
 	switch namedType := astType.NamedType; namedType {
 	case "String",
@@ -119,8 +139,10 @@ func (e *evaluator) convGoType(astType *ast.Type) string {
 	}
 }
 
+// convComplexType recursively checks GraphQL type and returns corresponding Go type
 func (e *evaluator) convComplexType(astType *ast.Type) string {
 	if common.IsList(astType) {
+		// If astType is not multi-dimensional array return '[]' with named type
 		if nt := astType.Elem; common.IsComplex(nt) && !common.IsList(nt) {
 			return fmt.Sprintf("[]%s", nt.NamedType)
 		} else {
@@ -128,13 +150,29 @@ func (e *evaluator) convComplexType(astType *ast.Type) string {
 		}
 	}
 
-	if astType.NamedType == "" {
-		return ""
-	}
-
+	// If astType is not array it is an object - just return the name
 	return astType.NamedType
 }
 
+// genOperations generates GraphQL operations as constants.
+// For example the following query:
+// query getContinentsAndCountries {
+//    continents {
+//        code
+//    }
+//    country {
+//        name
+//    }
+// }
+// Will be conversed to this Go code:
+// const getContinentsAndCountries = `query getContinentsAndCountries {
+//    continents {
+//        code
+//    }
+//    country {
+//        name
+//    }
+// }'
 func (e *evaluator) genOperations() {
 	ops := e.queryDocument.Operations
 	opsCount := len(ops)
@@ -143,6 +181,7 @@ func (e *evaluator) genOperations() {
 	var curOp *ast.OperationDefinition
 	var nextOp *ast.OperationDefinition
 
+	// Split multiple GraphQL operations into sub-operations to generate const value for each operation
 	for i := 0; i < opsCount; i++ {
 		curOp = ops[i]
 		if i < opsCount-1 {
@@ -170,6 +209,7 @@ func (e *evaluator) genOperations() {
 	}
 }
 
+// genClientCode generates client code - all interfaces, constructor methods and client struct.
 func (e *evaluator) genClientCode() {
 	e.genOpsInterface()
 	e.generator.WriteLineBreak(2)
@@ -180,6 +220,11 @@ func (e *evaluator) genClientCode() {
 	e.generator.WriteClientConstructor(e.AdditionalInfo.ClientName)
 }
 
+// genOpsInterface generates public interface for grafik client.
+// For example:
+// type SpaceXClient interface {
+//	AddOrUpdateHardcodedUser(rocketName string, usersOnConflict UsersOnConflict, header *http.Header) (*http.Response, error)
+// }
 func (e *evaluator) genOpsInterface() {
 	ops := e.queryDocument.Operations
 
@@ -195,18 +240,24 @@ func (e *evaluator) genOpsInterface() {
 	}
 	e.generator.WriteInterface(e.AdditionalInfo.ClientName, funcs...)
 	e.generator.WriteLineBreak(2)
+
+	// Generate interface implementation for each interface method
 	for _, f := range funcs {
 		e.generator.WriteInterfaceImplementation(e.AdditionalInfo.ClientName, f)
 		e.generator.WriteLineBreak(2)
 	}
 
+	// Generate wrapper struct for selection set operations
 	for _, f := range funcs {
 		e.genWrapperResponseStruct(f)
 	}
 
+	// Generate predefined error structs
 	e.genErrorStructs()
 }
 
+// genWrapperResponseStruct generates top level GraphQL response type
+// See https://graphql.org/learn/serving-over-http/#response
 func (e *evaluator) genWrapperResponseStruct(f generator.Func) {
 	dataStructName := fmt.Sprintf("%sData", strings.Title(f.Name))
 	responseStructName := fmt.Sprintf("%sResponse", strings.Title(f.Name))
@@ -226,6 +277,8 @@ func (e *evaluator) genWrapperResponseStruct(f generator.Func) {
 	e.generator.WritePublicStruct(structWrapper, e.AdditionalInfo.UsePointers)
 	e.generator.WriteLineBreak(2)
 
+	// generate object referenced in 'data' JSON response
+	// if object has selection set - those will be created as struct fields
 	s := generator.Struct{
 		Name:   dataStructName,
 		Fields: f.WrapperArgs,
@@ -234,10 +287,12 @@ func (e *evaluator) genWrapperResponseStruct(f generator.Func) {
 	e.generator.WriteLineBreak(2)
 }
 
+// genErrorStructs generates predefined GraphQL error structs
 func (e *evaluator) genErrorStructs() {
 	e.generator.WriteGraphqlErrorStructs(e.AdditionalInfo.UsePointers)
 }
 
+// genClientStruct generates internal grafik GraphQL client defined in package client
 func (e *evaluator) genClientStruct() {
 	s := generator.Struct{
 		Name: e.AdditionalInfo.ClientName,
