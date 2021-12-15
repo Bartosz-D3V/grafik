@@ -17,3 +17,6 @@ linters:
     - ifshort
     - importas
     - misspell
+    - gocritic
+    - unconvert
+    - unparam
