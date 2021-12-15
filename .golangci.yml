@@ -1,0 +1,19 @@
+run:
+  timeout: 5m
+linters:
+  enable:
+    - cyclop
+    - depguard
+    - dupl
+    - errname
+    - exhaustive
+    - gci
+    - gochecknoglobals
+    - gocognit
+    - goconst
+    - godot
+    - gomnd
+    - gosec
+    - ifshort
+    - importas
+    - misspell
