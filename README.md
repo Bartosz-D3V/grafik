@@ -4,6 +4,10 @@
 [![GitHub][mit-badge]][mit-link]
 [![PRs Welcome][pr-welcome-badge]][gh-contribute]
 
+<p align="center"><img src="docs/img/logo.png" width="300" alt="grafik logo"></p>
+
+**grafik** [*/ˈɡra.fik/*] (Origin: Polish): illustrator, graphic designer
+
 Grafik is a schema based GraphQL [Go][golang] code generator & HTTP client.
 
 ## Foreword
