@@ -75,13 +75,13 @@ func (c cli) parseSchemaName() string {
 	return c.queryFileName()
 }
 
-// queryFileName parses GraphQL query file name
+// queryFileName parses GraphQL query file name.
 func (c cli) queryFileName() string {
 	baseName := filepath.Base(*c.querySource)
 	return common.SentenceCase(strings.Split(baseName, ".")[0])
 }
 
-// getFileContent returns content of the file
+// getFileContent returns content of the file.
 func getFileContent(src *string) ([]byte, error) {
 	if src == nil || *src == "" {
 		return nil, errors.New("provided source is empty")
@@ -121,7 +121,7 @@ func validateGenOptions(opts ...*string) error {
 	return nil
 }
 
-// usage prints help usage text
+// usage prints help usage text.
 func usage(fs *flag.FlagSet) {
 	_, _ = io.WriteString(os.Stdout, usageTxt)
 	_, _ = io.WriteString(os.Stdout, fmt.Sprintf("Options for %s command: \n", fs.Name()))

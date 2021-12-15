@@ -2,12 +2,12 @@ package common
 
 import "github.com/vektah/gqlparser/ast"
 
-// IsList determines if ast.Type is a list (single/multi dimensional)
+// IsList determines if ast.Type is a list (single/multi dimensional).
 func IsList(astType *ast.Type) bool {
 	return astType.IsCompatible(ast.ListType(astType.Elem, astType.Position))
 }
 
-// FilterCustomFields returns slice of FieldDefinition created by user in .graphql files
+// FilterCustomFields returns slice of FieldDefinition created by user in .graphql files.
 func FilterCustomFields(fieldList ast.FieldList) []ast.FieldDefinition {
 	cFields := make([]ast.FieldDefinition, 0)
 	for _, field := range fieldList {

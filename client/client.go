@@ -16,14 +16,14 @@ type Client interface {
 
 // client is a private struct that can be created with New function.
 type client struct {
-	// endpoint specifies full URL address of the GraphQL endpoint
+	// endpoint specifies full URL address of the GraphQL endpoint.
 	endpoint string
 
 	// httpClient is a pointer to an instance of http.Client. It can be fully customized to provide authentication mechanism, timeout etc.
 	httpClient *http.Client
 }
 
-// New endpoint creates an instance of the client
+// New endpoint creates an instance of the client.
 func New(endpoint string, httpClient *http.Client) Client {
 	return &client{
 		endpoint:   endpoint,

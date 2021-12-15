@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-// genSchemaDef generates custom, user-defined structs and enums used in GraphQL query file
+// genSchemaDef generates custom, user-defined structs and enums used in GraphQL query file.
 func (e *evaluator) genSchemaDef(usePointers bool) {
 	e.generator.WriteLineBreak(2)
 
@@ -21,7 +21,7 @@ func (e *evaluator) genSchemaDef(usePointers bool) {
 	e.generator.WriteLineBreak(2)
 }
 
-// generateEnumTypesFromDefinition generates enums based on GraphQL schema
+// generateEnumTypesFromDefinition generates enums based on GraphQL schema.
 func (e *evaluator) generateEnumTypesFromDefinition(types map[string]*ast.Definition) {
 	for _, definition := range types {
 		if definition.Kind == ast.Enum && !definition.BuiltIn {
@@ -30,7 +30,7 @@ func (e *evaluator) generateEnumTypesFromDefinition(types map[string]*ast.Defini
 	}
 }
 
-// generateEnumTypesFromDefinition generates structs based on GraphQL schema
+// generateEnumTypesFromDefinition generates structs based on GraphQL schema.
 func (e *evaluator) generateStructs(usePointers bool) {
 	cTypes := e.visitor.IntrospectTypes()
 	for _, customType := range cTypes {
@@ -44,7 +44,7 @@ func (e *evaluator) generateStructs(usePointers bool) {
 	}
 }
 
-// createEnum creates generator.Enum and writes to IO
+// createEnum creates generator.Enum and writes to IO.
 func (e *evaluator) createEnum(cType *ast.Definition) {
 	fields := make([]string, len(cType.EnumValues))
 	for i, field := range cType.EnumValues {
@@ -60,7 +60,7 @@ func (e *evaluator) createEnum(cType *ast.Definition) {
 	e.generator.WriteEnum(en)
 }
 
-// createStruct creates generator.Struct and writes to IO
+// createStruct creates generator.Struct and writes to IO.
 func (e *evaluator) createStruct(cType *ast.Definition, usePointers bool) {
 	s := generator.Struct{
 		Name:   cType.Name,

@@ -15,7 +15,7 @@ func SentenceCase(s string) string {
 	return string(r)
 }
 
-// SnakeCaseToCamelCase converts snake_case to CamelCase
+// SnakeCaseToCamelCase converts snake_case to CamelCase.
 // "my_example" -> "MyExample"
 // "i_phone" -> "iPhone"
 // "1_Note" -> "1Note"
