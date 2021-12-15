@@ -4,7 +4,7 @@
 [![GitHub][mit-badge]][mit-link]
 [![PRs Welcome][pr-welcome-badge]][gh-contribute]
 
-<p align="center"><img src="docs/img/logo_mini.png" width="300" alt="grafik logo"></p>
+<p align="center"><img src="docs/img/logo.png" width="300" alt="grafik logo"></p>
 
 **grafik** [*/ˈɡra.fik/*] (Origin: Polish): illustrator, graphic designer
 
