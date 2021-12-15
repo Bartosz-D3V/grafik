@@ -111,7 +111,7 @@ func (e *evaluator) parseFnArgs(args *ast.VariableDefinitionList) []generator.Ty
 	return funcArgs
 }
 
-// parseFieldArgs converts GraphQL fields (ast.FieldList) into generator.TypeArg
+// parseFieldArgs converts GraphQL fields (ast.FieldList) into generator.TypeArg.
 func (e *evaluator) parseFieldArgs(args *ast.FieldList) []generator.TypeArg {
 	var funcArgs []generator.TypeArg
 	for _, arg := range *args {
@@ -290,12 +290,12 @@ func (e *evaluator) genWrapperResponseStruct(f generator.Func) {
 	e.generator.WriteLineBreak(twoLinesBreak)
 }
 
-// genErrorStructs generates predefined GraphQL error structs
+// genErrorStructs generates predefined GraphQL error structs.
 func (e *evaluator) genErrorStructs() {
 	e.generator.WriteGraphqlErrorStructs(e.AdditionalInfo.UsePointers)
 }
 
-// genClientStruct generates internal grafik GraphQL client defined in package client
+// genClientStruct generates internal grafik GraphQL client defined in package client.
 func (e *evaluator) genClientStruct() {
 	s := generator.Struct{
 		Name: e.AdditionalInfo.ClientName,

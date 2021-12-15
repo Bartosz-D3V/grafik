@@ -28,13 +28,13 @@ func SnakeCaseToCamelCase(s string) string {
 	capitalize := false
 	for i := 1; i < len(s); i++ {
 		char := s[i]
-		if char == '_' {
+		switch {
+		case char == '_':
 			capitalize = true
-			continue
-		} else if capitalize {
+		case capitalize:
 			capitalize = false
 			buff.WriteRune(unicode.ToUpper(rune(char)))
-		} else {
+		default:
 			capitalize = false
 			buff.WriteByte(char)
 		}
