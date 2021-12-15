@@ -29,11 +29,13 @@ Example:
 
 `
 
+const rwe = 0777
+
 // writeFile writes the whole slice of bytes to new file.
 // Used to create the generated grafik client file.
 func writeFile(content []byte, fullDist string) {
 	dir, _ := filepath.Split(fullDist)
-	err := os.MkdirAll(dir, 0777)
+	err := os.MkdirAll(dir, rwe)
 	if err != nil {
 		panic(err)
 	}

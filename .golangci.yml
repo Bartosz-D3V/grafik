@@ -7,7 +7,6 @@ linters:
     - dupl
     - errname
     - exhaustive
-    - gci
     - gochecknoglobals
     - gocognit
     - goconst

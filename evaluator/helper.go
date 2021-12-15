@@ -8,17 +8,20 @@ import (
 	"strings"
 )
 
+const twoLinesBreak = 2
+const oneLineBreak = 1
+
 // genSchemaDef generates custom, user-defined structs and enums used in GraphQL query file.
 func (e *evaluator) genSchemaDef(usePointers bool) {
-	e.generator.WriteLineBreak(2)
+	e.generator.WriteLineBreak(twoLinesBreak)
 
-	e.generator.WriteLineBreak(2)
+	e.generator.WriteLineBreak(twoLinesBreak)
 
 	e.generateEnumTypesFromDefinition(e.schema.Types)
 
 	e.generateStructs(usePointers)
 
-	e.generator.WriteLineBreak(2)
+	e.generator.WriteLineBreak(twoLinesBreak)
 }
 
 // generateEnumTypesFromDefinition generates enums based on GraphQL schema.
@@ -56,7 +59,7 @@ func (e *evaluator) createEnum(cType *ast.Definition) {
 		Fields: fields,
 	}
 
-	e.generator.WriteLineBreak(2)
+	e.generator.WriteLineBreak(twoLinesBreak)
 	e.generator.WriteEnum(en)
 }
 
@@ -66,7 +69,7 @@ func (e *evaluator) createStruct(cType *ast.Definition, usePointers bool) {
 		Name:   cType.Name,
 		Fields: e.parseFieldArgs(&cType.Fields),
 	}
-	e.generator.WriteLineBreak(2)
+	e.generator.WriteLineBreak(twoLinesBreak)
 	e.generator.WritePublicStruct(s, usePointers)
 }
 
@@ -95,7 +98,7 @@ func (e *evaluator) parseSelectionSet(set ast.SelectionSet) []generator.TypeArg 
 	return selectionSet
 }
 
-// parseFnArgs converts GraphQL operation (query/mutation) arguments (ast.VariableDefinitionList) and returns slice of generator.TypeArg
+// parseFnArgs converts GraphQL operation (query/mutation) arguments (ast.VariableDefinitionList) and returns slice of generator.TypeArg.
 func (e *evaluator) parseFnArgs(args *ast.VariableDefinitionList) []generator.TypeArg {
 	var funcArgs []generator.TypeArg
 	for _, arg := range *args {
@@ -196,7 +199,7 @@ func (e *evaluator) genOperations() {
 				Val:  queryStr,
 			}
 			e.generator.WriteConst(c)
-			e.generator.WriteLineBreak(2)
+			e.generator.WriteLineBreak(twoLinesBreak)
 		} else {
 			queryStr := src[curOp.Position.Start:]
 			c := generator.Const{
@@ -204,7 +207,7 @@ func (e *evaluator) genOperations() {
 				Val:  queryStr,
 			}
 			e.generator.WriteConst(c)
-			e.generator.WriteLineBreak(1)
+			e.generator.WriteLineBreak(oneLineBreak)
 		}
 	}
 }
@@ -212,10 +215,10 @@ func (e *evaluator) genOperations() {
 // genClientCode generates client code - all interfaces, constructor methods and client struct.
 func (e *evaluator) genClientCode() {
 	e.genOpsInterface()
-	e.generator.WriteLineBreak(2)
+	e.generator.WriteLineBreak(twoLinesBreak)
 
 	e.genClientStruct()
-	e.generator.WriteLineBreak(2)
+	e.generator.WriteLineBreak(twoLinesBreak)
 
 	e.generator.WriteClientConstructor(e.AdditionalInfo.ClientName)
 }
@@ -239,12 +242,12 @@ func (e *evaluator) genOpsInterface() {
 		funcs = append(funcs, f)
 	}
 	e.generator.WriteInterface(e.AdditionalInfo.ClientName, funcs...)
-	e.generator.WriteLineBreak(2)
+	e.generator.WriteLineBreak(twoLinesBreak)
 
 	// Generate interface implementation for each interface method
 	for _, f := range funcs {
 		e.generator.WriteInterfaceImplementation(e.AdditionalInfo.ClientName, f)
-		e.generator.WriteLineBreak(2)
+		e.generator.WriteLineBreak(twoLinesBreak)
 	}
 
 	// Generate wrapper struct for selection set operations
@@ -275,7 +278,7 @@ func (e *evaluator) genWrapperResponseStruct(f generator.Func) {
 		},
 	}
 	e.generator.WritePublicStruct(structWrapper, e.AdditionalInfo.UsePointers)
-	e.generator.WriteLineBreak(2)
+	e.generator.WriteLineBreak(twoLinesBreak)
 
 	// generate object referenced in 'data' JSON response
 	// if object has selection set - those will be created as struct fields
@@ -284,7 +287,7 @@ func (e *evaluator) genWrapperResponseStruct(f generator.Func) {
 		Fields: f.WrapperArgs,
 	}
 	e.generator.WritePublicStruct(s, e.AdditionalInfo.UsePointers)
-	e.generator.WriteLineBreak(2)
+	e.generator.WriteLineBreak(twoLinesBreak)
 }
 
 // genErrorStructs generates predefined GraphQL error structs

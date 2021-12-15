@@ -6,9 +6,9 @@ import (
 )
 
 // SentenceCase returns a new string with first character lowercased.
-// "MyExample" -> "myExample"
-// "iPhone" -> "iPhone"
-// "1Note" -> "1Note"
+// "MyExample" -> "myExample".
+// "iPhone" -> "iPhone".
+// "1Note" -> "1Note".
 func SentenceCase(s string) string {
 	r := []rune(s)
 	r[0] = unicode.ToLower(r[0])
@@ -16,9 +16,9 @@ func SentenceCase(s string) string {
 }
 
 // SnakeCaseToCamelCase converts snake_case to CamelCase.
-// "my_example" -> "MyExample"
-// "i_phone" -> "iPhone"
-// "1_Note" -> "1Note"
+// "my_example" -> "MyExample".
+// "i_phone" -> "iPhone".
+// "1_Note" -> "1Note".
 func SnakeCaseToCamelCase(s string) string {
 	if s == "" {
 		return s
