@@ -20,6 +20,8 @@ type cli struct {
 	usePointers  *bool
 }
 
+const numOfRequiredArgs = 2
+
 func main() {
 	genCmd := flag.NewFlagSet("gen", flag.ExitOnError)
 	genSchemaSrc := genCmd.String("schema_source", "", "[required] Location of the GraphQL schema file. Either absolute or relative.")
@@ -29,14 +31,14 @@ func main() {
 	genDestination := genCmd.String("destination", "./", "[optional] Output filename with path. Either absolute or relative; defaults to the current directory and client name.")
 	genUsePointers := genCmd.Bool("use_pointers", false, "[optional] Generate public GraphQL structs' fields as pointers; defaults to false.")
 
-	if len(os.Args) < 2 {
+	if len(os.Args) < numOfRequiredArgs {
 		fmt.Println("gen or help subcommand is required")
 		os.Exit(1)
 	}
 
 	switch os.Args[1] {
 	case "gen":
-		_ = genCmd.Parse(os.Args[2:])
+		_ = genCmd.Parse(os.Args[numOfRequiredArgs:])
 	case "help":
 		usage(genCmd)
 		os.Exit(0)

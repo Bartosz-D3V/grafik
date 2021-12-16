@@ -12,6 +12,7 @@ import (
 )
 
 func TestEvaluator_Generate_FlatStructure(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/simple_type/simple_type.graphql")
 	query := loadQuery(t, schema, "test/simple_type/simple_type_query.graphql")
 	info := AdditionalInfo{
@@ -28,6 +29,7 @@ func TestEvaluator_Generate_FlatStructure(t *testing.T) {
 package grafik_client
 
 import (
+    "context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
@@ -51,23 +53,23 @@ const renameFileWithId = %[1]cmutation RenameFileWithId($id: ID!, $name: String!
 }%[1]c
 
 type FilesClient interface {
-	GetFileNameWithId(id string, header *http.Header) (*http.Response, error)
-	RenameFileWithId(id string, name string, header *http.Header) (*http.Response, error)
+	GetFileNameWithId(ctx context.Context, id string, header *http.Header) (*http.Response, error)
+	RenameFileWithId(ctx context.Context, id string, name string, header *http.Header) (*http.Response, error)
 }
 
-func (c *filesClient) GetFileNameWithId(id string, header *http.Header) (*http.Response, error) {
+func (c *filesClient) GetFileNameWithId(ctx context.Context, id string, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 1)
 	params["id"] = id
 
-	return c.ctrl.Execute(getFileNameWithId, params, header)
+	return c.ctrl.Execute(ctx, getFileNameWithId, params, header)
 }
 
-func (c *filesClient) RenameFileWithId(id string, name string, header *http.Header) (*http.Response, error) {
+func (c *filesClient) RenameFileWithId(ctx context.Context, id string, name string, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 2)
 	params["id"] = id
 	params["name"] = name
 
-	return c.ctrl.Execute(renameFileWithId, params, header)
+	return c.ctrl.Execute(ctx, renameFileWithId, params, header)
 }
 
 type GetFileNameWithIdResponse struct {
@@ -118,6 +120,7 @@ func New(endpoint string, client *http.Client) FilesClient {
 }
 
 func TestEvaluator_Generate_ArrayStructure(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/array/array.graphql")
 	query := loadQuery(t, schema, "test/array/array_query.graphql")
 	info := AdditionalInfo{
@@ -134,6 +137,7 @@ func TestEvaluator_Generate_ArrayStructure(t *testing.T) {
 package grafik_client
 
 import (
+    "context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
@@ -155,13 +159,13 @@ const getAllFilmsProducers = %[1]cquery GetAllFilmsProducers {
 }%[1]c
 
 type FilmsClient interface {
-	GetAllFilmsProducers(header *http.Header) (*http.Response, error)
+	GetAllFilmsProducers(ctx context.Context, header *http.Header) (*http.Response, error)
 }
 
-func (c *filmsClient) GetAllFilmsProducers(header *http.Header) (*http.Response, error) {
+func (c *filmsClient) GetAllFilmsProducers(ctx context.Context, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
-	return c.ctrl.Execute(getAllFilmsProducers, params, header)
+	return c.ctrl.Execute(ctx, getAllFilmsProducers, params, header)
 }
 
 type GetAllFilmsProducersResponse struct {
@@ -203,6 +207,7 @@ func New(endpoint string, client *http.Client) FilmsClient {
 }
 
 func TestEvaluator_Generate_2DArrayStructure(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/2d_array/2d_array.graphql")
 	query := loadQuery(t, schema, "test/2d_array/2d_array_query.graphql")
 	info := AdditionalInfo{
@@ -219,6 +224,7 @@ func TestEvaluator_Generate_2DArrayStructure(t *testing.T) {
 package grafik_client
 
 import (
+    "context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
@@ -239,13 +245,13 @@ const getAllResults = %[1]cquery GetAllResults {
 }%[1]c
 
 type MathClient interface {
-	GetAllResults(header *http.Header) (*http.Response, error)
+	GetAllResults(ctx context.Context, header *http.Header) (*http.Response, error)
 }
 
-func (c *mathClient) GetAllResults(header *http.Header) (*http.Response, error) {
+func (c *mathClient) GetAllResults(ctx context.Context, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
-	return c.ctrl.Execute(getAllResults, params, header)
+	return c.ctrl.Execute(ctx, getAllResults, params, header)
 }
 
 type GetAllResultsResponse struct {
@@ -288,6 +294,7 @@ func New(endpoint string, client *http.Client) MathClient {
 }
 
 func TestEvaluator_Generate_3DArrayStructure(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/3d_array/3d_array.graphql")
 	query := loadQuery(t, schema, "test/3d_array/3d_array_query.graphql")
 	info := AdditionalInfo{
@@ -304,6 +311,7 @@ func TestEvaluator_Generate_3DArrayStructure(t *testing.T) {
 package grafik_client
 
 import (
+    "context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
@@ -323,13 +331,13 @@ const getAllResults = %[1]cquery GetAllResults {
 }%[1]c
 
 type MathClient interface {
-	GetAllResults(header *http.Header) (*http.Response, error)
+	GetAllResults(ctx context.Context, header *http.Header) (*http.Response, error)
 }
 
-func (c *mathClient) GetAllResults(header *http.Header) (*http.Response, error) {
+func (c *mathClient) GetAllResults(ctx context.Context, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
-	return c.ctrl.Execute(getAllResults, params, header)
+	return c.ctrl.Execute(ctx, getAllResults, params, header)
 }
 
 type GetAllResultsResponse struct {
@@ -371,6 +379,7 @@ func New(endpoint string, client *http.Client) MathClient {
 }
 
 func TestEvaluator_Generate_NestedStructure(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/nested_type/nested_type.graphql")
 	query := loadQuery(t, schema, "test/nested_type/nested_type_query.graphql")
 	info := AdditionalInfo{
@@ -387,6 +396,7 @@ func TestEvaluator_Generate_NestedStructure(t *testing.T) {
 package grafik_client
 
 import (
+    "context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
@@ -428,13 +438,13 @@ const getHeroWithId123ABC = %[1]cquery GetHeroWithId123ABC {
 }%[1]c
 
 type SpecificHeroClient interface {
-	GetHeroWithId123ABC(header *http.Header) (*http.Response, error)
+	GetHeroWithId123ABC(ctx context.Context, header *http.Header) (*http.Response, error)
 }
 
-func (c *specificHeroClient) GetHeroWithId123ABC(header *http.Header) (*http.Response, error) {
+func (c *specificHeroClient) GetHeroWithId123ABC(ctx context.Context, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
-	return c.ctrl.Execute(getHeroWithId123ABC, params, header)
+	return c.ctrl.Execute(ctx, getHeroWithId123ABC, params, header)
 }
 
 type GetHeroWithId123ABCResponse struct {
@@ -476,6 +486,7 @@ func New(endpoint string, client *http.Client) SpecificHeroClient {
 }
 
 func TestEvaluator_Generate_Enum(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/enum/enum.graphql")
 	query := loadQuery(t, schema, "test/enum/enum_query.graphql")
 	info := AdditionalInfo{
@@ -492,9 +503,14 @@ func TestEvaluator_Generate_Enum(t *testing.T) {
 package grafik_client
 
 import (
+    "context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
+
+type Department struct {
+	Name DepartmentName %[1]cjson:"name"%[1]c
+}
 
 type DepartmentName string
 
@@ -505,10 +521,6 @@ const (
 	SUPPORT DepartmentName = "SUPPORT"
 )
 
-type Department struct {
-	Name DepartmentName %[1]cjson:"name"%[1]c
-}
-
 const getDepartment = %[1]cquery getDepartment {
     getDepartment {
         name
@@ -516,13 +528,13 @@ const getDepartment = %[1]cquery getDepartment {
 }%[1]c
 
 type CompanyClient interface {
-	GetDepartment(header *http.Header) (*http.Response, error)
+	GetDepartment(ctx context.Context, header *http.Header) (*http.Response, error)
 }
 
-func (c *companyClient) GetDepartment(header *http.Header) (*http.Response, error) {
+func (c *companyClient) GetDepartment(ctx context.Context, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
-	return c.ctrl.Execute(getDepartment, params, header)
+	return c.ctrl.Execute(ctx, getDepartment, params, header)
 }
 
 type GetDepartmentResponse struct {
@@ -564,6 +576,7 @@ func New(endpoint string, client *http.Client) CompanyClient {
 }
 
 func TestEvaluator_Generate_Input(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/input/input.graphql")
 	query := loadQuery(t, schema, "test/input/input_query.graphql")
 	info := AdditionalInfo{
@@ -580,6 +593,7 @@ func TestEvaluator_Generate_Input(t *testing.T) {
 package grafik_client
 
 import (
+    "context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
@@ -592,6 +606,9 @@ type CapsulesFind struct {
 	ReuseCount     int    %[1]cjson:"reuse_count"%[1]c
 	Status         string %[1]cjson:"status"%[1]c
 	Type           string %[1]cjson:"type"%[1]c
+}
+
+type Date interface {
 }
 
 type Capsule struct {
@@ -610,10 +627,10 @@ const getCapsulesByFullSelector = %[1]cquery GetCapsulesByFullSelector($order: S
 }%[1]c
 
 type CapsulesClient interface {
-	GetCapsulesByFullSelector(order string, mission string, originalLaunch Date, id string, sort string, header *http.Header) (*http.Response, error)
+	GetCapsulesByFullSelector(ctx context.Context, order string, mission string, originalLaunch Date, id string, sort string, header *http.Header) (*http.Response, error)
 }
 
-func (c *capsulesClient) GetCapsulesByFullSelector(order string, mission string, originalLaunch Date, id string, sort string, header *http.Header) (*http.Response, error) {
+func (c *capsulesClient) GetCapsulesByFullSelector(ctx context.Context, order string, mission string, originalLaunch Date, id string, sort string, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 5)
 	params["order"] = order
 	params["mission"] = mission
@@ -621,7 +638,7 @@ func (c *capsulesClient) GetCapsulesByFullSelector(order string, mission string,
 	params["id"] = id
 	params["sort"] = sort
 
-	return c.ctrl.Execute(getCapsulesByFullSelector, params, header)
+	return c.ctrl.Execute(ctx, getCapsulesByFullSelector, params, header)
 }
 
 type GetCapsulesByFullSelectorResponse struct {
@@ -663,6 +680,7 @@ func New(endpoint string, client *http.Client) CapsulesClient {
 }
 
 func TestEvaluator_Generate_Input_2DArray(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/input_2d_array/input_2d_array.graphql")
 	query := loadQuery(t, schema, "test/input_2d_array/input_2d_array_query.graphql")
 	info := AdditionalInfo{
@@ -679,6 +697,7 @@ func TestEvaluator_Generate_Input_2DArray(t *testing.T) {
 package grafik_client
 
 import (
+    "context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
@@ -707,16 +726,16 @@ const getCapsulesByPositions = %[1]cquery GetCapsulesByPositions($find: [[Positi
 }%[1]c
 
 type CapsulesClient interface {
-	GetCapsulesByPositions(find [][]Position, limit [][]Limit, selector [][]string, header *http.Header) (*http.Response, error)
+	GetCapsulesByPositions(ctx context.Context, find [][]Position, limit [][]Limit, selector [][]string, header *http.Header) (*http.Response, error)
 }
 
-func (c *capsulesClient) GetCapsulesByPositions(find [][]Position, limit [][]Limit, selector [][]string, header *http.Header) (*http.Response, error) {
+func (c *capsulesClient) GetCapsulesByPositions(ctx context.Context, find [][]Position, limit [][]Limit, selector [][]string, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 3)
 	params["find"] = find
 	params["limit"] = limit
 	params["selector"] = selector
 
-	return c.ctrl.Execute(getCapsulesByPositions, params, header)
+	return c.ctrl.Execute(ctx, getCapsulesByPositions, params, header)
 }
 
 type GetCapsulesByPositionsResponse struct {
@@ -758,6 +777,7 @@ func New(endpoint string, client *http.Client) CapsulesClient {
 }
 
 func TestEvaluator_Generate_Input_3DArray(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/input_3d_array/input_3d_array.graphql")
 	query := loadQuery(t, schema, "test/input_3d_array/input_3d_array_query.graphql")
 	info := AdditionalInfo{
@@ -774,6 +794,7 @@ func TestEvaluator_Generate_Input_3DArray(t *testing.T) {
 package grafik_client
 
 import (
+    "context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
@@ -802,16 +823,16 @@ const getCapsulesByPositions = %[1]cquery GetCapsulesByPositions($find: [[[Posit
 }%[1]c
 
 type CapsulesClient interface {
-	GetCapsulesByPositions(find [][][]Position, limit [][][]Limit, selector [][][]string, header *http.Header) (*http.Response, error)
+	GetCapsulesByPositions(ctx context.Context, find [][][]Position, limit [][][]Limit, selector [][][]string, header *http.Header) (*http.Response, error)
 }
 
-func (c *capsulesClient) GetCapsulesByPositions(find [][][]Position, limit [][][]Limit, selector [][][]string, header *http.Header) (*http.Response, error) {
+func (c *capsulesClient) GetCapsulesByPositions(ctx context.Context, find [][][]Position, limit [][][]Limit, selector [][][]string, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 3)
 	params["find"] = find
 	params["limit"] = limit
 	params["selector"] = selector
 
-	return c.ctrl.Execute(getCapsulesByPositions, params, header)
+	return c.ctrl.Execute(ctx, getCapsulesByPositions, params, header)
 }
 
 type GetCapsulesByPositionsResponse struct {
@@ -853,6 +874,7 @@ func New(endpoint string, client *http.Client) CapsulesClient {
 }
 
 func TestEvaluator_CircularType(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/circular_type/circular_type.graphql")
 	query := loadQuery(t, schema, "test/circular_type/circular_type_query.graphql")
 	info := AdditionalInfo{
@@ -869,6 +891,7 @@ func TestEvaluator_CircularType(t *testing.T) {
 package grafik_client
 
 import (
+    "context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
@@ -894,14 +917,14 @@ const getAllMoviesWhereActorsOfTheMovieActedIn = %[1]cquery GetAllMoviesWhereAct
 }%[1]c
 
 type MovieClient interface {
-	GetAllMoviesWhereActorsOfTheMovieActedIn(title string, header *http.Header) (*http.Response, error)
+	GetAllMoviesWhereActorsOfTheMovieActedIn(ctx context.Context, title string, header *http.Header) (*http.Response, error)
 }
 
-func (c *movieClient) GetAllMoviesWhereActorsOfTheMovieActedIn(title string, header *http.Header) (*http.Response, error) {
+func (c *movieClient) GetAllMoviesWhereActorsOfTheMovieActedIn(ctx context.Context, title string, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 1)
 	params["title"] = title
 
-	return c.ctrl.Execute(getAllMoviesWhereActorsOfTheMovieActedIn, params, header)
+	return c.ctrl.Execute(ctx, getAllMoviesWhereActorsOfTheMovieActedIn, params, header)
 }
 
 type GetAllMoviesWhereActorsOfTheMovieActedInResponse struct {
@@ -943,6 +966,7 @@ func New(endpoint string, client *http.Client) MovieClient {
 }
 
 func TestEvaluator_FragmentType(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/fragment/fragment.graphql")
 	query := loadQuery(t, schema, "test/fragment/fragment_query.graphql")
 	info := AdditionalInfo{
@@ -959,6 +983,7 @@ func TestEvaluator_FragmentType(t *testing.T) {
 package grafik_client
 
 import (
+    "context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
@@ -991,13 +1016,13 @@ fragment RocketShortInfo on Rocket {
 }%[1]c
 
 type RocketClient interface {
-	GetShortRocketInfo(header *http.Header) (*http.Response, error)
+	GetShortRocketInfo(ctx context.Context, header *http.Header) (*http.Response, error)
 }
 
-func (c *rocketClient) GetShortRocketInfo(header *http.Header) (*http.Response, error) {
+func (c *rocketClient) GetShortRocketInfo(ctx context.Context, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
-	return c.ctrl.Execute(getShortRocketInfo, params, header)
+	return c.ctrl.Execute(ctx, getShortRocketInfo, params, header)
 }
 
 type GetShortRocketInfoResponse struct {
@@ -1039,6 +1064,7 @@ func New(endpoint string, client *http.Client) RocketClient {
 }
 
 func TestEvaluator_SelectionSet(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/selection_set/selection_set.graphql")
 	query := loadQuery(t, schema, "test/selection_set/selection_set_query.graphql")
 	info := AdditionalInfo{
@@ -1055,6 +1081,7 @@ func TestEvaluator_SelectionSet(t *testing.T) {
 package grafik_client
 
 import (
+    "context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
@@ -1082,13 +1109,13 @@ const getCountriesAndContinents = %[1]cquery getCountriesAndContinents {
 %[1]c
 
 type CountriesClient interface {
-	GetCountriesAndContinents(header *http.Header) (*http.Response, error)
+	GetCountriesAndContinents(ctx context.Context, header *http.Header) (*http.Response, error)
 }
 
-func (c *countriesClient) GetCountriesAndContinents(header *http.Header) (*http.Response, error) {
+func (c *countriesClient) GetCountriesAndContinents(ctx context.Context, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
-	return c.ctrl.Execute(getCountriesAndContinents, params, header)
+	return c.ctrl.Execute(ctx, getCountriesAndContinents, params, header)
 }
 
 type GetCountriesAndContinentsResponse struct {
@@ -1131,6 +1158,7 @@ func New(endpoint string, client *http.Client) CountriesClient {
 }
 
 func TestEvaluator_WithPointers(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/fragment/fragment.graphql")
 	query := loadQuery(t, schema, "test/fragment/fragment_query.graphql")
 	info := AdditionalInfo{
@@ -1147,6 +1175,7 @@ func TestEvaluator_WithPointers(t *testing.T) {
 package grafik_client
 
 import (
+    "context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
@@ -1179,13 +1208,13 @@ fragment RocketShortInfo on Rocket {
 }%[1]c
 
 type RocketClient interface {
-	GetShortRocketInfo(header *http.Header) (*http.Response, error)
+	GetShortRocketInfo(ctx context.Context, header *http.Header) (*http.Response, error)
 }
 
-func (c *rocketClient) GetShortRocketInfo(header *http.Header) (*http.Response, error) {
+func (c *rocketClient) GetShortRocketInfo(ctx context.Context, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
-	return c.ctrl.Execute(getShortRocketInfo, params, header)
+	return c.ctrl.Execute(ctx, getShortRocketInfo, params, header)
 }
 
 type GetShortRocketInfoResponse struct {

@@ -3,6 +3,7 @@
 package main
 
 import (
+	"context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
@@ -33,13 +34,13 @@ const getPolandInfo = `query getPolandInfo {
 }`
 
 type CountriesClient interface {
-	GetPolandInfo(header *http.Header) (*http.Response, error)
+	GetPolandInfo(ctx context.Context, header *http.Header) (*http.Response, error)
 }
 
-func (c *countriesClient) GetPolandInfo(header *http.Header) (*http.Response, error) {
+func (c *countriesClient) GetPolandInfo(ctx context.Context, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
-	return c.ctrl.Execute(getPolandInfo, params, header)
+	return c.ctrl.Execute(ctx, getPolandInfo, params, header)
 }
 
 type GetPolandInfoResponse struct {

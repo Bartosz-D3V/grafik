@@ -4,6 +4,7 @@ package client
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 )
@@ -11,7 +12,7 @@ import (
 // A Client is an interface that defines a contract of grafik internal GraphQL client.
 // It can be mocked with tools like https://github.com/golang/mock in unit tests.
 type Client interface {
-	Execute(query string, params map[string]interface{}, header *http.Header) (*http.Response, error)
+	Execute(ctx context.Context, query string, params map[string]interface{}, header *http.Header) (*http.Response, error)
 }
 
 // client is a private struct that can be created with New function.
@@ -33,7 +34,7 @@ func New(endpoint string, httpClient *http.Client) Client {
 
 // Execute is a receiver function used by generated grafik client to execute HTTP requests.
 // Caller method is responsible for closing the body reader.
-func (c *client) Execute(query string, params map[string]interface{}, header *http.Header) (*http.Response, error) {
+func (c *client) Execute(ctx context.Context, query string, params map[string]interface{}, header *http.Header) (*http.Response, error) {
 	q := c.formatQuery(query)
 	req := GraphQLRequest{
 		Query:     q,
@@ -44,7 +45,7 @@ func (c *client) Execute(query string, params map[string]interface{}, header *ht
 		return nil, GraphQLCallError{"Parsing GraphQL request failed", err.Error()}
 	}
 
-	httpReq, err := http.NewRequest("POST", c.endpoint, bytes.NewBuffer(reqJson))
+	httpReq, err := http.NewRequestWithContext(ctx, "POST", c.endpoint, bytes.NewBuffer(reqJson))
 	if err != nil {
 		return nil, GraphQLCallError{"Preparation of GraphQL call failed", err.Error()}
 	}

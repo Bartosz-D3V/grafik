@@ -7,6 +7,7 @@ import (
 )
 
 func TestGenerator_WriteInterface_NoArgWithReturn(t *testing.T) {
+	t.Parallel()
 	fn := Func{
 		Name: "FindBook",
 		Args: make([]TypeArg, 0),
@@ -19,13 +20,14 @@ func TestGenerator_WriteInterface_NoArgWithReturn(t *testing.T) {
 	out := string(g.Generate())
 	expOut := test.PrepExpCode(t, `
 type BookService interface {
-	FindBook(header *http.Header) Book
+	FindBook(ctx context.Context, header *http.Header) Book
 }`)
 
 	assert.Equal(t, expOut, out)
 }
 
 func TestGenerator_WriteInterface_SingleArgWithReturn(t *testing.T) {
+	t.Parallel()
 	fn := Func{
 		Name: "FindBook",
 		Args: []TypeArg{{Name: "isbn", Type: "string"}},
@@ -38,13 +40,14 @@ func TestGenerator_WriteInterface_SingleArgWithReturn(t *testing.T) {
 	out := string(g.Generate())
 	expOut := test.PrepExpCode(t, `
 type BookService interface {
-	FindBook(isbn string, header *http.Header) Book
+	FindBook(ctx context.Context, isbn string, header *http.Header) Book
 }`)
 
 	assert.Equal(t, expOut, out)
 }
 
 func TestGenerator_WriteInterface_MultiArgWithReturn(t *testing.T) {
+	t.Parallel()
 	fn := Func{
 		Name: "FindEmployee",
 		Args: []TypeArg{
@@ -61,13 +64,14 @@ func TestGenerator_WriteInterface_MultiArgWithReturn(t *testing.T) {
 	out := string(g.Generate())
 	expOut := test.PrepExpCode(t, `
 type EmployeeService interface {
-	FindEmployee(name string, department string, age int, header *http.Header) Employee
+	FindEmployee(ctx context.Context, name string, department string, age int, header *http.Header) Employee
 }`)
 
 	assert.Equal(t, expOut, out)
 }
 
 func TestGenerator_WriteInterface_MultiMethods(t *testing.T) {
+	t.Parallel()
 	fn1 := Func{
 		Name: "FindBook",
 		Args: make([]TypeArg, 0),
@@ -89,8 +93,8 @@ func TestGenerator_WriteInterface_MultiMethods(t *testing.T) {
 	out := string(g.Generate())
 	expOut := test.PrepExpCode(t, `
 type BookService interface {
-	FindBook(header *http.Header) Book
-	FindEmployee(name string, department string, age int, header *http.Header) Employee
+	FindBook(ctx context.Context, header *http.Header) Book
+	FindEmployee(ctx context.Context, name string, department string, age int, header *http.Header) Employee
 }`)
 
 	assert.Equal(t, expOut, out)

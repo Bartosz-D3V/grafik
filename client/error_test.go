@@ -6,6 +6,7 @@ import (
 )
 
 func TestGraphQLCallError_Error(t *testing.T) {
+	t.Parallel()
 	err := GraphQLCallError{
 		Message: "explaining message from library",
 		Reason:  "originating error",

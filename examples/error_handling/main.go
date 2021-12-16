@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"log"
@@ -18,7 +19,7 @@ func main() {
 	}
 	client := New(spacexUrl, httpClient)
 
-	res, err := client.GetRocketResults(maxResults, nil)
+	res, err := client.GetRocketResults(context.Background(), maxResults, nil)
 	if err != nil {
 		panic(err)
 	}

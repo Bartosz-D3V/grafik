@@ -29,15 +29,19 @@ Example:
 
 `
 
+const rwe = 0755
+
 // writeFile writes the whole slice of bytes to new file.
 // Used to create the generated grafik client file.
 func writeFile(content []byte, fullDist string) {
 	dir, _ := filepath.Split(fullDist)
-	err := os.MkdirAll(dir, 0777)
-	if err != nil {
-		panic(err)
+	if dir != "" {
+		err := os.MkdirAll(dir, rwe)
+		if err != nil {
+			panic(err)
+		}
 	}
-	openFile, err := os.OpenFile(fullDist, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	openFile, err := os.OpenFile(fullDist, os.O_RDWR|os.O_CREATE|os.O_TRUNC, rwe)
 	if err != nil {
 		panic(err)
 	}
@@ -103,11 +107,10 @@ func getFileDestName(clientName string, dist *string) string {
 	if dist == nil || *dist == "" {
 		return clientName
 	}
-	dir, file := filepath.Split(*dist)
-	if file != "" {
+	if strings.Contains(*dist, ".go") {
 		return *dist
 	}
-	return fmt.Sprintf("%s.go", filepath.Join(dir, clientName))
+	return fmt.Sprintf("%s.go", filepath.Join(*dist, clientName))
 }
 
 // validateGenOptions returns error if any CLI flag is nil or empty.

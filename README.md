@@ -81,6 +81,7 @@ Generated code:
 package main
 
 import (
+	"context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
@@ -104,11 +105,11 @@ type GraphqlClient interface {
 	CountResults(condition Condition, header *http.Header) (*http.Response, error)
 }
 
-func (c *graphqlClient) CountResults(condition Condition, header *http.Header) (*http.Response, error) {
+func (c *graphqlClient) CountResults(ctx context.Context, condition Condition, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 1)
 	params["condition"] = condition
 
-	return c.ctrl.Execute(countResults, params, header)
+	return c.ctrl.Execute(ctx, countResults, params, header)
 }
 
 type CountResultsResponse struct {

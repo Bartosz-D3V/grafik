@@ -2,6 +2,7 @@ package unit_test_example_with_mock
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"github.com/stretchr/testify/assert"
@@ -11,6 +12,7 @@ import (
 )
 
 func TestService_ReturnAverageCostForPerLaunch(t *testing.T) {
+	t.Parallel()
 	svc := service{mockSpaceXClient{true}}
 
 	res, err := svc.ReturnAverageCostForPerLaunch()
@@ -20,6 +22,7 @@ func TestService_ReturnAverageCostForPerLaunch(t *testing.T) {
 }
 
 func TestService_ReturnAverageCostForPerLaunch_Failure(t *testing.T) {
+	t.Parallel()
 	svc := service{mockSpaceXClient{false}}
 
 	res, err := svc.ReturnAverageCostForPerLaunch()
@@ -32,7 +35,7 @@ type mockSpaceXClient struct {
 	returnValidResponse bool
 }
 
-func (c mockSpaceXClient) GetRocketResults(int, *http.Header) (*http.Response, error) {
+func (c mockSpaceXClient) GetRocketResults(context.Context, int, *http.Header) (*http.Response, error) {
 	if c.returnValidResponse {
 		res := createGraphQLResponse()
 		resJson, _ := json.Marshal(res)
