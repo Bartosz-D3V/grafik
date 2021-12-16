@@ -5,36 +5,24 @@ import (
 	"github.com/Bartosz-D3V/grafik/common"
 	"github.com/Bartosz-D3V/grafik/generator"
 	"github.com/vektah/gqlparser/ast"
+	"log"
 	"strings"
 )
 
-const twoLinesBreak = 2
 const oneLineBreak = 1
+const twoLinesBreak = 2
 
 // genSchemaDef generates custom, user-defined structs and enums used in GraphQL query file.
 func (e *evaluator) genSchemaDef(usePointers bool) {
 	e.generator.WriteLineBreak(twoLinesBreak)
 
-	e.generator.WriteLineBreak(twoLinesBreak)
-
-	e.generateEnumTypesFromDefinition(e.schema.Types)
-
-	e.generateStructs(usePointers)
+	e.generateGoTypes(usePointers)
 
 	e.generator.WriteLineBreak(twoLinesBreak)
 }
 
-// generateEnumTypesFromDefinition generates enums based on GraphQL schema.
-func (e *evaluator) generateEnumTypesFromDefinition(types map[string]*ast.Definition) {
-	for _, definition := range types {
-		if definition.Kind == ast.Enum && !definition.BuiltIn {
-			e.createEnum(definition)
-		}
-	}
-}
-
-// generateEnumTypesFromDefinition generates structs based on GraphQL schema.
-func (e *evaluator) generateStructs(usePointers bool) {
+// generateStructs generates Go code based on GraphQL schema.
+func (e *evaluator) generateGoTypes(usePointers bool) {
 	cTypes := e.visitor.IntrospectTypes()
 	for _, customType := range cTypes {
 		cType := e.schema.Types[customType]
@@ -43,6 +31,14 @@ func (e *evaluator) generateStructs(usePointers bool) {
 		case ast.Object,
 			ast.InputObject:
 			e.createStruct(cType, usePointers)
+		case ast.Enum:
+			e.createEnum(cType)
+		case ast.Scalar:
+			log.Printf("Generating scalars not yet implemented. Skipping.")
+		case ast.Interface:
+			log.Printf("Generating interfaces not yet implemented. Skipping.")
+		case ast.Union:
+			log.Printf("Generating unions not yet implemented. Skipping.")
 		}
 	}
 }

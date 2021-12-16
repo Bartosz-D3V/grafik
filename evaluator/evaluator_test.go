@@ -496,6 +496,10 @@ import (
 	"net/http"
 )
 
+type Department struct {
+	Name DepartmentName %[1]cjson:"name"%[1]c
+}
+
 type DepartmentName string
 
 const (
@@ -504,10 +508,6 @@ const (
 	HR      DepartmentName = "HR"
 	SUPPORT DepartmentName = "SUPPORT"
 )
-
-type Department struct {
-	Name DepartmentName %[1]cjson:"name"%[1]c
-}
 
 const getDepartment = %[1]cquery getDepartment {
     getDepartment {

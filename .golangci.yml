@@ -19,6 +19,11 @@ linters:
     - gocritic
     - unconvert
     - unparam
+    - wastedassign
+    - nestif
+    - prealloc
+    - paralleltest
+    - noctx
 linters-settings:
   godot:
     exclude:

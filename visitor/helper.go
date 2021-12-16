@@ -50,6 +50,8 @@ func (v *visitor) findSubTypes(t *ast.Definition) {
 				v.registerType(t.Name)
 			}
 		}
+	} else if t != nil {
+		v.registerType(t.Name)
 	}
 }
 
