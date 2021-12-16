@@ -11,6 +11,7 @@ import (
 )
 
 func TestService_ReturnAverageCostForPerLaunch(t *testing.T) {
+	t.Parallel()
 	svc := service{mockSpaceXClient{true}}
 
 	res, err := svc.ReturnAverageCostForPerLaunch()
@@ -20,6 +21,7 @@ func TestService_ReturnAverageCostForPerLaunch(t *testing.T) {
 }
 
 func TestService_ReturnAverageCostForPerLaunch_Failure(t *testing.T) {
+	t.Parallel()
 	svc := service{mockSpaceXClient{false}}
 
 	res, err := svc.ReturnAverageCostForPerLaunch()

@@ -11,6 +11,7 @@ import (
 )
 
 func TestClient_Execute_DefaultHeader_Success(t *testing.T) {
+	t.Parallel()
 	exp := createCountriesResponse()
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		handleRequest(t, exp, w, r)
@@ -39,6 +40,7 @@ func TestClient_Execute_DefaultHeader_Success(t *testing.T) {
 }
 
 func TestClient_Execute_CustomHeader_Success(t *testing.T) {
+	t.Parallel()
 	expHeader := http.Header{
 		"Authorization":  {"Bearer token"},
 		"X-Trace-Id":     {"081cdde6-43a6-4c1c-8be1-2137af048273"},
@@ -75,6 +77,7 @@ func TestClient_Execute_CustomHeader_Success(t *testing.T) {
 }
 
 func TestClient_Execute_Marshall_Error(t *testing.T) {
+	t.Parallel()
 	client := New("localhost:8080", http.DefaultClient)
 	params := make(map[string]interface{})
 	params["breakingParam"] = make(chan int)
@@ -89,6 +92,7 @@ func TestClient_Execute_Marshall_Error(t *testing.T) {
 }
 
 func TestClient_Execute_NewRequest_Error(t *testing.T) {
+	t.Parallel()
 	client := New("http://localhost:%%%8080", http.DefaultClient)
 	params := make(map[string]interface{})
 	res, err := client.Execute("", params, nil)
@@ -102,6 +106,7 @@ func TestClient_Execute_NewRequest_Error(t *testing.T) {
 }
 
 func TestClient_Execute_HttpDo_Error(t *testing.T) {
+	t.Parallel()
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
 	svr.URL = "smtp://localhost:8000"
 

@@ -96,26 +96,26 @@ func (e *evaluator) parseSelectionSet(set ast.SelectionSet) []generator.TypeArg 
 
 // parseFnArgs converts GraphQL operation (query/mutation) arguments (ast.VariableDefinitionList) and returns slice of generator.TypeArg.
 func (e *evaluator) parseFnArgs(args *ast.VariableDefinitionList) []generator.TypeArg {
-	var funcArgs []generator.TypeArg
-	for _, arg := range *args {
-		farg := generator.TypeArg{
+	funcArgs := make([]generator.TypeArg, len(*args))
+	for i, arg := range *args {
+		fArg := generator.TypeArg{
 			Name: arg.Variable,
 			Type: e.convGoType(arg.Type),
 		}
-		funcArgs = append(funcArgs, farg)
+		funcArgs[i] = fArg
 	}
 	return funcArgs
 }
 
 // parseFieldArgs converts GraphQL fields (ast.FieldList) into generator.TypeArg.
 func (e *evaluator) parseFieldArgs(args *ast.FieldList) []generator.TypeArg {
-	var funcArgs []generator.TypeArg
-	for _, arg := range *args {
-		farg := generator.TypeArg{
+	funcArgs := make([]generator.TypeArg, len(*args))
+	for i, arg := range *args {
+		fArg := generator.TypeArg{
 			Name: arg.Name,
 			Type: e.convGoType(arg.Type),
 		}
-		funcArgs = append(funcArgs, farg)
+		funcArgs[i] = fArg
 	}
 	return funcArgs
 }
@@ -227,15 +227,15 @@ func (e *evaluator) genClientCode() {
 func (e *evaluator) genOpsInterface() {
 	ops := e.queryDocument.Operations
 
-	var funcs []generator.Func
-	for _, op := range ops {
+	funcs := make([]generator.Func, len(ops))
+	for i, op := range ops {
 		f := generator.Func{
 			Name:        op.Name,
 			Args:        e.parseFnArgs(&op.VariableDefinitions),
 			Type:        "(*http.Response, error)",
 			WrapperArgs: e.parseSelectionSet(op.SelectionSet),
 		}
-		funcs = append(funcs, f)
+		funcs[i] = f
 	}
 	e.generator.WriteInterface(e.AdditionalInfo.ClientName, funcs...)
 	e.generator.WriteLineBreak(twoLinesBreak)

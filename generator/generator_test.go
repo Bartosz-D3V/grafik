@@ -7,6 +7,7 @@ import (
 )
 
 func TestGenerator_WriteInterface_NoArgWithReturn(t *testing.T) {
+	t.Parallel()
 	fn := Func{
 		Name: "FindBook",
 		Args: make([]TypeArg, 0),
@@ -26,6 +27,7 @@ type BookService interface {
 }
 
 func TestGenerator_WriteInterface_SingleArgWithReturn(t *testing.T) {
+	t.Parallel()
 	fn := Func{
 		Name: "FindBook",
 		Args: []TypeArg{{Name: "isbn", Type: "string"}},
@@ -45,6 +47,7 @@ type BookService interface {
 }
 
 func TestGenerator_WriteInterface_MultiArgWithReturn(t *testing.T) {
+	t.Parallel()
 	fn := Func{
 		Name: "FindEmployee",
 		Args: []TypeArg{
@@ -68,6 +71,7 @@ type EmployeeService interface {
 }
 
 func TestGenerator_WriteInterface_MultiMethods(t *testing.T) {
+	t.Parallel()
 	fn1 := Func{
 		Name: "FindBook",
 		Args: make([]TypeArg, 0),

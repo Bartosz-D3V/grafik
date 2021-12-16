@@ -59,10 +59,10 @@ type Func struct {
 }
 
 func (f Func) JoinArgsBy(s string) string {
-	var pArgs []string
-	for _, arg := range f.Args {
+	pArgs := make([]string, len(f.Args))
+	for i, arg := range f.Args {
 		tArg := arg.TitleType()
-		pArgs = append(pArgs, fmt.Sprintf("%s %s", tArg.Name, common.SnakeCaseToCamelCase(tArg.Type)))
+		pArgs[i] = fmt.Sprintf("%s %s", tArg.Name, common.SnakeCaseToCamelCase(tArg.Type))
 	}
 
 	return strings.Join(pArgs, s)

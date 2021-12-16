@@ -6,6 +6,7 @@ import (
 )
 
 func TestSnakeCaseToPascalCase(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		input string
 		exp   string

@@ -12,6 +12,7 @@ import (
 )
 
 func TestEvaluator_Generate_FlatStructure(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/simple_type/simple_type.graphql")
 	query := loadQuery(t, schema, "test/simple_type/simple_type_query.graphql")
 	info := AdditionalInfo{
@@ -118,6 +119,7 @@ func New(endpoint string, client *http.Client) FilesClient {
 }
 
 func TestEvaluator_Generate_ArrayStructure(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/array/array.graphql")
 	query := loadQuery(t, schema, "test/array/array_query.graphql")
 	info := AdditionalInfo{
@@ -203,6 +205,7 @@ func New(endpoint string, client *http.Client) FilmsClient {
 }
 
 func TestEvaluator_Generate_2DArrayStructure(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/2d_array/2d_array.graphql")
 	query := loadQuery(t, schema, "test/2d_array/2d_array_query.graphql")
 	info := AdditionalInfo{
@@ -288,6 +291,7 @@ func New(endpoint string, client *http.Client) MathClient {
 }
 
 func TestEvaluator_Generate_3DArrayStructure(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/3d_array/3d_array.graphql")
 	query := loadQuery(t, schema, "test/3d_array/3d_array_query.graphql")
 	info := AdditionalInfo{
@@ -371,6 +375,7 @@ func New(endpoint string, client *http.Client) MathClient {
 }
 
 func TestEvaluator_Generate_NestedStructure(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/nested_type/nested_type.graphql")
 	query := loadQuery(t, schema, "test/nested_type/nested_type_query.graphql")
 	info := AdditionalInfo{
@@ -476,6 +481,7 @@ func New(endpoint string, client *http.Client) SpecificHeroClient {
 }
 
 func TestEvaluator_Generate_Enum(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/enum/enum.graphql")
 	query := loadQuery(t, schema, "test/enum/enum_query.graphql")
 	info := AdditionalInfo{
@@ -564,6 +570,7 @@ func New(endpoint string, client *http.Client) CompanyClient {
 }
 
 func TestEvaluator_Generate_Input(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/input/input.graphql")
 	query := loadQuery(t, schema, "test/input/input_query.graphql")
 	info := AdditionalInfo{
@@ -663,6 +670,7 @@ func New(endpoint string, client *http.Client) CapsulesClient {
 }
 
 func TestEvaluator_Generate_Input_2DArray(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/input_2d_array/input_2d_array.graphql")
 	query := loadQuery(t, schema, "test/input_2d_array/input_2d_array_query.graphql")
 	info := AdditionalInfo{
@@ -758,6 +766,7 @@ func New(endpoint string, client *http.Client) CapsulesClient {
 }
 
 func TestEvaluator_Generate_Input_3DArray(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/input_3d_array/input_3d_array.graphql")
 	query := loadQuery(t, schema, "test/input_3d_array/input_3d_array_query.graphql")
 	info := AdditionalInfo{
@@ -853,6 +862,7 @@ func New(endpoint string, client *http.Client) CapsulesClient {
 }
 
 func TestEvaluator_CircularType(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/circular_type/circular_type.graphql")
 	query := loadQuery(t, schema, "test/circular_type/circular_type_query.graphql")
 	info := AdditionalInfo{
@@ -943,6 +953,7 @@ func New(endpoint string, client *http.Client) MovieClient {
 }
 
 func TestEvaluator_FragmentType(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/fragment/fragment.graphql")
 	query := loadQuery(t, schema, "test/fragment/fragment_query.graphql")
 	info := AdditionalInfo{
@@ -1039,6 +1050,7 @@ func New(endpoint string, client *http.Client) RocketClient {
 }
 
 func TestEvaluator_SelectionSet(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/selection_set/selection_set.graphql")
 	query := loadQuery(t, schema, "test/selection_set/selection_set_query.graphql")
 	info := AdditionalInfo{
@@ -1131,6 +1143,7 @@ func New(endpoint string, client *http.Client) CountriesClient {
 }
 
 func TestEvaluator_WithPointers(t *testing.T) {
+	t.Parallel()
 	schema := loadSchema(t, "test/fragment/fragment.graphql")
 	query := loadQuery(t, schema, "test/fragment/fragment_query.graphql")
 	info := AdditionalInfo{
