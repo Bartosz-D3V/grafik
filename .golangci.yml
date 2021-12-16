@@ -24,6 +24,7 @@ linters:
     - prealloc
     - paralleltest
     - noctx
+    - deadcode
 linters-settings:
   godot:
     exclude:
