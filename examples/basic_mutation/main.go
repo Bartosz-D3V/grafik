@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"log"
@@ -27,7 +28,7 @@ func main() {
 			Twitter,
 		},
 	}
-	res, err := client.AddOrUpdateHardcodedUser("Falcon 1", onConflict, headers)
+	res, err := client.AddOrUpdateHardcodedUser(context.Background(), "Falcon 1", onConflict, headers)
 	if err != nil {
 		panic(err)
 	}

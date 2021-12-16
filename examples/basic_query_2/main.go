@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"log"
@@ -15,7 +16,7 @@ func main() {
 	}
 	client := New(countriesUrl, httpClient)
 
-	res, err := client.GetPolandInfo(nil)
+	res, err := client.GetPolandInfo(context.Background(), nil)
 	if err != nil {
 		panic(err)
 	}
@@ -38,5 +39,5 @@ func main() {
 	}
 
 	country := graphqlRes.Data.Country
-	log.Printf("%s: %s means %s in %s and we use %s as a currency", country.Emoji, country.Native, country.Name, country.Languages[0].Name, country.Currency)
+	log.Printf("%s: %s means %s in %s and we use %s as a currency.", country.Emoji, country.Native, country.Name, country.Languages[0].Name, country.Currency)
 }

@@ -3,24 +3,9 @@
 package main
 
 import (
+	"context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
-)
-
-type UsersUpdateColumn string
-
-const (
-	Id        UsersUpdateColumn = "id"
-	Name      UsersUpdateColumn = "name"
-	Rocket    UsersUpdateColumn = "rocket"
-	Timestamp UsersUpdateColumn = "timestamp"
-	Twitter   UsersUpdateColumn = "twitter"
-)
-
-type UsersConstraint string
-
-const (
-	UsersPkey UsersConstraint = "users_pkey"
 )
 
 type UsersMutationResponse struct {
@@ -37,6 +22,22 @@ type UsersOnConflict struct {
 	UpdateColumns []UsersUpdateColumn `json:"update_columns"`
 }
 
+type UsersConstraint string
+
+const (
+	UsersPkey UsersConstraint = "users_pkey"
+)
+
+type UsersUpdateColumn string
+
+const (
+	Id        UsersUpdateColumn = "id"
+	Name      UsersUpdateColumn = "name"
+	Rocket    UsersUpdateColumn = "rocket"
+	Timestamp UsersUpdateColumn = "timestamp"
+	Twitter   UsersUpdateColumn = "twitter"
+)
+
 const addOrUpdateHardcodedUser = `mutation addOrUpdateHardcodedUser($rocketName: String, $usersOnConflict: users_on_conflict) {
         insert_users(objects: {id: "5b8bcf27-9561-4123-87ff-75088c9da9c7", rocket: $rocketName}, on_conflict: $usersOnConflict) {
             affected_rows
@@ -47,15 +48,15 @@ const addOrUpdateHardcodedUser = `mutation addOrUpdateHardcodedUser($rocketName:
 }`
 
 type SpaceXClient interface {
-	AddOrUpdateHardcodedUser(rocketName string, usersOnConflict UsersOnConflict, header *http.Header) (*http.Response, error)
+	AddOrUpdateHardcodedUser(ctx context.Context, rocketName string, usersOnConflict UsersOnConflict, header *http.Header) (*http.Response, error)
 }
 
-func (c *spaceXClient) AddOrUpdateHardcodedUser(rocketName string, usersOnConflict UsersOnConflict, header *http.Header) (*http.Response, error) {
+func (c *spaceXClient) AddOrUpdateHardcodedUser(ctx context.Context, rocketName string, usersOnConflict UsersOnConflict, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 2)
 	params["rocketName"] = rocketName
 	params["usersOnConflict"] = usersOnConflict
 
-	return c.ctrl.Execute(addOrUpdateHardcodedUser, params, header)
+	return c.ctrl.Execute(ctx, addOrUpdateHardcodedUser, params, header)
 }
 
 type AddOrUpdateHardcodedUserResponse struct {

@@ -3,6 +3,7 @@
 package main
 
 import (
+	"context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
@@ -75,14 +76,14 @@ const getBatchInfo = `query getBatchInfo($limit: Int) {
 `
 
 type SpaceXClient interface {
-	GetBatchInfo(limit int, header *http.Header) (*http.Response, error)
+	GetBatchInfo(ctx context.Context, limit int, header *http.Header) (*http.Response, error)
 }
 
-func (c *spaceXClient) GetBatchInfo(limit int, header *http.Header) (*http.Response, error) {
+func (c *spaceXClient) GetBatchInfo(ctx context.Context, limit int, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 1)
 	params["limit"] = limit
 
-	return c.ctrl.Execute(getBatchInfo, params, header)
+	return c.ctrl.Execute(ctx, getBatchInfo, params, header)
 }
 
 type GetBatchInfoResponse struct {

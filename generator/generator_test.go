@@ -20,7 +20,7 @@ func TestGenerator_WriteInterface_NoArgWithReturn(t *testing.T) {
 	out := string(g.Generate())
 	expOut := test.PrepExpCode(t, `
 type BookService interface {
-	FindBook(header *http.Header) Book
+	FindBook(ctx context.Context, header *http.Header) Book
 }`)
 
 	assert.Equal(t, expOut, out)
@@ -40,7 +40,7 @@ func TestGenerator_WriteInterface_SingleArgWithReturn(t *testing.T) {
 	out := string(g.Generate())
 	expOut := test.PrepExpCode(t, `
 type BookService interface {
-	FindBook(isbn string, header *http.Header) Book
+	FindBook(ctx context.Context, isbn string, header *http.Header) Book
 }`)
 
 	assert.Equal(t, expOut, out)
@@ -64,7 +64,7 @@ func TestGenerator_WriteInterface_MultiArgWithReturn(t *testing.T) {
 	out := string(g.Generate())
 	expOut := test.PrepExpCode(t, `
 type EmployeeService interface {
-	FindEmployee(name string, department string, age int, header *http.Header) Employee
+	FindEmployee(ctx context.Context, name string, department string, age int, header *http.Header) Employee
 }`)
 
 	assert.Equal(t, expOut, out)
@@ -93,8 +93,8 @@ func TestGenerator_WriteInterface_MultiMethods(t *testing.T) {
 	out := string(g.Generate())
 	expOut := test.PrepExpCode(t, `
 type BookService interface {
-	FindBook(header *http.Header) Book
-	FindEmployee(name string, department string, age int, header *http.Header) Employee
+	FindBook(ctx context.Context, header *http.Header) Book
+	FindEmployee(ctx context.Context, name string, department string, age int, header *http.Header) Employee
 }`)
 
 	assert.Equal(t, expOut, out)

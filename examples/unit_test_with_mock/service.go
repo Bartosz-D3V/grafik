@@ -1,6 +1,7 @@
 package unit_test_example_with_mock
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -11,7 +12,7 @@ type service struct {
 }
 
 func (s service) ReturnAverageCostForPerLaunch() (int, error) {
-	res, err := s.client.GetRocketResults(50, nil)
+	res, err := s.client.GetRocketResults(context.Background(), 50, nil)
 	if err != nil {
 		return 0, fmt.Errorf("SpaceXClient failed: %s", err.Error())
 	}

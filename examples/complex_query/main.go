@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"log"
@@ -19,7 +20,7 @@ func main() {
 	}
 	client := New(spacexUrl, httpClient)
 
-	res, err := client.GetBatchInfo(maxResults, nil)
+	res, err := client.GetBatchInfo(context.Background(), maxResults, nil)
 	if err != nil {
 		panic(err)
 	}

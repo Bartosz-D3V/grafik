@@ -1,6 +1,7 @@
 package client
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/stretchr/testify/assert"
 	"io"
@@ -28,7 +29,7 @@ func TestClient_Execute_DefaultHeader_Success(t *testing.T) {
 	client := New(svr.URL, svr.Client())
 	params := make(map[string]interface{})
 	params["code"] = "EU"
-	res, err := client.Execute(query, params, nil)
+	res, err := client.Execute(context.TODO(), query, params, nil)
 	assert.NoError(t, err)
 
 	b, err := io.ReadAll(res.Body)
@@ -65,7 +66,7 @@ func TestClient_Execute_CustomHeader_Success(t *testing.T) {
 	client := New(svr.URL, svr.Client())
 	params := make(map[string]interface{})
 	params["code"] = "EU"
-	res, err := client.Execute(query, params, &expHeader)
+	res, err := client.Execute(context.TODO(), query, params, &expHeader)
 	assert.NoError(t, err)
 
 	b, err := io.ReadAll(res.Body)
@@ -81,7 +82,7 @@ func TestClient_Execute_Marshall_Error(t *testing.T) {
 	client := New("localhost:8080", http.DefaultClient)
 	params := make(map[string]interface{})
 	params["breakingParam"] = make(chan int)
-	res, err := client.Execute("", params, nil)
+	res, err := client.Execute(context.TODO(), "", params, nil)
 
 	assert.Nil(t, res)
 	expErr := GraphQLCallError{
@@ -95,7 +96,7 @@ func TestClient_Execute_NewRequest_Error(t *testing.T) {
 	t.Parallel()
 	client := New("http://localhost:%%%8080", http.DefaultClient)
 	params := make(map[string]interface{})
-	res, err := client.Execute("", params, nil)
+	res, err := client.Execute(context.TODO(), "", params, nil)
 
 	assert.Nil(t, res)
 	expErr := GraphQLCallError{
@@ -112,7 +113,7 @@ func TestClient_Execute_HttpDo_Error(t *testing.T) {
 
 	client := New(svr.URL, svr.Client())
 	params := make(map[string]interface{})
-	res, err := client.Execute("", params, nil)
+	res, err := client.Execute(context.TODO(), "", params, nil)
 
 	assert.Nil(t, res)
 	expErr := GraphQLCallError{

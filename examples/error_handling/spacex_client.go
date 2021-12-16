@@ -3,6 +3,7 @@
 package main
 
 import (
+	"context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
@@ -37,14 +38,14 @@ const getRocketResults = `query getRocketResults($limit: Int){
 `
 
 type SpaceXClient interface {
-	GetRocketResults(limit int, header *http.Header) (*http.Response, error)
+	GetRocketResults(ctx context.Context, limit int, header *http.Header) (*http.Response, error)
 }
 
-func (c *spaceXClient) GetRocketResults(limit int, header *http.Header) (*http.Response, error) {
+func (c *spaceXClient) GetRocketResults(ctx context.Context, limit int, header *http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 1)
 	params["limit"] = limit
 
-	return c.ctrl.Execute(getRocketResults, params, header)
+	return c.ctrl.Execute(ctx, getRocketResults, params, header)
 }
 
 type GetRocketResultsResponse struct {
