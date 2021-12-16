@@ -27,6 +27,11 @@ func (e *evaluator) generateGoTypes(usePointers bool) {
 	for _, customType := range cTypes {
 		cType := e.schema.Types[customType]
 
+		// skipping all predefined GraphQL types (i.e. String, Int etc).
+		if cType.BuiltIn {
+			continue
+		}
+
 		switch cType.Kind {
 		case ast.Object,
 			ast.InputObject:
@@ -34,7 +39,7 @@ func (e *evaluator) generateGoTypes(usePointers bool) {
 		case ast.Enum:
 			e.createEnum(cType)
 		case ast.Scalar:
-			log.Printf("Generating scalars not yet implemented. Skipping.")
+			e.createInterfaceType(cType)
 		case ast.Interface:
 			log.Printf("Generating interfaces not yet implemented. Skipping.")
 		case ast.Union:
@@ -57,6 +62,12 @@ func (e *evaluator) createEnum(cType *ast.Definition) {
 
 	e.generator.WriteLineBreak(twoLinesBreak)
 	e.generator.WriteEnum(en)
+}
+
+// createInterface creates type 'any' in Go [type X interface{}] and writes to IO.
+func (e *evaluator) createInterfaceType(cType *ast.Definition) {
+	e.generator.WriteLineBreak(twoLinesBreak)
+	e.generator.WriteInterface(cType.Name)
 }
 
 // createStruct creates generator.Struct and writes to IO.

@@ -608,6 +608,9 @@ type CapsulesFind struct {
 	Type           string %[1]cjson:"type"%[1]c
 }
 
+type Date interface {
+}
+
 type Capsule struct {
 	Id         string %[1]cjson:"id"%[1]c
 	Landings   int    %[1]cjson:"landings"%[1]c

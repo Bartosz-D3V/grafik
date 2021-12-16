@@ -16,8 +16,7 @@ func (v *visitor) IntrospectTypes() []string {
 }
 
 func (v *visitor) parseOpTypes(query *ast.Definition) {
-	usrFields := common.FilterCustomFields(query.Fields)
-	for _, field := range usrFields {
+	for _, field := range query.Fields {
 		v.findSubTypes(v.schema.Types[field.Type.NamedType])
 		for _, arg := range field.Arguments {
 			v.findSubTypes(v.schema.Types[arg.Type.NamedType])
@@ -36,7 +35,7 @@ func (v *visitor) parseOpTypes(query *ast.Definition) {
 }
 
 func (v *visitor) findSubTypes(t *ast.Definition) {
-	if t != nil {
+	if t != nil && !t.BuiltIn {
 		v.registerType(t.Name)
 		for _, field := range t.Fields {
 			v.registerType(t.Name)
