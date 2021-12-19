@@ -1249,6 +1249,98 @@ func New(endpoint string, client *http.Client) CharacterClient {
 	assert.Equal(t, expOut, out)
 }
 
+func TestEvaluator_Interface_3DArray(t *testing.T) {
+	t.Parallel()
+	schema := loadSchema(t, "test/interface_3d_array/interface_3d_array.graphql")
+	query := loadQuery(t, schema, "test/interface_3d_array/interface_3d_array_query.graphql")
+	info := AdditionalInfo{
+		PackageName: "grafik_client",
+		ClientName:  "CharacterClient",
+		UsePointers: false,
+	}
+	e := New("../", schema, query, info)
+
+	out := string(e.Generate())
+	expOut := test.PrepExpCode(t, fmt.Sprintf(`
+// Generated with grafik. DO NOT EDIT
+
+package grafik_client
+
+import (
+	"context"
+	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
+	"net/http"
+)
+
+type CharacterFragment struct {
+	Id              string %[1]cjson:"id"%[1]c
+	Name            string %[1]cjson:"name"%[1]c
+	HomePlanet      string %[1]cjson:"homePlanet"%[1]c
+	PrimaryFunction string %[1]cjson:"primaryFunction"%[1]c
+}
+
+const getCharacters = %[1]cquery getCharacters {
+    characters {
+        ... on Human {
+            homePlanet
+        }
+        ... on Droid {
+            primaryFunction
+        }
+        ... on Character {
+            name
+        }
+    }
+}%[1]c
+
+type CharacterClient interface {
+	GetCharacters(ctx context.Context, header *http.Header) (*http.Response, error)
+}
+
+func (c *characterClient) GetCharacters(ctx context.Context, header *http.Header) (*http.Response, error) {
+	params := make(map[string]interface{}, 0)
+
+	return c.ctrl.Execute(ctx, getCharacters, params, header)
+}
+
+type GetCharactersResponse struct {
+	Data   GetCharactersData %[1]cjson:"data"%[1]c
+	Errors []GraphQLError    %[1]cjson:"errors"%[1]c
+}
+
+type GetCharactersData struct {
+	Characters [][][]CharacterFragment %[1]cjson:"characters"%[1]c
+}
+
+type GraphQLError struct {
+	Message    string                 %[1]cjson:"message"%[1]c
+	Locations  []GraphQLErrorLocation %[1]cjson:"locations"%[1]c
+	Extensions GraphQLErrorExtensions %[1]cjson:"extensions"%[1]c
+}
+
+type GraphQLErrorLocation struct {
+	Line   int %[1]cjson:"line"%[1]c
+	Column int %[1]cjson:"column"%[1]c
+}
+
+type GraphQLErrorExtensions struct {
+	Code string %[1]cjson:"code"%[1]c
+}
+
+type characterClient struct {
+	ctrl GraphqlClient.Client
+}
+
+func New(endpoint string, client *http.Client) CharacterClient {
+	return &characterClient{
+		ctrl: GraphqlClient.New(endpoint, client),
+	}
+}
+`, '`'))
+
+	assert.Equal(t, expOut, out)
+}
+
 func TestEvaluator_InterfaceWithSelectionSet(t *testing.T) {
 	t.Parallel()
 	schema := loadSchema(t, "test/interface_selection_set/interface_selection_set.graphql")

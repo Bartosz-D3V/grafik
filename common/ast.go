@@ -8,8 +8,8 @@ func IsList(astType *ast.Type) bool {
 }
 
 // IsComplex determines if GraphQL type is not 'primitive'.
-func IsComplex(t *ast.Type) bool {
-	return t.NamedType != "String" && t.NamedType != "Int" &&
-		t.NamedType != "ID" && t.NamedType != "Float" &&
-		t.NamedType != "Boolean"
+func IsComplex(astType *ast.Type) bool {
+	return astType.NamedType != "String" && astType.NamedType != "Int" &&
+		astType.NamedType != "ID" && astType.NamedType != "Float" &&
+		astType.NamedType != "Boolean"
 }

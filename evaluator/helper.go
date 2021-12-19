@@ -177,14 +177,15 @@ func (e *evaluator) convGoType(astType *ast.Type) string {
 // convComplexType recursively checks GraphQL type and returns corresponding Go type.
 func (e *evaluator) convComplexType(astType *ast.Type) string {
 	if common.IsList(astType) {
+		switch nt := astType.Elem; {
+		// If astType is not multi-dimensional array of interfaces return '[]' with 'Fragment' suffix
+		case common.IsComplex(nt) && !common.IsList(nt) && e.schema.Types[nt.NamedType].Kind == ast.Interface:
+			return fmt.Sprintf("[]%s%s", nt.NamedType, graphQLFragmentStructName)
 		// If astType is not multi-dimensional array return '[]' with named type
-		if nt := astType.Elem; common.IsComplex(nt) && !common.IsList(nt) {
-			if e.schema.Types[nt.NamedType].Kind == ast.Interface {
-				return fmt.Sprintf("[]%s%s", nt.NamedType, graphQLFragmentStructName)
-			} else {
-				return fmt.Sprintf("[]%s", nt.NamedType)
-			}
-		} else {
+		case common.IsComplex(nt) && !common.IsList(nt):
+			return fmt.Sprintf("[]%s", nt.NamedType)
+		// Otherwise, recursively check the type
+		default:
 			return fmt.Sprintf("[]%s", e.convGoType(nt))
 		}
 	}
