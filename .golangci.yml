@@ -29,5 +29,5 @@ linters-settings:
   godot:
     exclude:
       - '[}]+'
-  gocyclo:
-    min-complexity: 12
+  cyclop:
+    max-complexity: 11
