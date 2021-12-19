@@ -17,7 +17,10 @@ func (v *visitor) IntrospectTypes() []string {
 
 func (v *visitor) parseOpTypes(query *ast.Definition) {
 	for _, field := range query.Fields {
-		v.findSubTypes(v.schema.Types[field.Type.NamedType])
+		if field.Type.NamedType != "" {
+			v.findSubTypes(v.schema.Types[field.Type.NamedType])
+		}
+
 		for _, arg := range field.Arguments {
 			v.findSubTypes(v.schema.Types[arg.Type.NamedType])
 		}

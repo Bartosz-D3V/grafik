@@ -1,0 +1,24 @@
+schema {
+    query: Query
+}
+
+type Query {
+    characters: [Character]
+}
+
+interface Character {
+    id: ID!
+    name: String!
+}
+
+type Human implements Character {
+    id: ID!
+    name: String!
+    homePlanet: String
+}
+
+type Droid implements Character {
+    id: ID!
+    name: String!
+    primaryFunction: String
+}

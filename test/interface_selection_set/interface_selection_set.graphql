@@ -1,0 +1,42 @@
+schema {
+    query: Query
+}
+
+type Query {
+    characters: [Character]
+    planets: [Planet]
+}
+
+interface Character {
+    id: ID!
+    name: String!
+}
+
+type Human implements Character {
+    id: ID!
+    name: String!
+    homePlanet: String
+}
+
+type Droid implements Character {
+    id: ID!
+    name: String!
+    primaryFunction: String
+}
+
+interface Planet {
+    id: ID!
+    name: String!
+}
+
+type IcePlanet implements Planet {
+    id: ID!
+    name: String!
+    temperature: Int!
+}
+
+type RockyPlanet implements Planet {
+    id: ID!
+    name: String!
+    age: Int!
+}
