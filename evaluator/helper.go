@@ -5,13 +5,15 @@ import (
 	"github.com/Bartosz-D3V/grafik/common"
 	"github.com/Bartosz-D3V/grafik/generator"
 	"github.com/vektah/gqlparser/ast"
-	"log"
 	"strings"
 )
 
-const oneLineBreak = 1
-const twoLinesBreak = 2
-const graphQLFragmentStructName = "Fragment"
+const (
+	oneLineBreak              = 1
+	twoLinesBreak             = 2
+	graphQLFragmentStructName = "Fragment"
+	graphQLUnionStructName    = "Union"
+)
 
 // genSchemaDef generates custom, user-defined structs and enums used in GraphQL query file.
 func (e *evaluator) genSchemaDef(usePointers bool) {
@@ -42,9 +44,9 @@ func (e *evaluator) generateGoTypes(usePointers bool) {
 		case ast.Scalar:
 			e.createInterfaceType(cType)
 		case ast.Interface:
-			e.createFragmentStruct(cType)
+			e.createCommonStruct(cType, graphQLFragmentStructName)
 		case ast.Union:
-			log.Printf("Generating unions not yet implemented. Skipping.")
+			e.createCommonStruct(cType, graphQLUnionStructName)
 		}
 	}
 }
@@ -81,9 +83,9 @@ func (e *evaluator) createStruct(cType *ast.Definition, usePointers bool) {
 	e.generator.WritePublicStruct(s, usePointers)
 }
 
-// createFragmentStruct creates a generic struct containing all the fields that interface and all implementations it has.
-func (e *evaluator) createFragmentStruct(cType *ast.Definition) {
-	fragmentName := fmt.Sprintf("%s%s", cType.Name, graphQLFragmentStructName)
+// createCommonStruct creates a generic struct containing all the fields that interface and all implementations it has.
+func (e *evaluator) createCommonStruct(cType *ast.Definition, graphQLTypeSuffix string) {
+	fragmentName := fmt.Sprintf("%s%s", cType.Name, graphQLTypeSuffix)
 	fragmentFields := make(ast.FieldList, 0)
 
 	for _, definition := range e.schema.GetPossibleTypes(cType) {
@@ -181,6 +183,9 @@ func (e *evaluator) convComplexType(astType *ast.Type) string {
 		// If astType is not multi-dimensional array of interfaces return '[]' with 'Fragment' suffix
 		case common.IsComplex(nt) && !common.IsList(nt) && e.schema.Types[nt.NamedType].Kind == ast.Interface:
 			return fmt.Sprintf("[]%s%s", nt.NamedType, graphQLFragmentStructName)
+		// If astType is not multi-dimensional array of unions return '[]' with 'Union' suffix
+		case common.IsComplex(nt) && !common.IsList(nt) && e.schema.Types[nt.NamedType].Kind == ast.Union:
+			return fmt.Sprintf("[]%s%s", nt.NamedType, graphQLUnionStructName)
 		// If astType is not multi-dimensional array return '[]' with named type
 		case common.IsComplex(nt) && !common.IsList(nt):
 			return fmt.Sprintf("[]%s", nt.NamedType)

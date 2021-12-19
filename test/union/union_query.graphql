@@ -1,0 +1,10 @@
+query getCharacters {
+    characters {
+        ... on Human {
+            homePlanet
+        }
+        ... on Droid {
+            primaryFunction
+        }
+    }
+}
