@@ -8,10 +8,12 @@ import (
 	"strings"
 )
 
-const oneLineBreak = 1
-const twoLinesBreak = 2
-const graphQLFragmentStructName = "Fragment"
-const graphQLUnionStructName = "Union"
+const (
+	oneLineBreak              = 1
+	twoLinesBreak             = 2
+	graphQLFragmentStructName = "Fragment"
+	graphQLUnionStructName    = "Union"
+)
 
 // genSchemaDef generates custom, user-defined structs and enums used in GraphQL query file.
 func (e *evaluator) genSchemaDef(usePointers bool) {
