@@ -1,0 +1,8 @@
+{
+  "name": "Union test",
+  "projects": {
+    "array": {
+      "includes": ["./**"]
+    }
+   }
+}

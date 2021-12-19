@@ -1,0 +1,17 @@
+schema {
+    query: Query
+}
+
+type Query {
+    characters: [CharacterResult]
+}
+
+union CharacterResult = Human | Droid
+
+type Human {
+    homePlanet: String
+}
+
+type Droid {
+    primaryFunction: String
+}
