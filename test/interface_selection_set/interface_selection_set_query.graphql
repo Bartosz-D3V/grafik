@@ -1,0 +1,24 @@
+query getCharacters {
+    characters {
+        ... on Human {
+            homePlanet
+        }
+        ... on Droid {
+            primaryFunction
+        }
+        ... on Character {
+            name
+        }
+    }
+    planets {
+        ... on IcePlanet {
+            temperature
+        }
+        ... on RockyPlanet {
+            age
+        }
+        ... on Planet {
+            name
+        }
+    }
+}

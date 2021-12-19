@@ -1,0 +1,8 @@
+{
+  "name": "Interface test",
+  "projects": {
+    "array": {
+      "includes": ["./**"]
+    }
+   }
+}

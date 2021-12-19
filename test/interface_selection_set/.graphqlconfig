@@ -1,0 +1,8 @@
+{
+  "name": "Interface and selection set test",
+  "projects": {
+    "array": {
+      "includes": ["./**"]
+    }
+   }
+}

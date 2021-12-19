@@ -11,6 +11,7 @@ import (
 
 const oneLineBreak = 1
 const twoLinesBreak = 2
+const graphQLFragmentStructName = "Fragment"
 
 // genSchemaDef generates custom, user-defined structs and enums used in GraphQL query file.
 func (e *evaluator) genSchemaDef(usePointers bool) {
@@ -41,7 +42,7 @@ func (e *evaluator) generateGoTypes(usePointers bool) {
 		case ast.Scalar:
 			e.createInterfaceType(cType)
 		case ast.Interface:
-			log.Printf("Generating interfaces not yet implemented. Skipping.")
+			e.createFragmentStruct(cType)
 		case ast.Union:
 			log.Printf("Generating unions not yet implemented. Skipping.")
 		}
@@ -78,6 +79,30 @@ func (e *evaluator) createStruct(cType *ast.Definition, usePointers bool) {
 	}
 	e.generator.WriteLineBreak(twoLinesBreak)
 	e.generator.WritePublicStruct(s, usePointers)
+}
+
+// createFragmentStruct creates a generic struct containing all the fields that interface and all implementations it has.
+func (e *evaluator) createFragmentStruct(cType *ast.Definition) {
+	fragmentName := fmt.Sprintf("%s%s", cType.Name, graphQLFragmentStructName)
+	fragmentFields := make(ast.FieldList, 0)
+
+	for _, definition := range e.schema.GetPossibleTypes(cType) {
+		fragmentFields = append(fragmentFields, definition.Fields...)
+	}
+
+	fList := make(ast.FieldList, 0)
+	for _, fField := range fragmentFields {
+		if fList.ForName(fField.Name) == nil {
+			fList = append(fList, fField)
+		}
+	}
+
+	fragmentDef := &ast.Definition{
+		Kind:   ast.Object,
+		Name:   fragmentName,
+		Fields: fList,
+	}
+	e.createStruct(fragmentDef, e.AdditionalInfo.UsePointers)
 }
 
 // parseSelectionSet creates array of type generator.TypeArg based on selection set.
@@ -152,10 +177,15 @@ func (e *evaluator) convGoType(astType *ast.Type) string {
 // convComplexType recursively checks GraphQL type and returns corresponding Go type.
 func (e *evaluator) convComplexType(astType *ast.Type) string {
 	if common.IsList(astType) {
+		switch nt := astType.Elem; {
+		// If astType is not multi-dimensional array of interfaces return '[]' with 'Fragment' suffix
+		case common.IsComplex(nt) && !common.IsList(nt) && e.schema.Types[nt.NamedType].Kind == ast.Interface:
+			return fmt.Sprintf("[]%s%s", nt.NamedType, graphQLFragmentStructName)
 		// If astType is not multi-dimensional array return '[]' with named type
-		if nt := astType.Elem; common.IsComplex(nt) && !common.IsList(nt) {
+		case common.IsComplex(nt) && !common.IsList(nt):
 			return fmt.Sprintf("[]%s", nt.NamedType)
-		} else {
+		// Otherwise, recursively check the type
+		default:
 			return fmt.Sprintf("[]%s", e.convGoType(nt))
 		}
 	}
