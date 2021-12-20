@@ -16,16 +16,16 @@ const (
 )
 
 // genSchemaDef generates custom, user-defined structs and enums used in GraphQL query file.
-func (e *evaluator) genSchemaDef(usePointers bool) {
+func (e *evaluator) genSchemaDef() {
 	e.generator.WriteLineBreak(twoLinesBreak)
 
-	e.generateGoTypes(usePointers)
+	e.generateGoTypes()
 
 	e.generator.WriteLineBreak(twoLinesBreak)
 }
 
 // generateStructs generates Go code based on GraphQL schema.
-func (e *evaluator) generateGoTypes(usePointers bool) {
+func (e *evaluator) generateGoTypes() {
 	cTypes := e.visitor.IntrospectTypes()
 	for _, customType := range cTypes {
 		cType := e.schema.Types[customType]
@@ -38,7 +38,7 @@ func (e *evaluator) generateGoTypes(usePointers bool) {
 		switch cType.Kind {
 		case ast.Object,
 			ast.InputObject:
-			e.createStruct(cType, usePointers)
+			e.createStruct(cType)
 		case ast.Enum:
 			e.createEnum(cType)
 		case ast.Scalar:
@@ -74,13 +74,13 @@ func (e *evaluator) createInterfaceType(cType *ast.Definition) {
 }
 
 // createStruct creates generator.Struct and writes to IO.
-func (e *evaluator) createStruct(cType *ast.Definition, usePointers bool) {
+func (e *evaluator) createStruct(cType *ast.Definition) {
 	s := generator.Struct{
 		Name:   cType.Name,
 		Fields: e.parseFieldArgs(&cType.Fields),
 	}
 	e.generator.WriteLineBreak(twoLinesBreak)
-	e.generator.WritePublicStruct(s, usePointers)
+	e.generator.WritePublicStruct(s, e.AdditionalInfo.UsePointers)
 }
 
 // createCommonStruct creates a generic struct containing all the fields that interface and all implementations it has.
@@ -104,7 +104,7 @@ func (e *evaluator) createCommonStruct(cType *ast.Definition, graphQLTypeSuffix 
 		Name:   fragmentName,
 		Fields: fList,
 	}
-	e.createStruct(fragmentDef, e.AdditionalInfo.UsePointers)
+	e.createStruct(fragmentDef)
 }
 
 // parseSelectionSet creates array of type generator.TypeArg based on selection set.

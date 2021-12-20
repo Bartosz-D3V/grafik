@@ -44,7 +44,7 @@ func (e *evaluator) Generate() []byte {
 	e.generator.WriteImports()
 	e.generator.WriteLineBreak(twoLinesBreak)
 
-	e.genSchemaDef(e.AdditionalInfo.UsePointers)
+	e.genSchemaDef()
 	e.generator.WriteLineBreak(oneLineBreak)
 
 	e.genOperations()
