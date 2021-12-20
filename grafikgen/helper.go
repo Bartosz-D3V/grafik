@@ -15,18 +15,22 @@ import (
 
 const usageTxt = `grafik is GraphQL schema based client and generator.
 
-Supported commands:
+grafikgen is a CLI for generating GraphQL Go clients.
+
+Supported sub-commands:
 	help - prints this message
-	gen  - generates a GraphQL Go client
 
 Generate Go GraphQL client by providing location of GraphQL schema and GraphQL queries file.
 Example:
-	grafik gen -schema_source=./schemas/my_schema.graphql -query_source=./schemas/my_query.graphql [other options]
+	grafikgen -schema_source=./schemas/my_schema.graphql -query_source=./schemas/my_query.graphql [other options]
 
 To customize generated Go GraphQL client provide auxiliary options for client name, package and destination folder.
 Example:
-	grafik gen -schema_source=./schemas/my_schema.graphql -query_source=./schemas/my_query.graphql -package=app -client_name=MyGraphqlClient -destination=./app/my_client.go
+	grafikgen -schema_source=./schemas/my_schema.graphql -query_source=./schemas/my_query.graphql -package=app -client_name=MyGraphqlClient -destination=./app/my_client.go
 
+To display this message use help:
+Example:
+	grafikgen help
 `
 
 const rwe = 0755

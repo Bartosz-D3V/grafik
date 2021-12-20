@@ -3,7 +3,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"github.com/Bartosz-D3V/grafik/evaluator"
 	"github.com/vektah/gqlparser"
 	"github.com/vektah/gqlparser/ast"
@@ -20,10 +19,8 @@ type cli struct {
 	usePointers  *bool
 }
 
-const numOfRequiredArgs = 2
-
 func main() {
-	genCmd := flag.NewFlagSet("gen", flag.ExitOnError)
+	genCmd := flag.NewFlagSet("", flag.ExitOnError)
 	genSchemaSrc := genCmd.String("schema_source", "", "[required] Location of the GraphQL schema file. Either absolute or relative.")
 	genQuerySrc := genCmd.String("query_source", "", "[required] Location of the GraphQL query file. Either absolute or relative.")
 	genPackageName := genCmd.String("package_name", "", "[optional] Name of the generated Go GraphQL client package; defaults to the name of the GraphQL query file with 'grafik_' prefix.")
@@ -31,20 +28,12 @@ func main() {
 	genDestination := genCmd.String("destination", "./", "[optional] Output filename with path. Either absolute or relative; defaults to the current directory and client name.")
 	genUsePointers := genCmd.Bool("use_pointers", false, "[optional] Generate public GraphQL structs' fields as pointers; defaults to false.")
 
-	if len(os.Args) < numOfRequiredArgs {
-		fmt.Println("gen or help subcommand is required")
-		os.Exit(1)
-	}
-
 	switch os.Args[1] {
-	case "gen":
-		_ = genCmd.Parse(os.Args[numOfRequiredArgs:])
 	case "help":
 		usage(genCmd)
 		os.Exit(0)
 	default:
-		usage(genCmd)
-		os.Exit(1)
+		_ = genCmd.Parse(os.Args[1:])
 	}
 
 	err := validateGenOptions(genSchemaSrc, genQuerySrc)
