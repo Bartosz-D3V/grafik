@@ -27,13 +27,13 @@ GO111MODULE=on go get github.com/Bartosz-D3V/grafik/grafikgen@latest
 ### Go 1.16+
 
 ```bash
-go install github.com/Bartosz-D3V/grafik/grafikgen@latest
+go install github.com/Bartosz-D3V/grafik/grafikgen@v0.0.1
 ```
 
 To add grafik GraphQL client add grafik as a dependency to the project:
 
 ```shell
-go get github.com/Bartosz-D3V/grafik@latest
+go get github.com/Bartosz-D3V/grafik@v0.0.1
 ```
 
 ## Running grafikgen
@@ -66,7 +66,7 @@ query countResults($condition: Condition!){
 ```
 Command to generate GraphQL client
 ```shell
-gen
+grafikgen
     --schema_source=./graphql/schema.graphql \
     --query_source=./graphql/query.graphql \
     --package_name=main \
