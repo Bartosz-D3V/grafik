@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/Bartosz-D3V/grafik/common"
 	"go/format"
+	"log"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -44,7 +45,7 @@ func New(rootLoc string) Generator {
 	}
 	tmpl, err := template.New("codeTemplate").Funcs(funcMap).ParseGlob(filepath.Join(rootLoc, "templates/*.tmpl"))
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to parse templates. Cause: %s", err.Error())
 	}
 	return &generator{
 		stream:   &bytes.Buffer{},
@@ -66,7 +67,7 @@ func (g *generator) WritePackage(pkgName string) {
 func (g *generator) WriteImports() {
 	err := g.template.ExecuteTemplate(g.stream, "imports.tmpl", make(map[string]interface{}))
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to execute 'imports' template. Cause: %s", err.Error())
 	}
 }
 
@@ -83,7 +84,7 @@ func (g *generator) WriteInterface(name string, fn ...Func) {
 	}
 	err := g.template.ExecuteTemplate(g.stream, "interface.tmpl", config)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to parse 'interface' template. Cause: %s", err.Error())
 	}
 }
 
@@ -96,7 +97,7 @@ func (g *generator) WritePublicStruct(s Struct, usePointers bool) {
 	}
 	err := g.template.ExecuteTemplate(g.stream, "struct.tmpl", config)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to parse 'struct' template. Cause: %s", err.Error())
 	}
 }
 
@@ -108,7 +109,7 @@ func (g *generator) WritePrivateStruct(s Struct) {
 	}
 	err := g.template.ExecuteTemplate(g.stream, "struct.tmpl", config)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to parse 'struct' template. Cause: %s", err.Error())
 	}
 }
 
@@ -116,7 +117,7 @@ func (g *generator) WritePrivateStruct(s Struct) {
 func (g *generator) WriteEnum(e Enum) {
 	err := g.template.ExecuteTemplate(g.stream, "enum.tmpl", e)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to parse 'enum' template. Cause: %s", err.Error())
 	}
 }
 
@@ -124,7 +125,7 @@ func (g *generator) WriteEnum(e Enum) {
 func (g *generator) WriteConst(c Const) {
 	err := g.template.ExecuteTemplate(g.stream, "const.tmpl", c)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to parse 'const' template. Cause: %s", err.Error())
 	}
 }
 
@@ -132,7 +133,7 @@ func (g *generator) WriteConst(c Const) {
 func (g *generator) WriteClientConstructor(clientName string) {
 	err := g.template.ExecuteTemplate(g.stream, "constructor.tmpl", clientName)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to parse 'constructor' template. Cause: %s", err.Error())
 	}
 }
 
@@ -144,7 +145,7 @@ func (g *generator) WriteInterfaceImplementation(clientName string, f Func) {
 	}
 	err := g.template.ExecuteTemplate(g.stream, "interface_impl.tmpl", config)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to parse 'interface_impl' template. Cause: %s", err.Error())
 	}
 }
 
@@ -156,7 +157,7 @@ func (g *generator) WriteGraphqlErrorStructs(usePointers bool) {
 	}
 	err := g.template.ExecuteTemplate(g.stream, "graphql_error.tmpl", config)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to parse 'graphql_error' template. Cause: %s", err.Error())
 	}
 }
 
@@ -165,11 +166,11 @@ func (g *generator) Generate() []byte {
 	b := make([]byte, g.stream.Len())
 	_, err := g.stream.Read(b)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to read stream content from generator. Cause: %s", err.Error())
 	}
 	b, err = format.Source(b)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to format generated Go code. Cause: %s", err.Error())
 	}
 	return b
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/Bartosz-D3V/grafik/evaluator"
 	"github.com/vektah/gqlparser"
 	"github.com/vektah/gqlparser/ast"
+	"log"
 	"os"
 )
 
@@ -43,7 +44,8 @@ func main() {
 	}
 
 	if !genCmd.Parsed() {
-		return
+		usage(genCmd)
+		os.Exit(1)
 	}
 
 	cli := cli{
@@ -57,21 +59,28 @@ func main() {
 
 	schemaContent, err := getFileContent(cli.schemaSource)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to read content of GraphQL schema file. Cause: %s", err.Error())
 	}
 
 	schema, err := gqlparser.LoadSchema(&ast.Source{
 		Input: string(schemaContent),
 		Name:  cli.parseSchemaName(),
 	})
-	print(err.Error())
+
+	// gqlparser returns err that is not nil even when schema is parsed correctly
+	if err.Error() != "" {
+		log.Fatalf("Failed to parse GraphQL schema file. Cause: %s", err.Error())
+	}
 
 	queryContent, err := getFileContent(cli.querySource)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to read content of GraphQL query file. Cause: %s", err.Error())
 	}
 	query, err := gqlparser.LoadQuery(schema, string(queryContent))
-	print(err.Error())
+	// gqlparser returns err that is not nil even when schema is parsed correctly
+	if err.Error() != "" {
+		log.Fatalf("Failed to parse GraphQL query file. Cause: %s", err.Error())
+	}
 
 	additionalInfo := evaluator.AdditionalInfo{
 		PackageName: cli.parsePackageName(),

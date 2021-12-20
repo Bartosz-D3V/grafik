@@ -7,6 +7,7 @@ import (
 	"github.com/Bartosz-D3V/grafik/common"
 	"io"
 	"io/ioutil"
+	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -42,19 +43,19 @@ func writeFile(content []byte, fullDist string) {
 	if dir != "" {
 		err := os.MkdirAll(dir, rwe)
 		if err != nil {
-			panic(err)
+			log.Fatalf("Failed to create folder %s. Cause: %s", dir, err.Error())
 		}
 	}
 	openFile, err := os.OpenFile(fullDist, os.O_RDWR|os.O_CREATE|os.O_TRUNC, rwe)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to open generated file %s. Cause: %s", fullDist, err.Error())
 	}
 	_, err = openFile.Write(content)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to write content of the grafik client. Cause: %s", err.Error())
 	}
 	if err := openFile.Close(); err != nil {
-		panic(err)
+		log.Fatalf("Failed to close generated file. Cause: %s", err.Error())
 	}
 }
 
