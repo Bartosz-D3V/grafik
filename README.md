@@ -1,6 +1,8 @@
 # grafik
 
 [![Build Status][ci-badge]][ci-yml]
+[![Go Report Card][go-report-card-link]][go-report-card-link]
+[![Latest Tag][latest-tag]][latest-tag]
 [![GitHub][mit-badge]][mit-link]
 [![PRs Welcome][pr-welcome-badge]][gh-contribute]
 
@@ -176,6 +178,10 @@ To view the help run `grafikgen help` command.
 [golang]:   http://golang.org/
 
 [ci-badge]: https://github.com/Bartosz-D3V/grafik/actions/workflows/go.yml/badge.svg
+
+[go-report-card-link]: https://goreportcard.com/badge/github.com/Bartosz-D3V/grafik
+
+[latest-tag]: https://img.shields.io/github/v/tag/Bartosz-D3V/grafik?sort=semver
 
 [ci-yml]:   https://github.com/Bartosz-D3V/grafik/actions/workflows/go.yml
 
