@@ -2,6 +2,7 @@
 
 [![Build Status][ci-badge]][ci-yml]
 [![Go Report Card][go-report-card-link]][go-report-card-link]
+[![codecov][codecov-link]][project-link]
 [![Latest Tag][latest-tag]][latest-tag]
 [![GitHub][mit-badge]][mit-link]
 [![PRs Welcome][pr-welcome-badge]][gh-contribute]
@@ -180,6 +181,10 @@ To view the help run `grafikgen help` command.
 [ci-badge]: https://github.com/Bartosz-D3V/grafik/actions/workflows/go.yml/badge.svg
 
 [go-report-card-link]: https://goreportcard.com/badge/github.com/Bartosz-D3V/grafik
+
+[codecov-link]: https://codecov.io/gh/Bartosz-D3V/grafik/branch/master/graph/badge.svg?token=BNGJMPXWPD
+
+[project-link]: https://codecov.io/gh/Bartosz-D3V/grafik
 
 [latest-tag]: https://img.shields.io/github/v/tag/Bartosz-D3V/grafik?sort=semver
 
