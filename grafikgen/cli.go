@@ -88,8 +88,19 @@ func main() {
 		UsePointers: *genUsePointers,
 	}
 
-	e := evaluator.New("./", schema, query, additionalInfo)
+	e, err := evaluator.New("./", schema, query, additionalInfo)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	fileName := getFileDestName(additionalInfo.ClientName, cli.destination)
-	writeFile(e.Generate(), fileName)
+
+	fileContent, err := e.Generate()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = writeFile(fileContent, fileName)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

@@ -16,16 +16,19 @@ const (
 )
 
 // genSchemaDef generates custom, user-defined structs and enums used in GraphQL query file.
-func (e *evaluator) genSchemaDef() {
+func (e *evaluator) genSchemaDef() error {
 	e.generator.WriteLineBreak(twoLinesBreak)
 
-	e.generateGoTypes()
+	if err := e.generateGoTypes(); err != nil {
+		return err
+	}
 
 	e.generator.WriteLineBreak(twoLinesBreak)
+	return nil
 }
 
 // generateStructs generates Go code based on GraphQL schema.
-func (e *evaluator) generateGoTypes() {
+func (e *evaluator) generateGoTypes() (err error) {
 	cTypes := e.visitor.IntrospectTypes()
 	for _, customType := range cTypes {
 		cType := e.schema.Types[customType]
@@ -38,21 +41,22 @@ func (e *evaluator) generateGoTypes() {
 		switch cType.Kind {
 		case ast.Object,
 			ast.InputObject:
-			e.createStruct(cType)
+			err = e.createStruct(cType)
 		case ast.Enum:
-			e.createEnum(cType)
+			err = e.createEnum(cType)
 		case ast.Scalar:
-			e.createInterfaceType(cType)
+			err = e.createInterfaceType(cType)
 		case ast.Interface:
-			e.createCommonStruct(cType, graphQLFragmentStructName)
+			err = e.createCommonStruct(cType, graphQLFragmentStructName)
 		case ast.Union:
-			e.createCommonStruct(cType, graphQLUnionStructName)
+			err = e.createCommonStruct(cType, graphQLUnionStructName)
 		}
 	}
+	return err
 }
 
 // createEnum creates generator.Enum and writes to IO.
-func (e *evaluator) createEnum(cType *ast.Definition) {
+func (e *evaluator) createEnum(cType *ast.Definition) error {
 	fields := make([]string, len(cType.EnumValues))
 	for i, field := range cType.EnumValues {
 		fields[i] = field.Name
@@ -64,27 +68,27 @@ func (e *evaluator) createEnum(cType *ast.Definition) {
 	}
 
 	e.generator.WriteLineBreak(twoLinesBreak)
-	e.generator.WriteEnum(en)
+	return e.generator.WriteEnum(en)
 }
 
 // createInterface creates type 'any' in Go [type X interface{}] and writes to IO.
-func (e *evaluator) createInterfaceType(cType *ast.Definition) {
+func (e *evaluator) createInterfaceType(cType *ast.Definition) error {
 	e.generator.WriteLineBreak(twoLinesBreak)
-	e.generator.WriteInterface(cType.Name)
+	return e.generator.WriteInterface(cType.Name)
 }
 
 // createStruct creates generator.Struct and writes to IO.
-func (e *evaluator) createStruct(cType *ast.Definition) {
+func (e *evaluator) createStruct(cType *ast.Definition) error {
 	s := generator.Struct{
 		Name:   cType.Name,
 		Fields: e.parseFieldArgs(&cType.Fields),
 	}
 	e.generator.WriteLineBreak(twoLinesBreak)
-	e.generator.WritePublicStruct(s, e.AdditionalInfo.UsePointers)
+	return e.generator.WritePublicStruct(s, e.AdditionalInfo.UsePointers)
 }
 
 // createCommonStruct creates a generic struct containing all the fields that interface and all implementations it has.
-func (e *evaluator) createCommonStruct(cType *ast.Definition, graphQLTypeSuffix string) {
+func (e *evaluator) createCommonStruct(cType *ast.Definition, graphQLTypeSuffix string) error {
 	fragmentName := fmt.Sprintf("%s%s", cType.Name, graphQLTypeSuffix)
 	fragmentFields := make(ast.FieldList, 0)
 
@@ -104,7 +108,7 @@ func (e *evaluator) createCommonStruct(cType *ast.Definition, graphQLTypeSuffix 
 		Name:   fragmentName,
 		Fields: fList,
 	}
-	e.createStruct(fragmentDef)
+	return e.createStruct(fragmentDef)
 }
 
 // parseSelectionSet creates array of type generator.TypeArg based on selection set.
@@ -218,7 +222,7 @@ func (e *evaluator) convComplexType(astType *ast.Type) string {
 //        name
 //    }
 // }'
-func (e *evaluator) genOperations() {
+func (e *evaluator) genOperations() error {
 	ops := e.queryDocument.Operations
 	opsCount := len(ops)
 	src := ops[0].Position.Src.Input
@@ -240,7 +244,10 @@ func (e *evaluator) genOperations() {
 				Name: curOp.Name,
 				Val:  queryStr,
 			}
-			e.generator.WriteConst(c)
+			err := e.generator.WriteConst(c)
+			if err != nil {
+				return err
+			}
 			e.generator.WriteLineBreak(twoLinesBreak)
 		} else {
 			queryStr := src[curOp.Position.Start:]
@@ -248,21 +255,31 @@ func (e *evaluator) genOperations() {
 				Name: curOp.Name,
 				Val:  queryStr,
 			}
-			e.generator.WriteConst(c)
+			err := e.generator.WriteConst(c)
+			if err != nil {
+				return err
+			}
 			e.generator.WriteLineBreak(oneLineBreak)
 		}
 	}
+	return nil
 }
 
 // genClientCode generates client code - all interfaces, constructor methods and client struct.
-func (e *evaluator) genClientCode() {
-	e.genOpsInterface()
+func (e *evaluator) genClientCode() error {
+	err := e.genOpsInterface()
+	if err != nil {
+		return err
+	}
 	e.generator.WriteLineBreak(twoLinesBreak)
 
-	e.genClientStruct()
+	err = e.genClientStruct()
+	if err != nil {
+		return err
+	}
 	e.generator.WriteLineBreak(twoLinesBreak)
 
-	e.generator.WriteClientConstructor(e.AdditionalInfo.ClientName)
+	return e.generator.WriteClientConstructor(e.AdditionalInfo.ClientName)
 }
 
 // genOpsInterface generates public interface for grafik client.
@@ -270,7 +287,7 @@ func (e *evaluator) genClientCode() {
 // type SpaceXClient interface {
 //	AddOrUpdateHardcodedUser(rocketName string, usersOnConflict UsersOnConflict, header *http.Header) (*http.Response, error)
 // }
-func (e *evaluator) genOpsInterface() {
+func (e *evaluator) genOpsInterface() error {
 	ops := e.queryDocument.Operations
 
 	funcs := make([]generator.Func, len(ops))
@@ -283,27 +300,36 @@ func (e *evaluator) genOpsInterface() {
 		}
 		funcs[i] = f
 	}
-	e.generator.WriteInterface(e.AdditionalInfo.ClientName, funcs...)
+	err := e.generator.WriteInterface(e.AdditionalInfo.ClientName, funcs...)
+	if err != nil {
+		return err
+	}
 	e.generator.WriteLineBreak(twoLinesBreak)
 
 	// Generate interface implementation for each interface method
 	for _, f := range funcs {
-		e.generator.WriteInterfaceImplementation(e.AdditionalInfo.ClientName, f)
+		err := e.generator.WriteInterfaceImplementation(e.AdditionalInfo.ClientName, f)
+		if err != nil {
+			return err
+		}
 		e.generator.WriteLineBreak(twoLinesBreak)
 	}
 
 	// Generate wrapper struct for selection set operations
 	for _, f := range funcs {
-		e.genWrapperResponseStruct(f)
+		err := e.genWrapperResponseStruct(f)
+		if err != nil {
+			return err
+		}
 	}
 
 	// Generate predefined error structs
-	e.genErrorStructs()
+	return e.genErrorStructs()
 }
 
 // genWrapperResponseStruct generates top level GraphQL response type
 // See https://graphql.org/learn/serving-over-http/#response
-func (e *evaluator) genWrapperResponseStruct(f generator.Func) {
+func (e *evaluator) genWrapperResponseStruct(f generator.Func) error {
 	dataStructName := fmt.Sprintf("%sData", strings.Title(f.Name))
 	responseStructName := fmt.Sprintf("%sResponse", strings.Title(f.Name))
 	structWrapper := generator.Struct{
@@ -319,7 +345,10 @@ func (e *evaluator) genWrapperResponseStruct(f generator.Func) {
 			},
 		},
 	}
-	e.generator.WritePublicStruct(structWrapper, e.AdditionalInfo.UsePointers)
+	err := e.generator.WritePublicStruct(structWrapper, e.AdditionalInfo.UsePointers)
+	if err != nil {
+		return err
+	}
 	e.generator.WriteLineBreak(twoLinesBreak)
 
 	// generate object referenced in 'data' JSON response
@@ -328,17 +357,21 @@ func (e *evaluator) genWrapperResponseStruct(f generator.Func) {
 		Name:   dataStructName,
 		Fields: f.WrapperArgs,
 	}
-	e.generator.WritePublicStruct(s, e.AdditionalInfo.UsePointers)
+	err = e.generator.WritePublicStruct(s, e.AdditionalInfo.UsePointers)
+	if err != nil {
+		return err
+	}
 	e.generator.WriteLineBreak(twoLinesBreak)
+	return nil
 }
 
 // genErrorStructs generates predefined GraphQL error structs.
-func (e *evaluator) genErrorStructs() {
-	e.generator.WriteGraphqlErrorStructs(e.AdditionalInfo.UsePointers)
+func (e *evaluator) genErrorStructs() error {
+	return e.generator.WriteGraphqlErrorStructs(e.AdditionalInfo.UsePointers)
 }
 
 // genClientStruct generates internal grafik GraphQL client defined in package client.
-func (e *evaluator) genClientStruct() {
+func (e *evaluator) genClientStruct() error {
 	s := generator.Struct{
 		Name: e.AdditionalInfo.ClientName,
 		Fields: []generator.TypeArg{
@@ -348,5 +381,5 @@ func (e *evaluator) genClientStruct() {
 			},
 		},
 	}
-	e.generator.WritePrivateStruct(s)
+	return e.generator.WritePrivateStruct(s)
 }

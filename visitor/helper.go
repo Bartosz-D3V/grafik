@@ -53,9 +53,8 @@ func (v *visitor) findSubTypes(t *ast.Definition) {
 func (v *visitor) findLeafType(elem *ast.Type) *ast.Type {
 	if common.IsList(elem) {
 		return v.findLeafType(elem.Elem)
-	} else {
-		return elem
 	}
+	return elem
 }
 
 func (v *visitor) registerType(typeName string) {

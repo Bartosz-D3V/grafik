@@ -7,7 +7,6 @@ import (
 	"github.com/Bartosz-D3V/grafik/common"
 	"io"
 	"io/ioutil"
-	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -38,25 +37,26 @@ const rwe = 0755
 
 // writeFile writes the whole slice of bytes to new file.
 // Used to create the generated grafik client file.
-func writeFile(content []byte, fullDist string) {
+func writeFile(content []byte, fullDist string) error {
 	dir, _ := filepath.Split(fullDist)
 	if dir != "" {
 		err := os.MkdirAll(dir, rwe)
 		if err != nil {
-			log.Fatalf("Failed to create folder %s. Cause: %s", dir, err.Error())
+			return fmt.Errorf("failed to create folder %s. Cause: %w", dir, err)
 		}
 	}
 	openFile, err := os.OpenFile(fullDist, os.O_RDWR|os.O_CREATE|os.O_TRUNC, rwe)
 	if err != nil {
-		log.Fatalf("Failed to open generated file %s. Cause: %s", fullDist, err.Error())
+		return fmt.Errorf("failed to open generated file %s. Cause: %w", fullDist, err)
 	}
 	_, err = openFile.Write(content)
 	if err != nil {
-		log.Fatalf("Failed to write content of the grafik client. Cause: %s", err.Error())
+		return fmt.Errorf("failed to write content of the grafik client. Cause: %w", err)
 	}
 	if err := openFile.Close(); err != nil {
-		log.Fatalf("Failed to close generated file. Cause: %s", err.Error())
+		return fmt.Errorf("failed to close generated file. Cause: %w", err)
 	}
+	return nil
 }
 
 // parsePackageName returns name of the package - either defined by user through CLI flag or GraphQL query file name with 'grafik_' prefix.
@@ -97,17 +97,16 @@ func getFileContent(src *string) ([]byte, error) {
 	}
 	if path.IsAbs(*src) {
 		return ioutil.ReadFile(*src)
-	} else {
-		wd, err := os.Getwd()
-		if err != nil {
-			return nil, err
-		}
-		absSrc := path.Join(wd, *src)
-		return ioutil.ReadFile(absSrc)
 	}
+	wd, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
+	absSrc := path.Join(wd, *src)
+	return ioutil.ReadFile(absSrc)
 }
 
-// getFileDestName returns destination file name - either defined thrugh CLI flag or same as client name.
+// getFileDestName returns destination file name - either defined via CLI flag or same as client name.
 func getFileDestName(clientName string, dist *string) string {
 	if dist == nil || *dist == "" {
 		return clientName

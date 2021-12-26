@@ -20,9 +20,13 @@ func TestEvaluator_Generate_FlatStructure(t *testing.T) {
 		ClientName:  "FilesClient",
 		UsePointers: false,
 	}
-	e := New("../", schema, query, info)
+	e, err := New("../", schema, query, info)
+	assert.NoError(t, err)
 
-	out := string(e.Generate())
+	fileContent, err := e.Generate()
+	assert.NoError(t, err)
+
+	out := string(fileContent)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -128,9 +132,13 @@ func TestEvaluator_Generate_ArrayStructure(t *testing.T) {
 		ClientName:  "FilmsClient",
 		UsePointers: false,
 	}
-	e := New("../", schema, query, info)
+	e, err := New("../", schema, query, info)
+	assert.NoError(t, err)
 
-	out := string(e.Generate())
+	fileContent, err := e.Generate()
+	assert.NoError(t, err)
+
+	out := string(fileContent)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -215,9 +223,13 @@ func TestEvaluator_Generate_2DArrayStructure(t *testing.T) {
 		ClientName:  "MathClient",
 		UsePointers: false,
 	}
-	e := New("../", schema, query, info)
+	e, err := New("../", schema, query, info)
+	assert.NoError(t, err)
 
-	out := string(e.Generate())
+	fileContent, err := e.Generate()
+	assert.NoError(t, err)
+
+	out := string(fileContent)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -302,9 +314,13 @@ func TestEvaluator_Generate_3DArrayStructure(t *testing.T) {
 		ClientName:  "MathClient",
 		UsePointers: false,
 	}
-	e := New("../", schema, query, info)
+	e, err := New("../", schema, query, info)
+	assert.NoError(t, err)
 
-	out := string(e.Generate())
+	fileContent, err := e.Generate()
+	assert.NoError(t, err)
+
+	out := string(fileContent)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -387,9 +403,13 @@ func TestEvaluator_Generate_NestedStructure(t *testing.T) {
 		ClientName:  "SpecificHeroClient",
 		UsePointers: false,
 	}
-	e := New("../", schema, query, info)
+	e, err := New("../", schema, query, info)
+	assert.NoError(t, err)
 
-	out := string(e.Generate())
+	fileContent, err := e.Generate()
+	assert.NoError(t, err)
+
+	out := string(fileContent)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -494,9 +514,13 @@ func TestEvaluator_Generate_Enum(t *testing.T) {
 		ClientName:  "CompanyClient",
 		UsePointers: false,
 	}
-	e := New("../", schema, query, info)
+	e, err := New("../", schema, query, info)
+	assert.NoError(t, err)
 
-	out := string(e.Generate())
+	fileContent, err := e.Generate()
+	assert.NoError(t, err)
+
+	out := string(fileContent)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -584,9 +608,13 @@ func TestEvaluator_Generate_Input(t *testing.T) {
 		ClientName:  "CapsulesClient",
 		UsePointers: false,
 	}
-	e := New("../", schema, query, info)
+	e, err := New("../", schema, query, info)
+	assert.NoError(t, err)
 
-	out := string(e.Generate())
+	fileContent, err := e.Generate()
+	assert.NoError(t, err)
+
+	out := string(fileContent)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -688,9 +716,13 @@ func TestEvaluator_Generate_Input_2DArray(t *testing.T) {
 		ClientName:  "CapsulesClient",
 		UsePointers: false,
 	}
-	e := New("../", schema, query, info)
+	e, err := New("../", schema, query, info)
+	assert.NoError(t, err)
 
-	out := string(e.Generate())
+	fileContent, err := e.Generate()
+	assert.NoError(t, err)
+
+	out := string(fileContent)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -785,9 +817,13 @@ func TestEvaluator_Generate_Input_3DArray(t *testing.T) {
 		ClientName:  "CapsulesClient",
 		UsePointers: false,
 	}
-	e := New("../", schema, query, info)
+	e, err := New("../", schema, query, info)
+	assert.NoError(t, err)
 
-	out := string(e.Generate())
+	fileContent, err := e.Generate()
+	assert.NoError(t, err)
+
+	out := string(fileContent)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -882,9 +918,13 @@ func TestEvaluator_CircularType(t *testing.T) {
 		ClientName:  "MovieClient",
 		UsePointers: false,
 	}
-	e := New("../", schema, query, info)
+	e, err := New("../", schema, query, info)
+	assert.NoError(t, err)
 
-	out := string(e.Generate())
+	fileContent, err := e.Generate()
+	assert.NoError(t, err)
+
+	out := string(fileContent)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -974,9 +1014,13 @@ func TestEvaluator_FragmentType(t *testing.T) {
 		ClientName:  "RocketClient",
 		UsePointers: false,
 	}
-	e := New("../", schema, query, info)
+	e, err := New("../", schema, query, info)
+	assert.NoError(t, err)
 
-	out := string(e.Generate())
+	fileContent, err := e.Generate()
+	assert.NoError(t, err)
+
+	out := string(fileContent)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -1072,9 +1116,13 @@ func TestEvaluator_SelectionSet(t *testing.T) {
 		ClientName:  "CountriesClient",
 		UsePointers: false,
 	}
-	e := New("../", schema, query, info)
+	e, err := New("../", schema, query, info)
+	assert.NoError(t, err)
 
-	out := string(e.Generate())
+	fileContent, err := e.Generate()
+	assert.NoError(t, err)
+
+	out := string(fileContent)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -1166,9 +1214,13 @@ func TestEvaluator_Interface(t *testing.T) {
 		ClientName:  "CharacterClient",
 		UsePointers: false,
 	}
-	e := New("../", schema, query, info)
+	e, err := New("../", schema, query, info)
+	assert.NoError(t, err)
 
-	out := string(e.Generate())
+	fileContent, err := e.Generate()
+	assert.NoError(t, err)
+
+	out := string(fileContent)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -1258,9 +1310,13 @@ func TestEvaluator_Interface_3DArray(t *testing.T) {
 		ClientName:  "CharacterClient",
 		UsePointers: false,
 	}
-	e := New("../", schema, query, info)
+	e, err := New("../", schema, query, info)
+	assert.NoError(t, err)
 
-	out := string(e.Generate())
+	fileContent, err := e.Generate()
+	assert.NoError(t, err)
+
+	out := string(fileContent)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -1350,9 +1406,13 @@ func TestEvaluator_InterfaceWithSelectionSet(t *testing.T) {
 		ClientName:  "PlanetClient",
 		UsePointers: false,
 	}
-	e := New("../", schema, query, info)
+	e, err := New("../", schema, query, info)
+	assert.NoError(t, err)
 
-	out := string(e.Generate())
+	fileContent, err := e.Generate()
+	assert.NoError(t, err)
+
+	out := string(fileContent)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -1461,9 +1521,13 @@ func TestEvaluator_Union(t *testing.T) {
 		ClientName:  "CharacterClient",
 		UsePointers: false,
 	}
-	e := New("../", schema, query, info)
+	e, err := New("../", schema, query, info)
+	assert.NoError(t, err)
 
-	out := string(e.Generate())
+	fileContent, err := e.Generate()
+	assert.NoError(t, err)
+
+	out := string(fileContent)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -1548,9 +1612,13 @@ func TestEvaluator_WithPointers(t *testing.T) {
 		ClientName:  "RocketClient",
 		UsePointers: true,
 	}
-	e := New("../", schema, query, info)
+	e, err := New("../", schema, query, info)
+	assert.NoError(t, err)
 
-	out := string(e.Generate())
+	fileContent, err := e.Generate()
+	assert.NoError(t, err)
+
+	out := string(fileContent)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 

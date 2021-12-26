@@ -1,9 +1,11 @@
 # grafik
 
 [![Build Status][ci-badge]][ci-yml]
-[![Go Report Card][go-report-card-link]][go-report-card-link]
-[![codecov][codecov-link]][project-link]
-[![Latest Tag][latest-tag]][latest-tag]
+[![CodeQL][codeql-badge]][codeql-link]
+[![Go Report Card][go-report-card-badge]][go-report-card-link]
+[![codecov][codecov-badge]][codecov-link]
+[![Latest Tag][latest-tag-badge]][gh-tags]
+[![Go Reference][godoc-badge]][godoc-link]
 [![GitHub][mit-badge]][mit-link]
 [![PRs Welcome][pr-welcome-badge]][gh-contribute]
 
@@ -24,19 +26,19 @@ Assuming you have [Go][golang] installed on your machine, first install `grafikg
 ### Go version < 1.16
 
 ```bash
-GO111MODULE=on go get github.com/Bartosz-D3V/grafik/grafikgen@latest
+GO111MODULE=on go get github.com/Bartosz-D3V/grafik/grafikgen
 ```
 
 ### Go 1.16+
 
 ```bash
-go install github.com/Bartosz-D3V/grafik/grafikgen@v0.0.1
+go install github.com/Bartosz-D3V/grafik/grafikgen
 ```
 
 To add grafik GraphQL client add grafik as a dependency to the project:
 
 ```shell
-go get github.com/Bartosz-D3V/grafik@v0.0.1
+go get github.com/Bartosz-D3V/grafik
 ```
 
 ## Running grafikgen
@@ -180,19 +182,31 @@ To view the help run `grafikgen help` command.
 
 [ci-badge]: https://github.com/Bartosz-D3V/grafik/actions/workflows/go.yml/badge.svg
 
-[go-report-card-link]: https://goreportcard.com/badge/github.com/Bartosz-D3V/grafik
+[go-report-card-badge]: https://goreportcard.com/badge/github.com/Bartosz-D3V/grafik
 
-[codecov-link]: https://codecov.io/gh/Bartosz-D3V/grafik/branch/master/graph/badge.svg?token=BNGJMPXWPD
+[go-report-card-link]: https://goreportcard.com/report/github.com/Bartosz-D3V/grafik
 
-[project-link]: https://codecov.io/gh/Bartosz-D3V/grafik
+[codecov-badge]: https://codecov.io/gh/Bartosz-D3V/grafik/branch/master/graph/badge.svg?token=BNGJMPXWPD
 
-[latest-tag]: https://img.shields.io/github/v/tag/Bartosz-D3V/grafik?sort=semver
+[codecov-link]: https://codecov.io/gh/Bartosz-D3V/grafik
+
+[codeql-badge]: https://github.com/Bartosz-D3V/grafik/actions/workflows/codeql-analysis.yml/badge.svg
+
+[codeql-link]: https://github.com/Bartosz-D3V/grafik/actions/workflows/codeql-analysis.yml
+
+[latest-tag-badge]: https://img.shields.io/github/v/tag/Bartosz-D3V/grafik?sort=semver
+
+[gh-tags]: https://github.com/Bartosz-D3V/grafik/tags
 
 [ci-yml]:   https://github.com/Bartosz-D3V/grafik/actions/workflows/go.yml
 
 [mit-badge]: https://img.shields.io/github/license/mashape/apistatus.svg
 
 [mit-link]: https://opensource.org/licenses/MIT
+
+[godoc-badge]: https://pkg.go.dev/badge/github.com/Bartosz-D3V/grafik.svg
+
+[godoc-link]: https://pkg.go.dev/github.com/Bartosz-D3V/grafik
 
 [pr-welcome-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
 

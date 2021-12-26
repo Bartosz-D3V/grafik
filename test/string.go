@@ -1,3 +1,4 @@
+// Package test contains GraphQL code (Schemas & Queries) used for unit tests.
 package test
 
 import (
