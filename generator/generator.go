@@ -98,7 +98,7 @@ func (g *generator) WritePublicStruct(s Struct, usePointers bool) error {
 	}
 	err := g.template.ExecuteTemplate(g.stream, "struct.tmpl", config)
 	if err != nil {
-		fmt.Errorf("failed to execute 'struct' template. Cause: %w", err)
+		return fmt.Errorf("failed to execute 'struct' template. Cause: %w", err)
 	}
 	return nil
 }

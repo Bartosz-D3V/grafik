@@ -37,7 +37,7 @@ linters-settings:
     exclude:
       - '[}]+'
   cyclop:
-    max-complexity: 11
+    max-complexity: 12
   revive:
     rules:
       - name: exported

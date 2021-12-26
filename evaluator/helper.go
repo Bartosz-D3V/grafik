@@ -19,8 +19,7 @@ const (
 func (e *evaluator) genSchemaDef() error {
 	e.generator.WriteLineBreak(twoLinesBreak)
 
-	err := e.generateGoTypes()
-	if err != nil {
+	if err := e.generateGoTypes(); err != nil {
 		return err
 	}
 
@@ -29,7 +28,7 @@ func (e *evaluator) genSchemaDef() error {
 }
 
 // generateStructs generates Go code based on GraphQL schema.
-func (e *evaluator) generateGoTypes() error {
+func (e *evaluator) generateGoTypes() (err error) {
 	cTypes := e.visitor.IntrospectTypes()
 	for _, customType := range cTypes {
 		cType := e.schema.Types[customType]
@@ -42,33 +41,18 @@ func (e *evaluator) generateGoTypes() error {
 		switch cType.Kind {
 		case ast.Object,
 			ast.InputObject:
-			err := e.createStruct(cType)
-			if err != nil {
-				return err
-			}
+			err = e.createStruct(cType)
 		case ast.Enum:
-			err := e.createEnum(cType)
-			if err != nil {
-				return err
-			}
+			err = e.createEnum(cType)
 		case ast.Scalar:
-			err := e.createInterfaceType(cType)
-			if err != nil {
-				return err
-			}
+			err = e.createInterfaceType(cType)
 		case ast.Interface:
-			err := e.createCommonStruct(cType, graphQLFragmentStructName)
-			if err != nil {
-				return err
-			}
+			err = e.createCommonStruct(cType, graphQLFragmentStructName)
 		case ast.Union:
-			err := e.createCommonStruct(cType, graphQLUnionStructName)
-			if err != nil {
-				return err
-			}
+			err = e.createCommonStruct(cType, graphQLUnionStructName)
 		}
 	}
-	return nil
+	return err
 }
 
 // createEnum creates generator.Enum and writes to IO.
