@@ -97,17 +97,16 @@ func getFileContent(src *string) ([]byte, error) {
 	}
 	if path.IsAbs(*src) {
 		return ioutil.ReadFile(*src)
-	} else {
-		wd, err := os.Getwd()
-		if err != nil {
-			return nil, err
-		}
-		absSrc := path.Join(wd, *src)
-		return ioutil.ReadFile(absSrc)
 	}
+	wd, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
+	absSrc := path.Join(wd, *src)
+	return ioutil.ReadFile(absSrc)
 }
 
-// getFileDestName returns destination file name - either defined thrugh CLI flag or same as client name.
+// getFileDestName returns destination file name - either defined via CLI flag or same as client name.
 func getFileDestName(clientName string, dist *string) string {
 	if dist == nil || *dist == "" {
 		return clientName

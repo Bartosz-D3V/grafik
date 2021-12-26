@@ -1,5 +1,4 @@
 // Package client contains the code used internally by grafik to prepare & send HTTP requests.
-
 package client
 
 import (
@@ -40,12 +39,12 @@ func (c *client) Execute(ctx context.Context, query string, params map[string]in
 		Query:     q,
 		Variables: params,
 	}
-	reqJson, err := json.Marshal(req)
+	reqJSON, err := json.Marshal(req)
 	if err != nil {
 		return nil, GraphQLCallError{"Parsing GraphQL request failed", err.Error()}
 	}
 
-	httpReq, err := http.NewRequestWithContext(ctx, "POST", c.endpoint, bytes.NewBuffer(reqJson))
+	httpReq, err := http.NewRequestWithContext(ctx, "POST", c.endpoint, bytes.NewBuffer(reqJSON))
 	if err != nil {
 		return nil, GraphQLCallError{"Preparation of GraphQL call failed", err.Error()}
 	}
