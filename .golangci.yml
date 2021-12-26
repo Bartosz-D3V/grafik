@@ -26,6 +26,11 @@ linters:
     - noctx
     - deadcode
     - revive
+    - whitespace
+    - gofmt
+    - nilerr
+    - exportloopref
+    - asciicheck
 linters-settings:
   godot:
     exclude:
