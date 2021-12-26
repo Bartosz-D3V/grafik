@@ -25,6 +25,7 @@ linters:
     - paralleltest
     - noctx
     - deadcode
+    - revive
 linters-settings:
   godot:
     exclude:

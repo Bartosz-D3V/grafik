@@ -1,10 +1,10 @@
 # grafik
 
 [![Build Status][ci-badge]][ci-yml]
-[![Go Report Card][go-report-card-link]][go-report-card-link]
-[![codecov][codecov-link]][codecov-link]
 [![CodeQL][codeql-badge]][codeql-link]
-[![Latest Tag][latest-tag]][latest-tag]
+[![Go Report Card][go-report-card-badge]][go-report-card-link]
+[![codecov][codecov-badge]][codecov-link]
+[![Latest Tag][latest-tag-badge]][gh-tags]
 [![Go Reference][godoc-badge]][godoc-link]
 [![GitHub][mit-badge]][mit-link]
 [![PRs Welcome][pr-welcome-badge]][gh-contribute]
@@ -182,7 +182,9 @@ To view the help run `grafikgen help` command.
 
 [ci-badge]: https://github.com/Bartosz-D3V/grafik/actions/workflows/go.yml/badge.svg
 
-[go-report-card-link]: https://goreportcard.com/badge/github.com/Bartosz-D3V/grafik
+[go-report-card-badge]: https://goreportcard.com/badge/github.com/Bartosz-D3V/grafik
+
+[go-report-card-link]: https://goreportcard.com/report/github.com/Bartosz-D3V/grafik
 
 [codecov-link]: https://codecov.io/gh/Bartosz-D3V/grafik/branch/master/graph/badge.svg?token=BNGJMPXWPD
 
@@ -190,9 +192,13 @@ To view the help run `grafikgen help` command.
 
 [codeql-link]: https://github.com/Bartosz-D3V/grafik/actions/workflows/codeql-analysis.yml
 
-[codecov-link]: https://codecov.io/gh/Bartosz-D3V/grafik
+[codecov-badge]: https://codecov.io/gh/Bartosz-D3V/grafik
 
-[latest-tag]: https://img.shields.io/github/v/tag/Bartosz-D3V/grafik?sort=semver
+[codecov-link]: https://app.codecov.io/gh/Bartosz-D3V/grafik
+
+[latest-tag-badge]: https://img.shields.io/github/v/tag/Bartosz-D3V/grafik?sort=semver
+
+[gh-tags]: https://github.com/Bartosz-D3V/grafik/tags
 
 [ci-yml]:   https://github.com/Bartosz-D3V/grafik/actions/workflows/go.yml
 
