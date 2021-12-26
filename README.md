@@ -186,15 +186,13 @@ To view the help run `grafikgen help` command.
 
 [go-report-card-link]: https://goreportcard.com/report/github.com/Bartosz-D3V/grafik
 
-[codecov-link]: https://codecov.io/gh/Bartosz-D3V/grafik/branch/master/graph/badge.svg?token=BNGJMPXWPD
+[codecov-badge]: https://codecov.io/gh/Bartosz-D3V/grafik/branch/master/graph/badge.svg?token=BNGJMPXWPD
+
+[codecov-link]: https://codecov.io/gh/Bartosz-D3V/grafik
 
 [codeql-badge]: https://github.com/Bartosz-D3V/grafik/actions/workflows/codeql-analysis.yml/badge.svg
 
 [codeql-link]: https://github.com/Bartosz-D3V/grafik/actions/workflows/codeql-analysis.yml
-
-[codecov-badge]: https://codecov.io/gh/Bartosz-D3V/grafik
-
-[codecov-link]: https://app.codecov.io/gh/Bartosz-D3V/grafik
 
 [latest-tag-badge]: https://img.shields.io/github/v/tag/Bartosz-D3V/grafik?sort=semver
 

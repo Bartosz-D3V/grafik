@@ -7,7 +7,6 @@ import (
 	"github.com/Bartosz-D3V/grafik/common"
 	"io"
 	"io/ioutil"
-	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -38,25 +37,26 @@ const rwe = 0755
 
 // writeFile writes the whole slice of bytes to new file.
 // Used to create the generated grafik client file.
-func writeFile(content []byte, fullDist string) {
+func writeFile(content []byte, fullDist string) error {
 	dir, _ := filepath.Split(fullDist)
 	if dir != "" {
 		err := os.MkdirAll(dir, rwe)
 		if err != nil {
-			log.Fatalf("Failed to create folder %s. Cause: %s", dir, err.Error())
+			return fmt.Errorf("failed to create folder %s. Cause: %s", dir, err.Error())
 		}
 	}
 	openFile, err := os.OpenFile(fullDist, os.O_RDWR|os.O_CREATE|os.O_TRUNC, rwe)
 	if err != nil {
-		log.Fatalf("Failed to open generated file %s. Cause: %s", fullDist, err.Error())
+		return fmt.Errorf("failed to open generated file %s. Cause: %s", fullDist, err.Error())
 	}
 	_, err = openFile.Write(content)
 	if err != nil {
-		log.Fatalf("Failed to write content of the grafik client. Cause: %s", err.Error())
+		return fmt.Errorf("failed to write content of the grafik client. Cause: %s", err.Error())
 	}
 	if err := openFile.Close(); err != nil {
-		log.Fatalf("Failed to close generated file. Cause: %s", err.Error())
+		return fmt.Errorf("failed to close generated file. Cause: %s", err.Error())
 	}
+	return nil
 }
 
 // parsePackageName returns name of the package - either defined by user through CLI flag or GraphQL query file name with 'grafik_' prefix.

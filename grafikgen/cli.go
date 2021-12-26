@@ -91,5 +91,8 @@ func main() {
 	e := evaluator.New("./", schema, query, additionalInfo)
 
 	fileName := getFileDestName(additionalInfo.ClientName, cli.destination)
-	writeFile(e.Generate(), fileName)
+	err = writeFile(e.Generate(), fileName)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
