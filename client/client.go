@@ -1,4 +1,4 @@
-// client is a package that contains the code used internally by grafik to prepare & send HTTP requests.
+// Package client contains the code used internally by grafik to prepare & send HTTP requests.
 
 package client
 
