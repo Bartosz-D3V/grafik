@@ -31,9 +31,24 @@ linters:
     - nilerr
     - exportloopref
     - asciicheck
+    - tenv
 linters-settings:
   godot:
     exclude:
       - '[}]+'
   cyclop:
     max-complexity: 11
+  revive:
+    rules:
+      - name: exported
+        severity: error
+        arguments:
+          - checkPrivateReceivers
+      - name: confusing-naming
+        severity: error
+      - name: constant-logical-expr
+        severity: error
+      - name: context-as-argument
+        severity: error
+      - name: deep-exit
+        severity: error
