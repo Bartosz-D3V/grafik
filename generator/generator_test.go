@@ -14,10 +14,13 @@ func TestGenerator_WriteInterface_NoArgWithReturn(t *testing.T) {
 		Type: "Book",
 	}
 
-	g := New("../")
-	g.WriteInterface("BookService", fn)
+	g, _ := New("../")
+	_ = g.WriteInterface("BookService", fn)
 
-	out := string(g.Generate())
+	fileContent, err := g.Generate()
+	assert.NoError(t, err)
+	out := string(fileContent)
+
 	expOut := test.PrepExpCode(t, `
 type BookService interface {
 	FindBook(ctx context.Context, header *http.Header) Book
@@ -34,10 +37,16 @@ func TestGenerator_WriteInterface_SingleArgWithReturn(t *testing.T) {
 		Type: "Book",
 	}
 
-	g := New("../")
-	g.WriteInterface("BookService", fn)
+	g, err := New("../")
+	assert.NoError(t, err)
 
-	out := string(g.Generate())
+	err = g.WriteInterface("BookService", fn)
+	assert.NoError(t, err)
+
+	fileContent, err := g.Generate()
+	assert.NoError(t, err)
+	out := string(fileContent)
+
 	expOut := test.PrepExpCode(t, `
 type BookService interface {
 	FindBook(ctx context.Context, isbn string, header *http.Header) Book
@@ -58,10 +67,16 @@ func TestGenerator_WriteInterface_MultiArgWithReturn(t *testing.T) {
 		Type: "Employee",
 	}
 
-	g := New("../")
-	g.WriteInterface("EmployeeService", fn)
+	g, err := New("../")
+	assert.NoError(t, err)
 
-	out := string(g.Generate())
+	err = g.WriteInterface("EmployeeService", fn)
+	assert.NoError(t, err)
+
+	fileContent, err := g.Generate()
+	assert.NoError(t, err)
+	out := string(fileContent)
+
 	expOut := test.PrepExpCode(t, `
 type EmployeeService interface {
 	FindEmployee(ctx context.Context, name string, department string, age int, header *http.Header) Employee
@@ -87,10 +102,16 @@ func TestGenerator_WriteInterface_MultiMethods(t *testing.T) {
 		Type: "Employee",
 	}
 
-	g := New("../")
-	g.WriteInterface("BookService", fn1, fn2)
+	g, err := New("../")
+	assert.NoError(t, err)
 
-	out := string(g.Generate())
+	err = g.WriteInterface("BookService", fn1, fn2)
+	assert.NoError(t, err)
+
+	fileContent, err := g.Generate()
+	assert.NoError(t, err)
+	out := string(fileContent)
+
 	expOut := test.PrepExpCode(t, `
 type BookService interface {
 	FindBook(ctx context.Context, header *http.Header) Book

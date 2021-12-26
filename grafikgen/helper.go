@@ -42,19 +42,19 @@ func writeFile(content []byte, fullDist string) error {
 	if dir != "" {
 		err := os.MkdirAll(dir, rwe)
 		if err != nil {
-			return fmt.Errorf("failed to create folder %s. Cause: %s", dir, err.Error())
+			return fmt.Errorf("failed to create folder %s. Cause: %w", dir, err)
 		}
 	}
 	openFile, err := os.OpenFile(fullDist, os.O_RDWR|os.O_CREATE|os.O_TRUNC, rwe)
 	if err != nil {
-		return fmt.Errorf("failed to open generated file %s. Cause: %s", fullDist, err.Error())
+		return fmt.Errorf("failed to open generated file %s. Cause: %w", fullDist, err)
 	}
 	_, err = openFile.Write(content)
 	if err != nil {
-		return fmt.Errorf("failed to write content of the grafik client. Cause: %s", err.Error())
+		return fmt.Errorf("failed to write content of the grafik client. Cause: %w", err)
 	}
 	if err := openFile.Close(); err != nil {
-		return fmt.Errorf("failed to close generated file. Cause: %s", err.Error())
+		return fmt.Errorf("failed to close generated file. Cause: %w", err)
 	}
 	return nil
 }
