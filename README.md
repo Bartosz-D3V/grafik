@@ -156,6 +156,10 @@ Use the `New` function from generated code to create instance of your GraphQL cl
 
 Grafik generates the GraphQL types used by operations defined in `query.graphql` file.
 
+Function with receiver returns `*http.Response` - use `json.Unmarshall` to convert the response to the actual Go struct defined in generated grafik client.
+
+By default, the GraphQL operation's return type is named using the following pattern: _graphqlOperation_**Response** (i.e. CountResultsResponse).
+
 See more [examples][examples-link] and how to use the client programmatically.
 
 ## Authorization

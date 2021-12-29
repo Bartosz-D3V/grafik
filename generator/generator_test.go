@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"bytes"
 	"github.com/Bartosz-D3V/grafik/test"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -15,13 +16,17 @@ func TestGenerator_WriteInterface_NoArgWithReturn(t *testing.T) {
 	}
 
 	g, _ := New("../")
+
+	g.WritePackage("test")
+	g.WriteLineBreak(2)
+
 	_ = g.WriteInterface("BookService", fn)
 
-	fileContent, err := g.Generate()
-	assert.NoError(t, err)
-	out := string(fileContent)
+	out := getSourceString(t, g)
 
 	expOut := test.PrepExpCode(t, `
+package test
+
 type BookService interface {
 	FindBook(ctx context.Context, header *http.Header) Book
 }`)
@@ -40,14 +45,17 @@ func TestGenerator_WriteInterface_SingleArgWithReturn(t *testing.T) {
 	g, err := New("../")
 	assert.NoError(t, err)
 
+	g.WritePackage("test")
+	g.WriteLineBreak(2)
+
 	err = g.WriteInterface("BookService", fn)
 	assert.NoError(t, err)
 
-	fileContent, err := g.Generate()
-	assert.NoError(t, err)
-	out := string(fileContent)
+	out := getSourceString(t, g)
 
 	expOut := test.PrepExpCode(t, `
+package test
+
 type BookService interface {
 	FindBook(ctx context.Context, isbn string, header *http.Header) Book
 }`)
@@ -70,14 +78,17 @@ func TestGenerator_WriteInterface_MultiArgWithReturn(t *testing.T) {
 	g, err := New("../")
 	assert.NoError(t, err)
 
+	g.WritePackage("test")
+	g.WriteLineBreak(2)
+
 	err = g.WriteInterface("EmployeeService", fn)
 	assert.NoError(t, err)
 
-	fileContent, err := g.Generate()
-	assert.NoError(t, err)
-	out := string(fileContent)
+	out := getSourceString(t, g)
 
 	expOut := test.PrepExpCode(t, `
+package test
+
 type EmployeeService interface {
 	FindEmployee(ctx context.Context, name string, department string, age int, header *http.Header) Employee
 }`)
@@ -105,18 +116,31 @@ func TestGenerator_WriteInterface_MultiMethods(t *testing.T) {
 	g, err := New("../")
 	assert.NoError(t, err)
 
+	g.WritePackage("test")
+	g.WriteLineBreak(2)
+
 	err = g.WriteInterface("BookService", fn1, fn2)
 	assert.NoError(t, err)
 
-	fileContent, err := g.Generate()
-	assert.NoError(t, err)
-	out := string(fileContent)
+	out := getSourceString(t, g)
 
 	expOut := test.PrepExpCode(t, `
+package test
+
 type BookService interface {
 	FindBook(ctx context.Context, header *http.Header) Book
 	FindEmployee(ctx context.Context, name string, department string, age int, header *http.Header) Employee
 }`)
 
 	assert.Equal(t, expOut, out)
+}
+
+func getSourceString(t *testing.T, g Generator) string {
+	fileContent, err := g.Generate()
+	assert.NoError(t, err)
+	src := &bytes.Buffer{}
+	_, err = fileContent.WriteTo(src)
+	assert.NoError(t, err)
+
+	return src.String()
 }

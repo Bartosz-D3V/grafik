@@ -6,11 +6,12 @@ import (
 	"github.com/Bartosz-D3V/grafik/generator"
 	"github.com/Bartosz-D3V/grafik/visitor"
 	"github.com/vektah/gqlparser/ast"
+	"io"
 )
 
 // Evaluator provides a contract for evaluator and is being used as a return type of New instead of a pointer.
 type Evaluator interface {
-	Generate() ([]byte, error)
+	Generate() (io.WriterTo, error)
 }
 
 // evaluator is a struct used internally by grafikgen to wrap all required services and properties.
@@ -38,7 +39,7 @@ func New(rootLoc string, schema *ast.Schema, queryDocument *ast.QueryDocument, a
 }
 
 // Generate is a root level function that generates the whole grafik client.
-func (e *evaluator) Generate() ([]byte, error) {
+func (e *evaluator) Generate() (io.WriterTo, error) {
 	e.generator.WriteHeader()
 	e.generator.WriteLineBreak(twoLinesBreak)
 

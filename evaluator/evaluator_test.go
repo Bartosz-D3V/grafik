@@ -1,6 +1,7 @@
 package evaluator
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/Bartosz-D3V/grafik/test"
 	"github.com/stretchr/testify/assert"
@@ -23,10 +24,7 @@ func TestEvaluator_Generate_FlatStructure(t *testing.T) {
 	e, err := New("../", schema, query, info)
 	assert.NoError(t, err)
 
-	fileContent, err := e.Generate()
-	assert.NoError(t, err)
-
-	out := string(fileContent)
+	out := getSourceString(t, e)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -135,10 +133,7 @@ func TestEvaluator_Generate_ArrayStructure(t *testing.T) {
 	e, err := New("../", schema, query, info)
 	assert.NoError(t, err)
 
-	fileContent, err := e.Generate()
-	assert.NoError(t, err)
-
-	out := string(fileContent)
+	out := getSourceString(t, e)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -226,10 +221,7 @@ func TestEvaluator_Generate_2DArrayStructure(t *testing.T) {
 	e, err := New("../", schema, query, info)
 	assert.NoError(t, err)
 
-	fileContent, err := e.Generate()
-	assert.NoError(t, err)
-
-	out := string(fileContent)
+	out := getSourceString(t, e)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -317,10 +309,7 @@ func TestEvaluator_Generate_3DArrayStructure(t *testing.T) {
 	e, err := New("../", schema, query, info)
 	assert.NoError(t, err)
 
-	fileContent, err := e.Generate()
-	assert.NoError(t, err)
-
-	out := string(fileContent)
+	out := getSourceString(t, e)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -406,10 +395,7 @@ func TestEvaluator_Generate_NestedStructure(t *testing.T) {
 	e, err := New("../", schema, query, info)
 	assert.NoError(t, err)
 
-	fileContent, err := e.Generate()
-	assert.NoError(t, err)
-
-	out := string(fileContent)
+	out := getSourceString(t, e)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -517,10 +503,7 @@ func TestEvaluator_Generate_Enum(t *testing.T) {
 	e, err := New("../", schema, query, info)
 	assert.NoError(t, err)
 
-	fileContent, err := e.Generate()
-	assert.NoError(t, err)
-
-	out := string(fileContent)
+	out := getSourceString(t, e)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -611,10 +594,7 @@ func TestEvaluator_Generate_Input(t *testing.T) {
 	e, err := New("../", schema, query, info)
 	assert.NoError(t, err)
 
-	fileContent, err := e.Generate()
-	assert.NoError(t, err)
-
-	out := string(fileContent)
+	out := getSourceString(t, e)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -719,10 +699,7 @@ func TestEvaluator_Generate_Input_2DArray(t *testing.T) {
 	e, err := New("../", schema, query, info)
 	assert.NoError(t, err)
 
-	fileContent, err := e.Generate()
-	assert.NoError(t, err)
-
-	out := string(fileContent)
+	out := getSourceString(t, e)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -820,10 +797,7 @@ func TestEvaluator_Generate_Input_3DArray(t *testing.T) {
 	e, err := New("../", schema, query, info)
 	assert.NoError(t, err)
 
-	fileContent, err := e.Generate()
-	assert.NoError(t, err)
-
-	out := string(fileContent)
+	out := getSourceString(t, e)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -921,10 +895,7 @@ func TestEvaluator_CircularType(t *testing.T) {
 	e, err := New("../", schema, query, info)
 	assert.NoError(t, err)
 
-	fileContent, err := e.Generate()
-	assert.NoError(t, err)
-
-	out := string(fileContent)
+	out := getSourceString(t, e)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -1017,10 +988,7 @@ func TestEvaluator_FragmentType(t *testing.T) {
 	e, err := New("../", schema, query, info)
 	assert.NoError(t, err)
 
-	fileContent, err := e.Generate()
-	assert.NoError(t, err)
-
-	out := string(fileContent)
+	out := getSourceString(t, e)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -1119,10 +1087,7 @@ func TestEvaluator_SelectionSet(t *testing.T) {
 	e, err := New("../", schema, query, info)
 	assert.NoError(t, err)
 
-	fileContent, err := e.Generate()
-	assert.NoError(t, err)
-
-	out := string(fileContent)
+	out := getSourceString(t, e)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -1217,10 +1182,7 @@ func TestEvaluator_Interface(t *testing.T) {
 	e, err := New("../", schema, query, info)
 	assert.NoError(t, err)
 
-	fileContent, err := e.Generate()
-	assert.NoError(t, err)
-
-	out := string(fileContent)
+	out := getSourceString(t, e)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -1313,10 +1275,7 @@ func TestEvaluator_Interface_3DArray(t *testing.T) {
 	e, err := New("../", schema, query, info)
 	assert.NoError(t, err)
 
-	fileContent, err := e.Generate()
-	assert.NoError(t, err)
-
-	out := string(fileContent)
+	out := getSourceString(t, e)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -1409,10 +1368,7 @@ func TestEvaluator_InterfaceWithSelectionSet(t *testing.T) {
 	e, err := New("../", schema, query, info)
 	assert.NoError(t, err)
 
-	fileContent, err := e.Generate()
-	assert.NoError(t, err)
-
-	out := string(fileContent)
+	out := getSourceString(t, e)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -1524,10 +1480,7 @@ func TestEvaluator_Union(t *testing.T) {
 	e, err := New("../", schema, query, info)
 	assert.NoError(t, err)
 
-	fileContent, err := e.Generate()
-	assert.NoError(t, err)
-
-	out := string(fileContent)
+	out := getSourceString(t, e)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -1615,10 +1568,7 @@ func TestEvaluator_WithPointers(t *testing.T) {
 	e, err := New("../", schema, query, info)
 	assert.NoError(t, err)
 
-	fileContent, err := e.Generate()
-	assert.NoError(t, err)
-
-	out := string(fileContent)
+	out := getSourceString(t, e)
 	expOut := test.PrepExpCode(t, fmt.Sprintf(`
 // Generated with grafik. DO NOT EDIT
 
@@ -1724,4 +1674,14 @@ func loadQuery(t *testing.T, schema *ast.Schema, queryName string) *ast.QueryDoc
 	assert.NotNil(t, file)
 
 	return gqlparser.MustLoadQuery(schema, string(file))
+}
+
+func getSourceString(t *testing.T, e Evaluator) string {
+	fileContent, err := e.Generate()
+	assert.NoError(t, err)
+	src := &bytes.Buffer{}
+	_, err = fileContent.WriteTo(src)
+	assert.NoError(t, err)
+
+	return src.String()
 }
