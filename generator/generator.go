@@ -57,12 +57,12 @@ func New(rootLoc string) (Generator, error) {
 
 // WriteHeader writes top level comment (grafik header).
 func (g *generator) WriteHeader() {
-	g.write(Header)
+	g.stream.WriteString(Header)
 }
 
 // WritePackage writes name of the package.
 func (g *generator) WritePackage(pkgName string) {
-	g.write(fmt.Sprintf("package %s", pkgName))
+	g.stream.WriteString(fmt.Sprintf("package %s", pkgName))
 }
 
 // WriteImports writes list of all required imports.
@@ -76,7 +76,7 @@ func (g *generator) WriteImports() error {
 
 // WriteLineBreak writes number of line breaks based on provided number (r).
 func (g *generator) WriteLineBreak(r int) {
-	g.write(strings.Repeat("\n", r))
+	g.stream.WriteString(strings.Repeat("\n", r))
 }
 
 // WriteInterface writes interface of provided name and functions (fn).

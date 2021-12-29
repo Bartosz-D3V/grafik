@@ -84,5 +84,14 @@ type Enum struct {
 
 type Const struct {
 	Name string
-	Val  string
+	Val  interface{}
+}
+
+func (c Const) IsString() bool {
+	switch c.Val.(type) {
+	case string:
+		return true
+	default:
+		return false
+	}
 }
