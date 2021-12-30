@@ -402,8 +402,8 @@ func TestGenerator_WriteInterfaceImplementation(t *testing.T) {
 			Name: "condition",
 			Type: "string",
 		}},
-		Type:        "int",
-		WrapperArgs: nil,
+		Type:         "int",
+		WrapperTypes: nil,
 	}
 	err := g.WriteInterfaceImplementation("apiClient", f)
 	assert.NoError(t, err)

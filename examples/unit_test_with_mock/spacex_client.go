@@ -1,6 +1,6 @@
 // Generated with grafik. DO NOT EDIT
 
-package unit_test_example_with_mock
+package unitTestExampleWithMock
 
 import (
 	"context"

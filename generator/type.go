@@ -6,6 +6,9 @@ import (
 	"strings"
 )
 
+// TypeArg represents simplified argument in Golang AST.
+// Name is the name of the argument.
+// Type is type of the argument defined as string - i.e. "string", "int", "Address" etc.
 type TypeArg struct {
 	Name string
 	Type string
@@ -56,11 +59,17 @@ func isPrimitive(s string) bool {
 	return s == "string" || s == "int" || s == "bool"
 }
 
+// Func represents simplified Function in Golang AST.
+// Name is the name of the Function.
+// Args is a slice of TypeArg and represents function parameters.
+// Type is a string and represents return type of the function - i.e. "string", "Address" etc.
+// WrapperTypes is a slice of TypeArg and represents selection set in GraphQL operation.
+// It is used to create wrapper struct containing all values in selection set.
 type Func struct {
-	Name        string
-	Args        []TypeArg
-	Type        string
-	WrapperArgs []TypeArg
+	Name         string
+	Args         []TypeArg
+	Type         string
+	WrapperTypes []TypeArg
 }
 
 // JoinArgsBy returns list of function arguments as concatenated string with name and type.
@@ -79,16 +88,25 @@ func (f Func) ExportName() string {
 	return strings.Title(f.Name)
 }
 
+// Struct represents simplified Struct in Golang AST.
+// Name is the name of the struct.
+// Fields is a slice of TypeArg and represents struct fields.
 type Struct struct {
 	Name   string
 	Fields []TypeArg
 }
 
+// Enum represents simplified Enum in Golang AST.
+// Name is the name of the enum.
+// Fields is a slice of string and represents all possible values of the enum.
 type Enum struct {
 	Name   string
 	Fields []string
 }
 
+// Const represents simplified constant in Golang AST.
+// Name is the name of the constant.
+// Val is an interface{} and represents any possible value of the struct.
 type Const struct {
 	Name string
 	Val  interface{}

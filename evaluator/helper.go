@@ -293,10 +293,10 @@ func (e *evaluator) genOpsInterface() error {
 	funcs := make([]generator.Func, len(ops))
 	for i, op := range ops {
 		f := generator.Func{
-			Name:        op.Name,
-			Args:        e.parseFnArgs(&op.VariableDefinitions),
-			Type:        "(*http.Response, error)",
-			WrapperArgs: e.parseSelectionSet(op.SelectionSet),
+			Name:         op.Name,
+			Args:         e.parseFnArgs(&op.VariableDefinitions),
+			Type:         "(*http.Response, error)",
+			WrapperTypes: e.parseSelectionSet(op.SelectionSet),
 		}
 		funcs[i] = f
 	}
@@ -355,7 +355,7 @@ func (e *evaluator) genWrapperResponseStruct(f generator.Func) error {
 	// if object has selection set - those will be created as struct fields
 	s := generator.Struct{
 		Name:   dataStructName,
-		Fields: f.WrapperArgs,
+		Fields: f.WrapperTypes,
 	}
 	err = e.generator.WritePublicStruct(s, e.AdditionalInfo.UsePointers)
 	if err != nil {
