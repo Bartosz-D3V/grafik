@@ -36,8 +36,10 @@ linters-settings:
   godot:
     exclude:
       - '[}]+'
+  dupl:
+    threshold: 200
   cyclop:
-    max-complexity: 12
+    max-complexity: 13
   revive:
     rules:
       - name: exported

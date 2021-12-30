@@ -29,18 +29,12 @@ func main() {
 	genDestination := genCmd.String("destination", "./", "[optional] Output filename with path. Either absolute or relative; defaults to the current directory and client name.")
 	genUsePointers := genCmd.Bool("use_pointers", false, "[optional] Generate public GraphQL structs' fields as pointers; defaults to false.")
 
-	switch os.Args[1] {
+	switch os.Args[0] {
 	case "help":
 		usage(genCmd)
 		os.Exit(0)
 	default:
 		_ = genCmd.Parse(os.Args[1:])
-	}
-
-	err := validateGenOptions(genSchemaSrc, genQuerySrc)
-	if err != nil {
-		usage(genCmd)
-		os.Exit(1)
 	}
 
 	if !genCmd.Parsed() {
@@ -57,6 +51,10 @@ func main() {
 		usePointers:  genUsePointers,
 	}
 
+	if *cli.schemaSource == "" || *cli.querySource == "" {
+		log.Fatal("grafikgen requires at least two flags - schema_source and query_source.")
+	}
+
 	schemaContent, err := getFileContent(cli.schemaSource)
 	if err != nil {
 		log.Fatalf("Failed to read content of GraphQL schema file. Cause: %s", err.Error())
@@ -64,7 +62,6 @@ func main() {
 
 	schema, err := gqlparser.LoadSchema(&ast.Source{
 		Input: string(schemaContent),
-		Name:  cli.parseSchemaName(),
 	})
 
 	// gqlparser returns err that is not nil even when schema is parsed correctly
@@ -76,6 +73,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to read content of GraphQL query file. Cause: %s", err.Error())
 	}
+
 	query, err := gqlparser.LoadQuery(schema, string(queryContent))
 	// gqlparser returns err that is not nil even when schema is parsed correctly
 	if err.Error() != "" {
@@ -93,7 +91,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fileName := getFileDestName(additionalInfo.ClientName, cli.destination)
+	fileName := cli.getFileDestName(additionalInfo.ClientName)
 
 	fileContent, err := e.Generate()
 	if err != nil {

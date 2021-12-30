@@ -10,6 +10,9 @@ import (
 // "iPhone" -> "iPhone".
 // "1Note" -> "1Note".
 func SentenceCase(s string) string {
+	if len(s) == 0 {
+		return s
+	}
 	r := []rune(s)
 	r[0] = unicode.ToLower(r[0])
 	return string(r)

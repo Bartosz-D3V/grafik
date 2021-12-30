@@ -35,9 +35,7 @@ Example:
 
 const rwe = 0755
 
-// writeFile writes the whole slice of bytes to new file.
-// Used to create the generated grafik client file.
-func writeFile(content []byte, fullDist string) error {
+func writeFile(content io.WriterTo, fullDist string) error {
 	dir, _ := filepath.Split(fullDist)
 	if dir != "" {
 		err := os.MkdirAll(dir, rwe)
@@ -49,13 +47,16 @@ func writeFile(content []byte, fullDist string) error {
 	if err != nil {
 		return fmt.Errorf("failed to open generated file %s. Cause: %w", fullDist, err)
 	}
-	_, err = openFile.Write(content)
+
+	_, err = content.WriteTo(openFile)
 	if err != nil {
 		return fmt.Errorf("failed to write content of the grafik client. Cause: %w", err)
 	}
+
 	if err := openFile.Close(); err != nil {
 		return fmt.Errorf("failed to close generated file. Cause: %w", err)
 	}
+
 	return nil
 }
 
@@ -72,28 +73,23 @@ func (c cli) parseClientName() string {
 	if c.clientName != nil && *c.clientName != "" {
 		return *c.clientName
 	}
-	schemaName := c.parseSchemaName()
-	return fmt.Sprintf("Grafik%sClient", strings.Title(schemaName))
+	queryName := c.queryFileName()
+	clientName := common.SnakeCaseToCamelCase(strings.Title(queryName))
+	return fmt.Sprintf("Grafik%sClient", clientName)
 }
 
-// parseSchemaName returns schema name - either Capitalized client name or Capitalized GraphQL query file source.
-func (c cli) parseSchemaName() string {
-	if c.clientName != nil && *c.clientName != "" {
-		return common.SentenceCase(*c.clientName)
-	}
-	return c.queryFileName()
-}
-
-// queryFileName parses GraphQL query file name.
+// queryFileName parses GraphQL schema file name.
 func (c cli) queryFileName() string {
 	baseName := filepath.Base(*c.querySource)
-	return common.SentenceCase(strings.Split(baseName, ".")[0])
+	fileName := strings.Split(baseName, ".")[0]
+	pFileName := strings.ReplaceAll(fileName, "-", "_")
+	return common.SentenceCase(pFileName)
 }
 
 // getFileContent returns content of the file.
 func getFileContent(src *string) ([]byte, error) {
 	if src == nil || *src == "" {
-		return nil, errors.New("provided source is empty")
+		return nil, errors.New("provided source path is empty")
 	}
 	if path.IsAbs(*src) {
 		return ioutil.ReadFile(*src)
@@ -107,25 +103,12 @@ func getFileContent(src *string) ([]byte, error) {
 }
 
 // getFileDestName returns destination file name - either defined via CLI flag or same as client name.
-func getFileDestName(clientName string, dist *string) string {
-	if dist == nil || *dist == "" {
-		return clientName
-	}
+func (c cli) getFileDestName(clientName string) string {
+	dist := c.destination
 	if strings.Contains(*dist, ".go") {
 		return *dist
 	}
 	return fmt.Sprintf("%s.go", filepath.Join(*dist, clientName))
-}
-
-// validateGenOptions returns error if any CLI flag is nil or empty.
-// Used to validate provided mandatory flags.
-func validateGenOptions(opts ...*string) error {
-	for _, opt := range opts {
-		if opt == nil || *opt == "" {
-			return errors.New("insufficient number of command parameters")
-		}
-	}
-	return nil
 }
 
 // usage prints help usage text.

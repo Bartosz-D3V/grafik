@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"github.com/Bartosz-D3V/grafik/common"
 	"go/format"
+	"go/parser"
+	"go/token"
+	"io"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -25,7 +28,7 @@ type Generator interface {
 	WriteClientConstructor(clientName string) error
 	WriteInterfaceImplementation(clientName string, f Func) error
 	WriteGraphqlErrorStructs(usePointers bool) error
-	Generate() ([]byte, error)
+	Generate() (io.WriterTo, error)
 }
 
 // generator is a private struct that can be created with New function.
@@ -54,12 +57,12 @@ func New(rootLoc string) (Generator, error) {
 
 // WriteHeader writes top level comment (grafik header).
 func (g *generator) WriteHeader() {
-	g.write(Header)
+	g.stream.WriteString(Header)
 }
 
 // WritePackage writes name of the package.
 func (g *generator) WritePackage(pkgName string) {
-	g.write(fmt.Sprintf("package %s", pkgName))
+	g.stream.WriteString(fmt.Sprintf("package %s", pkgName))
 }
 
 // WriteImports writes list of all required imports.
@@ -73,7 +76,7 @@ func (g *generator) WriteImports() error {
 
 // WriteLineBreak writes number of line breaks based on provided number (r).
 func (g *generator) WriteLineBreak(r int) {
-	g.write(strings.Repeat("\n", r))
+	g.stream.WriteString(strings.Repeat("\n", r))
 }
 
 // WriteInterface writes interface of provided name and functions (fn).
@@ -169,16 +172,18 @@ func (g *generator) WriteGraphqlErrorStructs(usePointers bool) error {
 	return nil
 }
 
-// Generate formats the generated code and returns it as a slice of bytes.
-func (g *generator) Generate() ([]byte, error) {
-	b := make([]byte, g.stream.Len())
-	_, err := g.stream.Read(b)
+// Generate formats the generated code and returns it as a WriterTo interface.
+func (g *generator) Generate() (io.WriterTo, error) {
+	writer := &bytes.Buffer{}
+	fSet := token.NewFileSet()
+	f, err := parser.ParseFile(fSet, "", g.stream, parser.ParseComments)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read stream content from generator. Cause: %w", err)
+		return nil, fmt.Errorf("failed to parse generated Go code. Cause: %w", err)
 	}
-	b, err = format.Source(b)
+
+	err = format.Node(writer, fSet, f)
 	if err != nil {
-		return nil, fmt.Errorf("failed to format generated Go code. Cause: %w", err)
+		return nil, fmt.Errorf("failed to gofmt generated Go code. Cause: %w", err)
 	}
-	return b, nil
+	return writer, nil
 }

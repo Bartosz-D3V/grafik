@@ -5,6 +5,26 @@ import (
 	"testing"
 )
 
+func TestSentenceCase(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		input string
+		exp   string
+	}{
+		{"Person", "person"},
+		{"Total_count", "total_count"},
+		{"1Number", "1Number"},
+		{"xRay", "xRay"},
+		{"car", "car"},
+		{"", ""},
+	}
+	for _, test := range tests {
+		res := SentenceCase(test.input)
+		assert.Equal(t, test.exp, res)
+	}
+}
+
 func TestSnakeCaseToPascalCase(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
