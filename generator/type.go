@@ -15,7 +15,7 @@ func (t TypeArg) ExportName() string {
 	return strings.Title(t.Name)
 }
 
-func (t TypeArg) TitleType() TypeArg {
+func (t TypeArg) ExportType() TypeArg {
 	const sliceTok = "[]"
 	if strings.Contains(t.Type, sliceTok) {
 		dim := strings.Count(t.Type, sliceTok)
@@ -48,7 +48,7 @@ func (t TypeArg) PointerType() TypeArg {
 }
 
 func isPrimitive(s string) bool {
-	return s == "string" || s == "int" || s == "float" || s == "byte" || s == "bool"
+	return s == "string" || s == "int" || s == "bool"
 }
 
 type Func struct {
@@ -61,7 +61,7 @@ type Func struct {
 func (f Func) JoinArgsBy(s string) string {
 	pArgs := make([]string, len(f.Args))
 	for i, arg := range f.Args {
-		tArg := arg.TitleType()
+		tArg := arg.ExportType()
 		pArgs[i] = fmt.Sprintf("%s %s", tArg.Name, common.SnakeCaseToCamelCase(tArg.Type))
 	}
 

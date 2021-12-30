@@ -206,7 +206,7 @@ To view the help run `grafikgen help` command.
 
 [mit-badge]: https://img.shields.io/github/license/mashape/apistatus.svg
 
-[mit-link]: https://opensource.org/licenses/MIT
+[mit-link]: https://github.com/Bartosz-D3V/grafik/blob/master/LICENSE
 
 [godoc-badge]: https://pkg.go.dev/badge/github.com/Bartosz-D3V/grafik.svg
 
