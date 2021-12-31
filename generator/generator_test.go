@@ -2,10 +2,12 @@ package generator
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"github.com/Bartosz-D3V/grafik/test"
 	"github.com/stretchr/testify/assert"
 	"testing"
+	"text/template"
 )
 
 func TestGenerator_WriteHeader(t *testing.T) {
@@ -13,9 +15,14 @@ func TestGenerator_WriteHeader(t *testing.T) {
 
 	g, _ := New()
 
-	g.WriteHeader()
-	g.WriteLineBreak(2)
-	g.WritePackage("test")
+	err := g.WriteHeader()
+	assert.NoError(t, err)
+
+	err = g.WriteLineBreak(2)
+	assert.NoError(t, err)
+
+	err = g.WritePackage("test")
+	assert.NoError(t, err)
 
 	out := getSourceString(t, g)
 	expOut := test.PrepExpCode(t, `
@@ -27,14 +34,45 @@ package test
 	assert.Equal(t, expOut, out)
 }
 
+func TestGenerator_WriteHeader_Error(t *testing.T) {
+	t.Parallel()
+
+	g := generator{stream: faultyWriter{}}
+
+	err := g.WriteHeader()
+	assert.EqualError(t, err, "failed to write header. Cause: unit test: Failed to write a string")
+}
+
+func TestGenerator_WritePackage_Error(t *testing.T) {
+	t.Parallel()
+
+	g := generator{stream: faultyWriter{}}
+
+	err := g.WritePackage("")
+	assert.EqualError(t, err, "failed to write package name. Cause: unit test: Failed to write a string")
+}
+
+func TestGenerator_WriteLineBreak_Error(t *testing.T) {
+	t.Parallel()
+
+	g := generator{stream: faultyWriter{}}
+
+	err := g.WriteLineBreak(1)
+	assert.EqualError(t, err, "failed to write line break. Cause: unit test: Failed to write a string")
+}
+
 func TestGenerator_WriteImports(t *testing.T) {
 	t.Parallel()
 
 	g, _ := New()
 
-	g.WritePackage("test")
-	g.WriteLineBreak(2)
-	err := g.WriteImports()
+	err := g.WritePackage("test")
+	assert.NoError(t, err)
+
+	err = g.WriteLineBreak(2)
+	assert.NoError(t, err)
+
+	err = g.WriteImports()
 	assert.NoError(t, err)
 
 	out := getSourceString(t, g)
@@ -51,6 +89,19 @@ import (
 	assert.Equal(t, expOut, out)
 }
 
+func TestGenerator_WriteImports_Error(t *testing.T) {
+	t.Parallel()
+
+	pTmpl, _ := template.New("imports.tmpl").Parse("imports.tmpl")
+	g := generator{
+		stream:   faultyWriter{},
+		template: pTmpl,
+	}
+
+	err := g.WriteImports()
+	assert.EqualError(t, err, "failed to execute 'imports' template. Cause: unit test: Failed to write a slice of bytes")
+}
+
 func TestGenerator_WriteInterface_NoArgWithReturn(t *testing.T) {
 	t.Parallel()
 	fn := Func{
@@ -61,8 +112,11 @@ func TestGenerator_WriteInterface_NoArgWithReturn(t *testing.T) {
 
 	g, _ := New()
 
-	g.WritePackage("test")
-	g.WriteLineBreak(2)
+	err := g.WritePackage("test")
+	assert.NoError(t, err)
+
+	err = g.WriteLineBreak(2)
+	assert.NoError(t, err)
 
 	_ = g.WriteInterface("BookService", fn)
 
@@ -89,8 +143,11 @@ func TestGenerator_WriteInterface_SingleArgWithReturn(t *testing.T) {
 	g, err := New()
 	assert.NoError(t, err)
 
-	g.WritePackage("test")
-	g.WriteLineBreak(2)
+	err = g.WritePackage("test")
+	assert.NoError(t, err)
+
+	err = g.WriteLineBreak(2)
+	assert.NoError(t, err)
 
 	err = g.WriteInterface("BookService", fn)
 	assert.NoError(t, err)
@@ -122,8 +179,11 @@ func TestGenerator_WriteInterface_MultiArgWithReturn(t *testing.T) {
 	g, err := New()
 	assert.NoError(t, err)
 
-	g.WritePackage("test")
-	g.WriteLineBreak(2)
+	err = g.WritePackage("test")
+	assert.NoError(t, err)
+
+	err = g.WriteLineBreak(2)
+	assert.NoError(t, err)
 
 	err = g.WriteInterface("EmployeeService", fn)
 	assert.NoError(t, err)
@@ -160,8 +220,11 @@ func TestGenerator_WriteInterface_MultiMethods(t *testing.T) {
 	g, err := New()
 	assert.NoError(t, err)
 
-	g.WritePackage("test")
-	g.WriteLineBreak(2)
+	err = g.WritePackage("test")
+	assert.NoError(t, err)
+
+	err = g.WriteLineBreak(2)
+	assert.NoError(t, err)
 
 	err = g.WriteInterface("BookService", fn1, fn2)
 	assert.NoError(t, err)
@@ -179,13 +242,29 @@ type BookService interface {
 	assert.Equal(t, expOut, out)
 }
 
+func TestGenerator_WriteInterface_Error(t *testing.T) {
+	t.Parallel()
+
+	pTmpl, _ := template.New("interface.tmpl").Parse("interface.tmpl")
+	g := generator{
+		stream:   faultyWriter{},
+		template: pTmpl,
+	}
+
+	err := g.WriteInterface("")
+	assert.EqualError(t, err, "failed to execute 'interface' template. Cause: unit test: Failed to write a slice of bytes")
+}
+
 func TestGenerator_WritePublicStruct(t *testing.T) {
 	t.Parallel()
 
 	g, _ := New()
 
-	g.WritePackage("test")
-	g.WriteLineBreak(2)
+	err := g.WritePackage("test")
+	assert.NoError(t, err)
+
+	err = g.WriteLineBreak(2)
+	assert.NoError(t, err)
 
 	s := Struct{
 		Name: "Person",
@@ -200,7 +279,7 @@ func TestGenerator_WritePublicStruct(t *testing.T) {
 			},
 		},
 	}
-	err := g.WritePublicStruct(s, false)
+	err = g.WritePublicStruct(s, false)
 	assert.NoError(t, err)
 
 	out := getSourceString(t, g)
@@ -221,8 +300,11 @@ func TestGenerator_WritePublicStruct_WithPointers(t *testing.T) {
 
 	g, _ := New()
 
-	g.WritePackage("test")
-	g.WriteLineBreak(2)
+	err := g.WritePackage("test")
+	assert.NoError(t, err)
+
+	err = g.WriteLineBreak(2)
+	assert.NoError(t, err)
 
 	s := Struct{
 		Name: "Person",
@@ -237,7 +319,7 @@ func TestGenerator_WritePublicStruct_WithPointers(t *testing.T) {
 			},
 		},
 	}
-	err := g.WritePublicStruct(s, true)
+	err = g.WritePublicStruct(s, true)
 	assert.NoError(t, err)
 
 	out := getSourceString(t, g)
@@ -253,13 +335,29 @@ type Person struct {
 	assert.Equal(t, expOut, out)
 }
 
+func TestGenerator_WritePublicStruct_Error(t *testing.T) {
+	t.Parallel()
+
+	pTmpl, _ := template.New("struct.tmpl").Parse("struct.tmpl")
+	g := generator{
+		stream:   faultyWriter{},
+		template: pTmpl,
+	}
+
+	err := g.WritePublicStruct(Struct{}, false)
+	assert.EqualError(t, err, "failed to execute 'struct' template. Cause: unit test: Failed to write a slice of bytes")
+}
+
 func TestGenerator_WritePrivateStruct(t *testing.T) {
 	t.Parallel()
 
 	g, _ := New()
 
-	g.WritePackage("test")
-	g.WriteLineBreak(2)
+	err := g.WritePackage("test")
+	assert.NoError(t, err)
+
+	err = g.WriteLineBreak(2)
+	assert.NoError(t, err)
 
 	s := Struct{
 		Name: "Person",
@@ -274,7 +372,7 @@ func TestGenerator_WritePrivateStruct(t *testing.T) {
 			},
 		},
 	}
-	err := g.WritePrivateStruct(s)
+	err = g.WritePrivateStruct(s)
 	assert.NoError(t, err)
 
 	out := getSourceString(t, g)
@@ -290,19 +388,35 @@ type person struct {
 	assert.Equal(t, expOut, out)
 }
 
+func TestGenerator_WritePrivateStruct_Error(t *testing.T) {
+	t.Parallel()
+
+	pTmpl, _ := template.New("struct.tmpl").Parse("struct.tmpl")
+	g := generator{
+		stream:   faultyWriter{},
+		template: pTmpl,
+	}
+
+	err := g.WritePrivateStruct(Struct{})
+	assert.EqualError(t, err, "failed to execute 'struct' template. Cause: unit test: Failed to write a slice of bytes")
+}
+
 func TestGenerator_WriteEnum(t *testing.T) {
 	t.Parallel()
 
 	g, _ := New()
 
-	g.WritePackage("test")
-	g.WriteLineBreak(2)
+	err := g.WritePackage("test")
+	assert.NoError(t, err)
+
+	err = g.WriteLineBreak(2)
+	assert.NoError(t, err)
 
 	e := Enum{
 		Name:   "Planet",
 		Fields: []string{"NEPTUNE", "MARS", "SATURN"},
 	}
-	err := g.WriteEnum(e)
+	err = g.WriteEnum(e)
 	assert.NoError(t, err)
 
 	out := getSourceString(t, g)
@@ -321,13 +435,29 @@ const (
 	assert.Equal(t, expOut, out)
 }
 
+func TestGenerator_WriteEnum_Error(t *testing.T) {
+	t.Parallel()
+
+	pTmpl, _ := template.New("enum.tmpl").Parse("enum.tmpl")
+	g := generator{
+		stream:   faultyWriter{},
+		template: pTmpl,
+	}
+
+	err := g.WriteEnum(Enum{})
+	assert.EqualError(t, err, "failed to execute 'enum' template. Cause: unit test: Failed to write a slice of bytes")
+}
+
 func TestGenerator_WriteConst(t *testing.T) {
 	t.Parallel()
 
 	g, _ := New()
 
-	g.WritePackage("test")
-	g.WriteLineBreak(2)
+	err := g.WritePackage("test")
+	assert.NoError(t, err)
+
+	err = g.WriteLineBreak(2)
+	assert.NoError(t, err)
 
 	c1 := Const{
 		Name: "pi",
@@ -337,9 +467,12 @@ func TestGenerator_WriteConst(t *testing.T) {
 		Name: "encoding",
 		Val:  "UTF-8",
 	}
-	err := g.WriteConst(c1)
+	err = g.WriteConst(c1)
 	assert.NoError(t, err)
-	g.WriteLineBreak(2)
+
+	err = g.WriteLineBreak(2)
+	assert.NoError(t, err)
+
 	err = g.WriteConst(c2)
 	assert.NoError(t, err)
 
@@ -355,15 +488,31 @@ const encoding = %[1]cUTF-8%[1]c
 	assert.Equal(t, expOut, out)
 }
 
+func TestGenerator_WriteConst_Error(t *testing.T) {
+	t.Parallel()
+
+	pTmpl, _ := template.New("const.tmpl").Parse("const.tmpl")
+	g := generator{
+		stream:   faultyWriter{},
+		template: pTmpl,
+	}
+
+	err := g.WriteConst(Const{})
+	assert.EqualError(t, err, "failed to execute 'const' template. Cause: unit test: Failed to write a slice of bytes")
+}
+
 func TestGenerator_WriteClientConstructor(t *testing.T) {
 	t.Parallel()
 
 	g, _ := New()
 
-	g.WritePackage("test")
-	g.WriteLineBreak(2)
+	err := g.WritePackage("test")
+	assert.NoError(t, err)
 
-	err := g.WriteClientConstructor("ApiClient")
+	err = g.WriteLineBreak(2)
+	assert.NoError(t, err)
+
+	err = g.WriteClientConstructor("ApiClient")
 	assert.NoError(t, err)
 
 	out := getSourceString(t, g)
@@ -380,13 +529,29 @@ func New(endpoint string, client *http.Client) ApiClient {
 	assert.Equal(t, expOut, out)
 }
 
+func TestGenerator_WriteClientConstructor_Error(t *testing.T) {
+	t.Parallel()
+
+	pTmpl, _ := template.New("constructor.tmpl").Parse("constructor.tmpl")
+	g := generator{
+		stream:   faultyWriter{},
+		template: pTmpl,
+	}
+
+	err := g.WriteClientConstructor("")
+	assert.EqualError(t, err, "failed to execute 'constructor' template. Cause: unit test: Failed to write a slice of bytes")
+}
+
 func TestGenerator_WriteInterfaceImplementation(t *testing.T) {
 	t.Parallel()
 
 	g, _ := New()
 
-	g.WritePackage("test")
-	g.WriteLineBreak(2)
+	err := g.WritePackage("test")
+	assert.NoError(t, err)
+
+	err = g.WriteLineBreak(2)
+	assert.NoError(t, err)
 
 	f := Func{
 		Name: "countResults",
@@ -397,7 +562,7 @@ func TestGenerator_WriteInterfaceImplementation(t *testing.T) {
 		Type:         "int",
 		WrapperTypes: nil,
 	}
-	err := g.WriteInterfaceImplementation("apiClient", f)
+	err = g.WriteInterfaceImplementation("apiClient", f)
 	assert.NoError(t, err)
 
 	out := getSourceString(t, g)
@@ -415,15 +580,31 @@ func (c *apiClient) CountResults(ctx context.Context, condition string, header *
 	assert.Equal(t, expOut, out)
 }
 
+func TestGenerator_WriteInterfaceImplementation_Error(t *testing.T) {
+	t.Parallel()
+
+	pTmpl, _ := template.New("interface_impl.tmpl").Parse("interface_impl.tmpl")
+	g := generator{
+		stream:   faultyWriter{},
+		template: pTmpl,
+	}
+
+	err := g.WriteInterfaceImplementation("", Func{})
+	assert.EqualError(t, err, "failed to execute 'interface_impl' template. Cause: unit test: Failed to write a slice of bytes")
+}
+
 func TestGenerator_WriteGraphqlErrorStructs(t *testing.T) {
 	t.Parallel()
 
 	g, _ := New()
 
-	g.WritePackage("test")
-	g.WriteLineBreak(2)
+	err := g.WritePackage("test")
+	assert.NoError(t, err)
 
-	err := g.WriteGraphqlErrorStructs(false)
+	err = g.WriteLineBreak(2)
+	assert.NoError(t, err)
+
+	err = g.WriteGraphqlErrorStructs(false)
 	assert.NoError(t, err)
 
 	out := getSourceString(t, g)
@@ -454,10 +635,13 @@ func TestGenerator_WriteGraphqlErrorStructs_WithPointers(t *testing.T) {
 
 	g, _ := New()
 
-	g.WritePackage("test")
-	g.WriteLineBreak(2)
+	err := g.WritePackage("test")
+	assert.NoError(t, err)
 
-	err := g.WriteGraphqlErrorStructs(true)
+	err = g.WriteLineBreak(2)
+	assert.NoError(t, err)
+
+	err = g.WriteGraphqlErrorStructs(true)
 	assert.NoError(t, err)
 
 	out := getSourceString(t, g)
@@ -491,4 +675,27 @@ func getSourceString(t *testing.T, g Generator) string {
 	assert.NoError(t, err)
 
 	return src.String()
+}
+
+func TestGenerator_WriteGraphqlErrorStructs_Error(t *testing.T) {
+	t.Parallel()
+
+	pTmpl, _ := template.New("graphql_error.tmpl").Parse("graphql_error.tmpl")
+	g := generator{
+		stream:   faultyWriter{},
+		template: pTmpl,
+	}
+
+	err := g.WriteGraphqlErrorStructs(false)
+	assert.EqualError(t, err, "failed to execute 'graphql_error' template. Cause: unit test: Failed to write a slice of bytes")
+}
+
+type faultyWriter struct{}
+
+func (w faultyWriter) WriteString(string) (n int, err error) {
+	return 0, errors.New("unit test: Failed to write a string")
+}
+
+func (w faultyWriter) Write([]byte) (n int, err error) {
+	return 0, errors.New("unit test: Failed to write a slice of bytes")
 }

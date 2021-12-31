@@ -40,35 +40,60 @@ func New(schema *ast.Schema, queryDocument *ast.QueryDocument, additionalInfo Ad
 
 // Generate is a root level function that generates the whole grafik client.
 func (e *evaluator) Generate() (io.WriterTo, error) {
-	e.generator.WriteHeader()
-	e.generator.WriteLineBreak(twoLinesBreak)
-
-	e.generator.WritePackage(e.AdditionalInfo.PackageName)
-	e.generator.WriteLineBreak(twoLinesBreak)
-
-	err := e.generator.WriteImports()
+	err := e.generator.WriteHeader()
 	if err != nil {
 		return nil, err
 	}
-	e.generator.WriteLineBreak(twoLinesBreak)
+	err = e.generator.WriteLineBreak(twoLinesBreak)
+	if err != nil {
+		return nil, err
+	}
+
+	err = e.generator.WritePackage(e.AdditionalInfo.PackageName)
+	if err != nil {
+		return nil, err
+	}
+	err = e.generator.WriteLineBreak(twoLinesBreak)
+	if err != nil {
+		return nil, err
+	}
+
+	err = e.generator.WriteImports()
+	if err != nil {
+		return nil, err
+	}
+
+	err = e.generator.WriteLineBreak(twoLinesBreak)
+	if err != nil {
+		return nil, err
+	}
 
 	err = e.genSchemaDef()
 	if err != nil {
 		return nil, err
 	}
-	e.generator.WriteLineBreak(oneLineBreak)
+	err = e.generator.WriteLineBreak(oneLineBreak)
+	if err != nil {
+		return nil, err
+	}
 
 	err = e.genOperations()
 	if err != nil {
 		return nil, err
 	}
-	e.generator.WriteLineBreak(oneLineBreak)
+	err = e.generator.WriteLineBreak(oneLineBreak)
+	if err != nil {
+		return nil, err
+	}
 
 	err = e.genClientCode()
 	if err != nil {
 		return nil, err
 	}
-	e.generator.WriteLineBreak(oneLineBreak)
+	err = e.generator.WriteLineBreak(oneLineBreak)
+	if err != nil {
+		return nil, err
+	}
 
 	return e.generator.Generate()
 }

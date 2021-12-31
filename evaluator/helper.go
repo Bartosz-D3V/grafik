@@ -17,13 +17,19 @@ const (
 
 // genSchemaDef generates custom, user-defined structs and enums used in GraphQL query file.
 func (e *evaluator) genSchemaDef() error {
-	e.generator.WriteLineBreak(twoLinesBreak)
-
-	if err := e.generateGoTypes(); err != nil {
+	err := e.generator.WriteLineBreak(twoLinesBreak)
+	if err != nil {
 		return err
 	}
 
-	e.generator.WriteLineBreak(twoLinesBreak)
+	if err = e.generateGoTypes(); err != nil {
+		return err
+	}
+
+	err = e.generator.WriteLineBreak(twoLinesBreak)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -67,13 +73,19 @@ func (e *evaluator) createEnum(cType *ast.Definition) error {
 		Fields: fields,
 	}
 
-	e.generator.WriteLineBreak(twoLinesBreak)
+	err := e.generator.WriteLineBreak(twoLinesBreak)
+	if err != nil {
+		return err
+	}
 	return e.generator.WriteEnum(en)
 }
 
 // createInterface creates type 'any' in Go [type X interface{}] and writes to IO.
 func (e *evaluator) createInterfaceType(cType *ast.Definition) error {
-	e.generator.WriteLineBreak(twoLinesBreak)
+	err := e.generator.WriteLineBreak(twoLinesBreak)
+	if err != nil {
+		return err
+	}
 	return e.generator.WriteInterface(cType.Name)
 }
 
@@ -83,7 +95,10 @@ func (e *evaluator) createStruct(cType *ast.Definition) error {
 		Name:   cType.Name,
 		Fields: e.parseFieldArgs(&cType.Fields),
 	}
-	e.generator.WriteLineBreak(twoLinesBreak)
+	err := e.generator.WriteLineBreak(twoLinesBreak)
+	if err != nil {
+		return err
+	}
 	return e.generator.WritePublicStruct(s, e.AdditionalInfo.UsePointers)
 }
 
@@ -248,7 +263,10 @@ func (e *evaluator) genOperations() error {
 			if err != nil {
 				return err
 			}
-			e.generator.WriteLineBreak(twoLinesBreak)
+			err = e.generator.WriteLineBreak(twoLinesBreak)
+			if err != nil {
+				return err
+			}
 		} else {
 			queryStr := src[curOp.Position.Start:]
 			c := generator.Const{
@@ -259,7 +277,10 @@ func (e *evaluator) genOperations() error {
 			if err != nil {
 				return err
 			}
-			e.generator.WriteLineBreak(oneLineBreak)
+			err = e.generator.WriteLineBreak(oneLineBreak)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -271,13 +292,19 @@ func (e *evaluator) genClientCode() error {
 	if err != nil {
 		return err
 	}
-	e.generator.WriteLineBreak(twoLinesBreak)
+	err = e.generator.WriteLineBreak(twoLinesBreak)
+	if err != nil {
+		return err
+	}
 
 	err = e.genClientStruct()
 	if err != nil {
 		return err
 	}
-	e.generator.WriteLineBreak(twoLinesBreak)
+	err = e.generator.WriteLineBreak(twoLinesBreak)
+	if err != nil {
+		return err
+	}
 
 	return e.generator.WriteClientConstructor(e.AdditionalInfo.ClientName)
 }
@@ -304,15 +331,21 @@ func (e *evaluator) genOpsInterface() error {
 	if err != nil {
 		return err
 	}
-	e.generator.WriteLineBreak(twoLinesBreak)
+	err = e.generator.WriteLineBreak(twoLinesBreak)
+	if err != nil {
+		return err
+	}
 
 	// Generate interface implementation for each interface method
 	for _, f := range funcs {
-		err := e.generator.WriteInterfaceImplementation(e.AdditionalInfo.ClientName, f)
+		err = e.generator.WriteInterfaceImplementation(e.AdditionalInfo.ClientName, f)
 		if err != nil {
 			return err
 		}
-		e.generator.WriteLineBreak(twoLinesBreak)
+		err = e.generator.WriteLineBreak(twoLinesBreak)
+		if err != nil {
+			return err
+		}
 	}
 
 	// Generate wrapper struct for selection set operations
@@ -349,7 +382,10 @@ func (e *evaluator) genWrapperResponseStruct(f generator.Func) error {
 	if err != nil {
 		return err
 	}
-	e.generator.WriteLineBreak(twoLinesBreak)
+	err = e.generator.WriteLineBreak(twoLinesBreak)
+	if err != nil {
+		return err
+	}
 
 	// generate object referenced in 'data' JSON response
 	// if object has selection set - those will be created as struct fields
@@ -361,7 +397,10 @@ func (e *evaluator) genWrapperResponseStruct(f generator.Func) error {
 	if err != nil {
 		return err
 	}
-	e.generator.WriteLineBreak(twoLinesBreak)
+	err = e.generator.WriteLineBreak(twoLinesBreak)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

@@ -16,10 +16,10 @@ import (
 
 // A Generator is an interface that provides contract for generator struct and is being used instead of a pointer.
 type Generator interface {
-	WriteHeader()
-	WritePackage(pkgName string)
+	WriteHeader() error
+	WritePackage(pkgName string) error
 	WriteImports() error
-	WriteLineBreak(r int)
+	WriteLineBreak(r int) error
 	WriteInterface(name string, fn ...Func) error
 	WritePublicStruct(s Struct, usePointers bool) error
 	WritePrivateStruct(s Struct) error
@@ -34,9 +34,14 @@ type Generator interface {
 //go:embed templates/*
 var content embed.FS
 
+type generatorWriter interface {
+	io.StringWriter
+	io.Writer
+}
+
 // generator is a private struct that can be created with New function.
 type generator struct {
-	stream   *bytes.Buffer      // IO to write all code to and read from
+	stream   generatorWriter    // IO to write all code to and read from
 	template *template.Template // Predefined template defined in package templates
 }
 
@@ -59,13 +64,21 @@ func New() (Generator, error) {
 }
 
 // WriteHeader writes top level comment (grafik header).
-func (g *generator) WriteHeader() {
-	g.stream.WriteString(Header)
+func (g *generator) WriteHeader() error {
+	_, err := g.stream.WriteString(Header)
+	if err != nil {
+		return fmt.Errorf("failed to write header. Cause: %w", err)
+	}
+	return nil
 }
 
 // WritePackage writes name of the package.
-func (g *generator) WritePackage(pkgName string) {
-	g.stream.WriteString(fmt.Sprintf("package %s", pkgName))
+func (g *generator) WritePackage(pkgName string) error {
+	_, err := g.stream.WriteString(fmt.Sprintf("package %s", pkgName))
+	if err != nil {
+		return fmt.Errorf("failed to write package name. Cause: %w", err)
+	}
+	return nil
 }
 
 // WriteImports writes list of all required imports.
@@ -78,8 +91,12 @@ func (g *generator) WriteImports() error {
 }
 
 // WriteLineBreak writes number of line breaks based on provided number (r).
-func (g *generator) WriteLineBreak(r int) {
-	g.stream.WriteString(strings.Repeat("\n", r))
+func (g *generator) WriteLineBreak(r int) error {
+	_, err := g.stream.WriteString(strings.Repeat("\n", r))
+	if err != nil {
+		return fmt.Errorf("failed to write line break. Cause: %w", err)
+	}
+	return nil
 }
 
 // WriteInterface writes interface of provided name and functions (fn).
