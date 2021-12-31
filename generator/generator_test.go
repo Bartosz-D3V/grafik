@@ -8,18 +8,10 @@ import (
 	"testing"
 )
 
-func TestGenerator_New_Error(t *testing.T) {
-	t.Parallel()
-
-	g, err := New("/dev/null/")
-	assert.Nil(t, g)
-	assert.EqualError(t, err, "failed to parse templates. Cause: template: pattern matches no files: `/dev/null/templates/*.tmpl`")
-}
-
 func TestGenerator_WriteHeader(t *testing.T) {
 	t.Parallel()
 
-	g, _ := New("../")
+	g, _ := New()
 
 	g.WriteHeader()
 	g.WriteLineBreak(2)
@@ -38,7 +30,7 @@ package test
 func TestGenerator_WriteImports(t *testing.T) {
 	t.Parallel()
 
-	g, _ := New("../")
+	g, _ := New()
 
 	g.WritePackage("test")
 	g.WriteLineBreak(2)
@@ -67,7 +59,7 @@ func TestGenerator_WriteInterface_NoArgWithReturn(t *testing.T) {
 		Type: "Book",
 	}
 
-	g, _ := New("../")
+	g, _ := New()
 
 	g.WritePackage("test")
 	g.WriteLineBreak(2)
@@ -94,7 +86,7 @@ func TestGenerator_WriteInterface_SingleArgWithReturn(t *testing.T) {
 		Type: "Book",
 	}
 
-	g, err := New("../")
+	g, err := New()
 	assert.NoError(t, err)
 
 	g.WritePackage("test")
@@ -127,7 +119,7 @@ func TestGenerator_WriteInterface_MultiArgWithReturn(t *testing.T) {
 		Type: "Employee",
 	}
 
-	g, err := New("../")
+	g, err := New()
 	assert.NoError(t, err)
 
 	g.WritePackage("test")
@@ -165,7 +157,7 @@ func TestGenerator_WriteInterface_MultiMethods(t *testing.T) {
 		Type: "Employee",
 	}
 
-	g, err := New("../")
+	g, err := New()
 	assert.NoError(t, err)
 
 	g.WritePackage("test")
@@ -190,7 +182,7 @@ type BookService interface {
 func TestGenerator_WritePublicStruct(t *testing.T) {
 	t.Parallel()
 
-	g, _ := New("../")
+	g, _ := New()
 
 	g.WritePackage("test")
 	g.WriteLineBreak(2)
@@ -227,7 +219,7 @@ type Person struct {
 func TestGenerator_WritePublicStruct_WithPointers(t *testing.T) {
 	t.Parallel()
 
-	g, _ := New("../")
+	g, _ := New()
 
 	g.WritePackage("test")
 	g.WriteLineBreak(2)
@@ -264,7 +256,7 @@ type Person struct {
 func TestGenerator_WritePrivateStruct(t *testing.T) {
 	t.Parallel()
 
-	g, _ := New("../")
+	g, _ := New()
 
 	g.WritePackage("test")
 	g.WriteLineBreak(2)
@@ -301,7 +293,7 @@ type person struct {
 func TestGenerator_WriteEnum(t *testing.T) {
 	t.Parallel()
 
-	g, _ := New("../")
+	g, _ := New()
 
 	g.WritePackage("test")
 	g.WriteLineBreak(2)
@@ -332,7 +324,7 @@ const (
 func TestGenerator_WriteConst(t *testing.T) {
 	t.Parallel()
 
-	g, _ := New("../")
+	g, _ := New()
 
 	g.WritePackage("test")
 	g.WriteLineBreak(2)
@@ -366,7 +358,7 @@ const encoding = %[1]cUTF-8%[1]c
 func TestGenerator_WriteClientConstructor(t *testing.T) {
 	t.Parallel()
 
-	g, _ := New("../")
+	g, _ := New()
 
 	g.WritePackage("test")
 	g.WriteLineBreak(2)
@@ -391,7 +383,7 @@ func New(endpoint string, client *http.Client) ApiClient {
 func TestGenerator_WriteInterfaceImplementation(t *testing.T) {
 	t.Parallel()
 
-	g, _ := New("../")
+	g, _ := New()
 
 	g.WritePackage("test")
 	g.WriteLineBreak(2)
@@ -426,7 +418,7 @@ func (c *apiClient) CountResults(ctx context.Context, condition string, header *
 func TestGenerator_WriteGraphqlErrorStructs(t *testing.T) {
 	t.Parallel()
 
-	g, _ := New("../")
+	g, _ := New()
 
 	g.WritePackage("test")
 	g.WriteLineBreak(2)
@@ -460,7 +452,7 @@ type GraphQLErrorExtensions struct {
 func TestGenerator_WriteGraphqlErrorStructs_WithPointers(t *testing.T) {
 	t.Parallel()
 
-	g, _ := New("../")
+	g, _ := New()
 
 	g.WritePackage("test")
 	g.WriteLineBreak(2)

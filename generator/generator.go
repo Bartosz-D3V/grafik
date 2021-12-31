@@ -3,13 +3,13 @@ package generator
 
 import (
 	"bytes"
+	"embed"
 	"fmt"
 	"github.com/Bartosz-D3V/grafik/common"
 	"go/format"
 	"go/parser"
 	"go/token"
 	"io"
-	"path/filepath"
 	"strings"
 	"text/template"
 )
@@ -31,6 +31,9 @@ type Generator interface {
 	Generate() (io.WriterTo, error)
 }
 
+//go:embed templates/*
+var content embed.FS
+
 // generator is a private struct that can be created with New function.
 type generator struct {
 	stream   *bytes.Buffer      // IO to write all code to and read from
@@ -38,14 +41,14 @@ type generator struct {
 }
 
 // New return instance of generator.
-// rootLoc is relative location of project root (grafik/).
-func New(rootLoc string) (Generator, error) {
+func New() (Generator, error) {
 	funcMap := template.FuncMap{
 		"title":        strings.Title,
 		"sentenceCase": common.SentenceCase,
 		"camelCase":    common.SnakeCaseToCamelCase,
 	}
-	tmpl, err := template.New("codeTemplate").Funcs(funcMap).ParseGlob(filepath.Join(rootLoc, "templates/*.tmpl"))
+
+	tmpl, err := template.New("codeTemplate").Funcs(funcMap).ParseFS(content, "**/*.tmpl")
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse templates. Cause: %w", err)
 	}

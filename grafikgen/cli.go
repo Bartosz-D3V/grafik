@@ -86,7 +86,7 @@ func main() {
 		UsePointers: *genUsePointers,
 	}
 
-	e, err := evaluator.New("./", schema, query, additionalInfo)
+	e, err := evaluator.New(schema, query, additionalInfo)
 	if err != nil {
 		log.Fatal(err)
 	}

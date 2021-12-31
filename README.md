@@ -26,13 +26,13 @@ Assuming you have [Go][golang] installed on your machine, first install `grafikg
 ### Go version < 1.16
 
 ```bash
-GO111MODULE=on go get github.com/Bartosz-D3V/grafik/grafikgen
+GO111MODULE=on go install github.com/Bartosz-D3V/grafik/grafikgen@latest
 ```
 
 ### Go 1.16+
 
 ```bash
-go install github.com/Bartosz-D3V/grafik/grafikgen
+go install github.com/Bartosz-D3V/grafik/grafikgen@latest
 ```
 
 To add grafik GraphQL client add grafik as a dependency to the project:

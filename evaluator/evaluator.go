@@ -24,8 +24,8 @@ type evaluator struct {
 }
 
 // New function creates an instance of evaluator.
-func New(rootLoc string, schema *ast.Schema, queryDocument *ast.QueryDocument, additionalInfo AdditionalInfo) (Evaluator, error) {
-	g, err := generator.New(rootLoc)
+func New(schema *ast.Schema, queryDocument *ast.QueryDocument, additionalInfo AdditionalInfo) (Evaluator, error) {
+	g, err := generator.New()
 	if err != nil {
 		return nil, err
 	}
