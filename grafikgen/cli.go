@@ -3,6 +3,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/Bartosz-D3V/grafik/evaluator"
 	"github.com/vektah/gqlparser"
 	"github.com/vektah/gqlparser/ast"
@@ -29,12 +30,15 @@ func main() {
 	genDestination := genCmd.String("destination", "./", "[optional] Output filename with path. Either absolute or relative; defaults to the current directory and client name.")
 	genUsePointers := genCmd.Bool("use_pointers", false, "[optional] Generate public GraphQL structs' fields as pointers; defaults to false.")
 
-	switch os.Args[0] {
-	case "help":
+	if os.Args[1] == "help" {
 		usage(genCmd)
 		os.Exit(0)
-	default:
-		_ = genCmd.Parse(os.Args[1:])
+	}
+
+	err := genCmd.Parse(os.Args[1:])
+	if err != nil {
+		usage(genCmd)
+		log.Fatalf("Failed to parse CLI arguments. Cause: %v", err)
 	}
 
 	if !genCmd.Parsed() {
@@ -52,12 +56,19 @@ func main() {
 	}
 
 	if *cli.schemaSource == "" || *cli.querySource == "" {
+		usage(genCmd)
 		log.Fatal("grafikgen requires at least two flags - schema_source and query_source.")
 	}
 
+	defer func() {
+		if r := recover(); r != nil {
+			log.Fatalf("Failed to generate grafik client. Cause: %v", r)
+		}
+	}()
+
 	schemaContent, err := getFileContent(cli.schemaSource)
 	if err != nil {
-		log.Fatalf("Failed to read content of GraphQL schema file. Cause: %s", err.Error())
+		panic(fmt.Errorf("failed to read content of GraphQL schema file. Cause: %s", err.Error()))
 	}
 
 	schema, err := gqlparser.LoadSchema(&ast.Source{
@@ -66,18 +77,18 @@ func main() {
 
 	// gqlparser returns err that is not nil even when schema is parsed correctly
 	if err.Error() != "" {
-		log.Fatalf("Failed to parse GraphQL schema file. Cause: %s", err.Error())
+		panic(fmt.Errorf("failed to parse GraphQL schema file. Cause: %s", err.Error()))
 	}
 
 	queryContent, err := getFileContent(cli.querySource)
 	if err != nil {
-		log.Fatalf("Failed to read content of GraphQL query file. Cause: %s", err.Error())
+		panic(fmt.Errorf("failed to read content of GraphQL query file. Cause: %s", err.Error()))
 	}
 
 	query, err := gqlparser.LoadQuery(schema, string(queryContent))
 	// gqlparser returns err that is not nil even when schema is parsed correctly
 	if err.Error() != "" {
-		log.Fatalf("Failed to parse GraphQL query file. Cause: %s", err.Error())
+		panic(fmt.Errorf("failed to parse GraphQL query file. Cause: %s", err.Error()))
 	}
 
 	additionalInfo := evaluator.AdditionalInfo{
@@ -86,19 +97,14 @@ func main() {
 		UsePointers: *genUsePointers,
 	}
 
-	e, err := evaluator.New("./", schema, query, additionalInfo)
-	if err != nil {
-		log.Fatal(err)
-	}
+	e := evaluator.New(schema, query, additionalInfo)
 
 	fileName := cli.getFileDestName(additionalInfo.ClientName)
 
-	fileContent, err := e.Generate()
-	if err != nil {
-		log.Fatal(err)
-	}
+	fileContent := e.Generate()
+
 	err = writeFile(fileContent, fileName)
 	if err != nil {
-		log.Fatal(err)
+		panic(fmt.Errorf("failed to write content to the generated file. Cause: %w", err))
 	}
 }
