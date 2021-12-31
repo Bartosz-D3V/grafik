@@ -11,7 +11,7 @@ import (
 
 // Evaluator provides a contract for evaluator and is being used as a return type of New instead of a pointer.
 type Evaluator interface {
-	Generate() (io.WriterTo, error)
+	Generate() io.WriterTo
 }
 
 // evaluator is a struct used internally by grafikgen to wrap all required services and properties.
@@ -24,76 +24,39 @@ type evaluator struct {
 }
 
 // New function creates an instance of evaluator.
-func New(schema *ast.Schema, queryDocument *ast.QueryDocument, additionalInfo AdditionalInfo) (Evaluator, error) {
-	g, err := generator.New()
-	if err != nil {
-		return nil, err
-	}
+func New(schema *ast.Schema, queryDocument *ast.QueryDocument, additionalInfo AdditionalInfo) Evaluator {
+	g := generator.New()
 	return &evaluator{
 		generator:      g,
 		visitor:        visitor.New(schema, queryDocument),
 		schema:         schema,
 		queryDocument:  queryDocument,
 		AdditionalInfo: additionalInfo,
-	}, nil
+	}
 }
 
 // Generate is a root level function that generates the whole grafik client.
-func (e *evaluator) Generate() (io.WriterTo, error) {
-	err := e.generator.WriteHeader()
-	if err != nil {
-		return nil, err
-	}
-	err = e.generator.WriteLineBreak(twoLinesBreak)
-	if err != nil {
-		return nil, err
-	}
+func (e *evaluator) Generate() io.WriterTo {
+	e.generator.WriteHeader()
 
-	err = e.generator.WritePackage(e.AdditionalInfo.PackageName)
-	if err != nil {
-		return nil, err
-	}
-	err = e.generator.WriteLineBreak(twoLinesBreak)
-	if err != nil {
-		return nil, err
-	}
+	e.generator.WriteLineBreak(twoLinesBreak)
 
-	err = e.generator.WriteImports()
-	if err != nil {
-		return nil, err
-	}
+	e.generator.WritePackage(e.AdditionalInfo.PackageName)
+	e.generator.WriteLineBreak(twoLinesBreak)
 
-	err = e.generator.WriteLineBreak(twoLinesBreak)
-	if err != nil {
-		return nil, err
-	}
+	e.generator.WriteImports()
 
-	err = e.genSchemaDef()
-	if err != nil {
-		return nil, err
-	}
-	err = e.generator.WriteLineBreak(oneLineBreak)
-	if err != nil {
-		return nil, err
-	}
+	e.generator.WriteLineBreak(twoLinesBreak)
 
-	err = e.genOperations()
-	if err != nil {
-		return nil, err
-	}
-	err = e.generator.WriteLineBreak(oneLineBreak)
-	if err != nil {
-		return nil, err
-	}
+	e.genSchemaDef()
 
-	err = e.genClientCode()
-	if err != nil {
-		return nil, err
-	}
-	err = e.generator.WriteLineBreak(oneLineBreak)
-	if err != nil {
-		return nil, err
-	}
+	e.generator.WriteLineBreak(oneLineBreak)
+
+	e.genOperations()
+	e.generator.WriteLineBreak(oneLineBreak)
+
+	e.genClientCode()
+	e.generator.WriteLineBreak(oneLineBreak)
 
 	return e.generator.Generate()
 }
