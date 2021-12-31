@@ -30,12 +30,15 @@ func main() {
 	genDestination := genCmd.String("destination", "./", "[optional] Output filename with path. Either absolute or relative; defaults to the current directory and client name.")
 	genUsePointers := genCmd.Bool("use_pointers", false, "[optional] Generate public GraphQL structs' fields as pointers; defaults to false.")
 
-	switch os.Args[0] {
-	case "help":
+	if os.Args[1] == "help" {
 		usage(genCmd)
 		os.Exit(0)
-	default:
-		_ = genCmd.Parse(os.Args[1:])
+	}
+
+	err := genCmd.Parse(os.Args[1:])
+	if err != nil {
+		usage(genCmd)
+		log.Fatalf("Failed to parse CLI arguments. Cause: %v", err)
 	}
 
 	if !genCmd.Parsed() {
