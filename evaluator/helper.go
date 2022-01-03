@@ -5,6 +5,7 @@ import (
 	"github.com/Bartosz-D3V/grafik/common"
 	"github.com/Bartosz-D3V/grafik/generator"
 	"github.com/vektah/gqlparser/ast"
+	"sort"
 	"strings"
 )
 
@@ -25,10 +26,45 @@ func (e *evaluator) genSchemaDef() {
 }
 
 // generateStructs generates Go code based on GraphQL schema.
+//func (e *evaluator) generateGoTypes() {
+//	cTypes := e.visitor.IntrospectTypes()
+//	for _, customType := range cTypes {
+//		cType := e.schema.Types[customType]
+//
+//		// skipping all predefined GraphQL types (i.e. String, Int etc).
+//		if cType.BuiltIn {
+//			continue
+//		}
+//
+//		switch cType.Kind {
+//		case ast.Object,
+//			ast.InputObject:
+//			e.createStruct(cType)
+//		case ast.Enum:
+//			e.createEnum(cType)
+//		case ast.Scalar:
+//			e.createInterfaceType(cType)
+//		case ast.Interface:
+//			e.createCommonStruct(cType, graphQLFragmentStructName)
+//		case ast.Union:
+//			e.createCommonStruct(cType, graphQLUnionStructName)
+//		}
+//	}
+//}
 func (e *evaluator) generateGoTypes() {
 	cTypes := e.visitor.IntrospectTypes()
-	for _, customType := range cTypes {
-		cType := e.schema.Types[customType]
+
+	keys := make([]string, 0, len(cTypes))
+	for k := range cTypes {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for _, key := range keys {
+		cType, ok := e.schema.Types[key]
+		if !ok {
+			panic(fmt.Errorf("failed to find definition of %s in GraphQL Schema AST", key))
+		}
 
 		// skipping all predefined GraphQL types (i.e. String, Int etc).
 		if cType.BuiltIn {
@@ -38,7 +74,7 @@ func (e *evaluator) generateGoTypes() {
 		switch cType.Kind {
 		case ast.Object,
 			ast.InputObject:
-			e.createStruct(cType)
+			e.createStruct(cType, cTypes[key])
 		case ast.Enum:
 			e.createEnum(cType)
 		case ast.Scalar:
@@ -74,10 +110,10 @@ func (e *evaluator) createInterfaceType(cType *ast.Definition) {
 }
 
 // createStruct creates generator.Struct and writes to IO.
-func (e *evaluator) createStruct(cType *ast.Definition) {
+func (e *evaluator) createStruct(cType *ast.Definition, selectedFields []string) {
 	s := generator.Struct{
 		Name:   cType.Name,
-		Fields: e.parseFieldArgs(&cType.Fields),
+		Fields: e.parseFieldArgs(&cType.Fields, selectedFields),
 	}
 	e.generator.WriteLineBreak(twoLinesBreak)
 	e.generator.WritePublicStruct(s, e.AdditionalInfo.UsePointers)
@@ -104,7 +140,13 @@ func (e *evaluator) createCommonStruct(cType *ast.Definition, graphQLTypeSuffix 
 		Name:   fragmentName,
 		Fields: fList,
 	}
-	e.createStruct(fragmentDef)
+
+	allFields := make([]string, len(fList))
+	for i, field := range fList {
+		allFields[i] = field.Name
+	}
+
+	e.createStruct(fragmentDef, allFields)
 }
 
 // parseSelectionSet creates array of type generator.TypeArg based on selection set.
@@ -146,14 +188,24 @@ func (e *evaluator) parseFnArgs(args *ast.VariableDefinitionList) []generator.Ty
 }
 
 // parseFieldArgs converts GraphQL fields (ast.FieldList) into generator.TypeArg.
-func (e *evaluator) parseFieldArgs(args *ast.FieldList) []generator.TypeArg {
-	funcArgs := make([]generator.TypeArg, len(*args))
-	for i, arg := range *args {
+func (e *evaluator) parseFieldArgs(args *ast.FieldList, selectedFields []string) []generator.TypeArg {
+	funcArgs := make([]generator.TypeArg, 0)
+	for _, arg := range *args {
+		selected := false
+		for _, field := range selectedFields {
+			if arg.Name == field {
+				selected = true
+			}
+		}
+		if !selected {
+			continue
+		}
+
 		fArg := generator.TypeArg{
 			Name: arg.Name,
 			Type: e.convGoType(arg.Type),
 		}
-		funcArgs[i] = fArg
+		funcArgs = append(funcArgs, fArg)
 	}
 	return funcArgs
 }

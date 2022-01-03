@@ -143,12 +143,12 @@ import (
 	"net/http"
 )
 
-type FilmsConnection struct {
-	Films []Film %[1]cjson:"films"%[1]c
-}
-
 type Film struct {
 	Producers []string %[1]cjson:"producers"%[1]c
+}
+
+type FilmsConnection struct {
+	Films []Film %[1]cjson:"films"%[1]c
 }
 
 const getAllFilmsProducers = %[1]cquery GetAllFilmsProducers {

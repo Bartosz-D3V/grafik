@@ -8,17 +8,9 @@ import (
 	"net/http"
 )
 
-type Mission struct {
-	Manufacturers []string `json:"manufacturers"`
-}
-
 type Launchpad struct {
 	Name     string   `json:"name"`
 	Location Location `json:"location"`
-}
-
-type Location struct {
-	Name string `json:"name"`
 }
 
 type Roadster struct {
@@ -26,8 +18,22 @@ type Roadster struct {
 	Wikipedia string `json:"wikipedia"`
 }
 
+type Volume struct {
+	CubicMeters int `json:"cubic_meters"`
+}
+
+type Mission struct {
+	Manufacturers []string `json:"manufacturers"`
+}
+
+type Location struct {
+}
+
 type Info struct {
 	Ceo string `json:"ceo"`
+}
+
+type DragonPressurizedCapsule struct {
 }
 
 type Dragon struct {
@@ -35,14 +41,6 @@ type Dragon struct {
 	Type               string                   `json:"type"`
 	Wikipedia          string                   `json:"wikipedia"`
 	PressurizedCapsule DragonPressurizedCapsule `json:"pressurized_capsule"`
-}
-
-type DragonPressurizedCapsule struct {
-	PayloadVolume Volume `json:"payload_volume"`
-}
-
-type Volume struct {
-	CubicMeters int `json:"cubic_meters"`
 }
 
 const getBatchInfo = `query getBatchInfo($limit: Int) {
