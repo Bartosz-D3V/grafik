@@ -599,25 +599,13 @@ import (
 	"net/http"
 )
 
-type CapsulesFind struct {
-	Id             string %[1]cjson:"id"%[1]c
-	Landings       int    %[1]cjson:"landings"%[1]c
-	Mission        string %[1]cjson:"mission"%[1]c
-	OriginalLaunch Date   %[1]cjson:"original_launch"%[1]c
-	ReuseCount     int    %[1]cjson:"reuse_count"%[1]c
-	Status         string %[1]cjson:"status"%[1]c
-	Type           string %[1]cjson:"type"%[1]c
+type Capsule struct {
+	Id         string %[1]cjson:"id"%[1]c
+	Type       string %[1]cjson:"type"%[1]c
 }
 
 type Date interface {
-}
 
-type Capsule struct {
-	Id         string %[1]cjson:"id"%[1]c
-	Landings   int    %[1]cjson:"landings"%[1]c
-	ReuseCount int    %[1]cjson:"reuse_count"%[1]c
-	Status     string %[1]cjson:"status"%[1]c
-	Type       string %[1]cjson:"type"%[1]c
 }
 
 const getCapsulesByFullSelector = %[1]cquery GetCapsulesByFullSelector($order: String, $mission: String, $originalLaunch: Date, $id: ID, $sort: String) {
@@ -705,19 +693,15 @@ import (
 
 type Capsule struct {
 	Id         string %[1]cjson:"id"%[1]c
-	Landings   int    %[1]cjson:"landings"%[1]c
-	ReuseCount int    %[1]cjson:"reuse_count"%[1]c
-	Status     string %[1]cjson:"status"%[1]c
-	Type       string %[1]cjson:"type"%[1]c
+}
+
+type Limit struct {
+	Size int %[1]cjson:"size"%[1]c
 }
 
 type Position struct {
 	X int %[1]cjson:"x"%[1]c
 	Y int %[1]cjson:"y"%[1]c
-}
-
-type Limit struct {
-	Size int %[1]cjson:"size"%[1]c
 }
 
 const getCapsulesByPositions = %[1]cquery GetCapsulesByPositions($find: [[Position]], $limit: [[Limit]], $selector: [[String]]) {
@@ -802,19 +786,15 @@ import (
 
 type Capsule struct {
 	Id         string %[1]cjson:"id"%[1]c
-	Landings   int    %[1]cjson:"landings"%[1]c
-	ReuseCount int    %[1]cjson:"reuse_count"%[1]c
-	Status     string %[1]cjson:"status"%[1]c
-	Type       string %[1]cjson:"type"%[1]c
+}
+
+type Limit struct {
+	Size int %[1]cjson:"size"%[1]c
 }
 
 type Position struct {
 	X int %[1]cjson:"x"%[1]c
 	Y int %[1]cjson:"y"%[1]c
-}
-
-type Limit struct {
-	Size int %[1]cjson:"size"%[1]c
 }
 
 const getCapsulesByPositions = %[1]cquery GetCapsulesByPositions($find: [[[Position]]], $limit: [[[Limit]]], $selector: [[[String]]]) {
@@ -897,14 +877,14 @@ import (
 	"net/http"
 )
 
-type Movie struct {
-	Title string %[1]cjson:"title"%[1]c
-	Actor Actor  %[1]cjson:"actor"%[1]c
-}
-
 type Actor struct {
 	Name    string  %[1]cjson:"name"%[1]c
 	ActedIn []Movie %[1]cjson:"actedIn"%[1]c
+}
+
+type Movie struct {
+	Title string %[1]cjson:"title"%[1]c
+	Actor Actor  %[1]cjson:"actor"%[1]c
 }
 
 const getAllMoviesWhereActorsOfTheMovieActedIn = %[1]cquery GetAllMoviesWhereActorsOfTheMovieActedIn($title: String!) {
@@ -984,24 +964,17 @@ func TestEvaluator_FragmentType(t *testing.T) {
 package grafik_client
 
 import (
-    "context"
+	"context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
 
 type Rocket struct {
-	Active         bool   %[1]cjson:"active"%[1]c
-	Boosters       int    %[1]cjson:"boosters"%[1]c
-	Company        string %[1]cjson:"company"%[1]c
-	CostPerLaunch  int    %[1]cjson:"costPerLaunch"%[1]c
-	Country        string %[1]cjson:"country"%[1]c
-	Description    string %[1]cjson:"description"%[1]c
-	Id             string %[1]cjson:"id"%[1]c
-	Name           string %[1]cjson:"name"%[1]c
-	Stages         int    %[1]cjson:"stages"%[1]c
-	SuccessRatePct int    %[1]cjson:"successRatePct"%[1]c
-	Type           string %[1]cjson:"type"%[1]c
-	Wikipedia      string %[1]cjson:"wikipedia"%[1]c
+	Active      bool   %[1]cjson:"active"%[1]c
+	Country     string %[1]cjson:"country"%[1]c
+	Description string %[1]cjson:"description"%[1]c
+	Id          string %[1]cjson:"id"%[1]c
+	Name        string %[1]cjson:"name"%[1]c
 }
 
 const getShortRocketInfo = %[1]cquery GetShortRocketInfo {
@@ -1014,7 +987,18 @@ fragment RocketShortInfo on Rocket {
     id
     name
     description
-}%[1]c
+    ...AdditionalRocketInfo
+}
+
+fragment AdditionalRocketInfo on Rocket {
+    country
+    ...InformatoryRocketInfo
+}
+
+fragment InformatoryRocketInfo on Rocket {
+    active
+}
+%[1]c
 
 type RocketClient interface {
 	GetShortRocketInfo(ctx context.Context, header *http.Header) (*http.Response, error)
@@ -1558,24 +1542,17 @@ func TestEvaluator_WithPointers(t *testing.T) {
 package grafik_client
 
 import (
-    "context"
+	"context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
 
 type Rocket struct {
-	Active         *bool   %[1]cjson:"active"%[1]c
-	Boosters       *int    %[1]cjson:"boosters"%[1]c
-	Company        *string %[1]cjson:"company"%[1]c
-	CostPerLaunch  *int    %[1]cjson:"costPerLaunch"%[1]c
-	Country        *string %[1]cjson:"country"%[1]c
-	Description    *string %[1]cjson:"description"%[1]c
-	Id             *string %[1]cjson:"id"%[1]c
-	Name           *string %[1]cjson:"name"%[1]c
-	Stages         *int    %[1]cjson:"stages"%[1]c
-	SuccessRatePct *int    %[1]cjson:"successRatePct"%[1]c
-	Type           *string %[1]cjson:"type"%[1]c
-	Wikipedia      *string %[1]cjson:"wikipedia"%[1]c
+	Active      *bool   %[1]cjson:"active"%[1]c
+	Country     *string %[1]cjson:"country"%[1]c
+	Description *string %[1]cjson:"description"%[1]c
+	Id          *string %[1]cjson:"id"%[1]c
+	Name        *string %[1]cjson:"name"%[1]c
 }
 
 const getShortRocketInfo = %[1]cquery GetShortRocketInfo {
@@ -1588,7 +1565,18 @@ fragment RocketShortInfo on Rocket {
     id
     name
     description
-}%[1]c
+    ...AdditionalRocketInfo
+}
+
+fragment AdditionalRocketInfo on Rocket {
+    country
+    ...InformatoryRocketInfo
+}
+
+fragment InformatoryRocketInfo on Rocket {
+    active
+}
+%[1]c
 
 type RocketClient interface {
 	GetShortRocketInfo(ctx context.Context, header *http.Header) (*http.Response, error)
@@ -1602,7 +1590,7 @@ func (c *rocketClient) GetShortRocketInfo(ctx context.Context, header *http.Head
 
 type GetShortRocketInfoResponse struct {
 	Data   *GetShortRocketInfoData %[1]cjson:"data"%[1]c
-	Errors []GraphQLError          %[1]cjson:"errors"%[1]c
+	Errors []GraphQLError         %[1]cjson:"errors"%[1]c
 }
 
 type GetShortRocketInfoData struct {
@@ -1611,7 +1599,7 @@ type GetShortRocketInfoData struct {
 
 type GraphQLError struct {
 	Message    *string                 %[1]cjson:"message"%[1]c
-	Locations  []GraphQLErrorLocation  %[1]cjson:"locations"%[1]c
+	Locations  []GraphQLErrorLocation %[1]cjson:"locations"%[1]c
 	Extensions *GraphQLErrorExtensions %[1]cjson:"extensions"%[1]c
 }
 

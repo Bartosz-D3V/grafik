@@ -8,4 +8,14 @@ fragment RocketShortInfo on Rocket {
     id
     name
     description
+    ...AdditionalRocketInfo
+}
+
+fragment AdditionalRocketInfo on Rocket {
+    country
+    ...InformatoryRocketInfo
+}
+
+fragment InformatoryRocketInfo on Rocket {
+    active
 }

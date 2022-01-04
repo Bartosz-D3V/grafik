@@ -28,42 +28,59 @@ import (
 //}
 func (v *visitor) parseOpTypes(opList ast.OperationList) {
 	for _, opDef := range opList {
-		v.parseSelection(opDef.SelectionSet)
+		v.parseSelection(opDef.SelectionSet, make([]string, 0))
 		v.parseVariables(opDef.VariableDefinitions)
 	}
 }
 
-func (v *visitor) parseSelection(selectionSet ast.SelectionSet) {
+func (v *visitor) parseSelection(selectionSet ast.SelectionSet, fields []string) []string {
 	for _, selection := range selectionSet {
 
 		if field, ok := selection.(*ast.Field); ok {
 			if field.SelectionSet == nil || len(field.SelectionSet) == 0 {
-				return
+				fields = append(fields, field.Name)
+				continue
 			}
-			fields := make([]string, 0)
+			//fields := make([]string, 0)
 			for _, s := range field.SelectionSet {
 				switch parsedType := s.(type) {
 				case *ast.Field:
 					fields = append(fields, parsedType.Name)
 					if parsedType.SelectionSet != nil && len(parsedType.SelectionSet) > 0 {
-						v.parseSelection(parsedType.SelectionSet)
+						v.parseSelection(parsedType.SelectionSet, fields)
 					}
 					v.registerType2(parsedType.Definition.Type, make([]string, 0))
 				case *ast.InlineFragment:
-					v.parseSelection(parsedType.SelectionSet)
+					v.parseSelection(parsedType.SelectionSet, fields)
 				case *ast.FragmentSpread:
-					for _, fDef := range parsedType.ObjectDefinition.Fields {
-						fields = append(fields, fDef.Name)
-					}
+					fields = v.parseFragmentSpread(parsedType, fields)
+					v.parseSelection(parsedType.Definition.SelectionSet, fields)
 				}
 			}
 
 			v.registerType2(field.Definition.Type, fields)
 			if field.SelectionSet != nil && len(field.SelectionSet) > 0 {
-				v.parseSelection(field.SelectionSet)
+				v.parseSelection(field.SelectionSet, fields)
 			}
 		}
+		if fragment, ok := selection.(*ast.FragmentSpread); ok {
+			fields = v.parseFragmentSpread(fragment, fields)
+			v.parseSelection(fragment.Definition.SelectionSet, fields)
+		}
 	}
+	return fields
+}
+
+func (v *visitor) parseFragmentSpread(parsedType *ast.FragmentSpread, fields []string) []string {
+	for _, sel := range parsedType.Definition.SelectionSet {
+		switch selType := sel.(type) {
+		case *ast.Field:
+			fields = append(fields, selType.Name)
+		case *ast.FragmentSpread:
+			fields = v.parseSelection(selType.Definition.SelectionSet, fields)
+		}
+	}
+	return fields
 }
 
 func (v *visitor) parseVariables(variableDefinitionList ast.VariableDefinitionList) {
