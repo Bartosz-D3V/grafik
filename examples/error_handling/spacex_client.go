@@ -8,11 +8,6 @@ import (
 	"net/http"
 )
 
-type RocketsResult struct {
-	Result Result   `json:"result"`
-	Data   []Rocket `json:"data"`
-}
-
 type Result struct {
 	TotalCount int `json:"totalCount"`
 }
@@ -21,6 +16,11 @@ type Rocket struct {
 	TotalPerLaunch int    `json:"total_per_launch"`
 	Country        string `json:"country"`
 	Name           string `json:"name"`
+}
+
+type RocketsResult struct {
+	Result Result   `json:"result"`
+	Data   []Rocket `json:"data"`
 }
 
 const getRocketResults = `query getRocketResults($limit: Int){

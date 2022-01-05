@@ -5,27 +5,6 @@ import (
 	"github.com/vektah/gqlparser/ast"
 )
 
-//func (v *visitor) parseOpTypes(query *ast.Definition) {
-//	for _, field := range query.Fields {
-//		if field.Type.NamedType != "" {
-//			v.findSubTypes(v.schema.Types[field.Type.NamedType])
-//		}
-//
-//		for _, arg := range field.Arguments {
-//			v.findSubTypes(v.schema.Types[arg.Type.NamedType])
-//		}
-//
-//		if common.IsList(field.Type) {
-//			typeLeafType := v.findLeafType(field.Type.Elem)
-//			v.findSubTypes(v.schema.Types[typeLeafType.NamedType])
-//
-//			for _, arg := range field.Arguments {
-//				argLeafType := v.findLeafType(arg.Type)
-//				v.findSubTypes(v.schema.Types[argLeafType.NamedType])
-//			}
-//		}
-//	}
-//}
 func (v *visitor) parseOpTypes(opList ast.OperationList) {
 	for _, opDef := range opList {
 		v.parseSelection(opDef.SelectionSet, make([]string, 0))
@@ -41,7 +20,7 @@ func (v *visitor) parseSelection(selectionSet ast.SelectionSet, fields []string)
 				fields = append(fields, field.Name)
 				continue
 			}
-			//fields := make([]string, 0)
+
 			for _, s := range field.SelectionSet {
 				switch parsedType := s.(type) {
 				case *ast.Field:
@@ -49,7 +28,7 @@ func (v *visitor) parseSelection(selectionSet ast.SelectionSet, fields []string)
 					if parsedType.SelectionSet != nil && len(parsedType.SelectionSet) > 0 {
 						v.parseSelection(parsedType.SelectionSet, fields)
 					}
-					v.registerType2(parsedType.Definition.Type, make([]string, 0))
+					v.registerType(parsedType.Definition.Type, make([]string, 0))
 				case *ast.InlineFragment:
 					v.parseSelection(parsedType.SelectionSet, fields)
 				case *ast.FragmentSpread:
@@ -58,7 +37,7 @@ func (v *visitor) parseSelection(selectionSet ast.SelectionSet, fields []string)
 				}
 			}
 
-			v.registerType2(field.Definition.Type, fields)
+			v.registerType(field.Definition.Type, fields)
 			if field.SelectionSet != nil && len(field.SelectionSet) > 0 {
 				v.parseSelection(field.SelectionSet, fields)
 			}
@@ -103,39 +82,35 @@ func (v *visitor) parseType(definitionType *ast.Type) {
 			fields[i] = field.Name
 			v.parseType(field.Type)
 		}
-		v.registerType2(definitionType, fields)
+		v.registerType(definitionType, fields)
 	}
 }
 
-func (v *visitor) registerType2(field *ast.Type, fields []string) {
+func (v *visitor) registerType(field *ast.Type, fields []string) {
 	if common.IsList(field) {
 		leafType := v.findLeafType(field)
-		cFields, ok := v.customTypes2[leafType.NamedType]
+		if v.schema.Types[leafType.NamedType].BuiltIn {
+			return
+		}
+
+		cFields, ok := v.customTypes[leafType.NamedType]
 		if ok {
-			joinedFields := append(cFields, fields...)
-			v.customTypes2[leafType.NamedType] = joinedFields
+			fields = append(cFields, fields...)
+			v.customTypes[leafType.NamedType] = fields
 		} else {
-			v.customTypes2[leafType.NamedType] = fields
+			v.customTypes[leafType.NamedType] = fields
 		}
 	} else {
-		cFields, ok := v.customTypes2[field.NamedType]
-		if ok {
-			joinedFields := append(cFields, fields...)
-			v.customTypes2[field.NamedType] = joinedFields
-		} else {
-			v.customTypes2[field.NamedType] = fields
+		if v.schema.Types[field.NamedType].BuiltIn {
+			return
 		}
-	}
-}
-func (v *visitor) findSubTypes(t *ast.Definition) {
-	if t != nil && !t.BuiltIn {
-		v.registerType(t.Name)
-		for _, field := range t.Fields {
-			v.registerType(t.Name)
-			v.findSubTypes(v.schema.Types[field.Type.NamedType])
-			if common.IsList(field.Type) {
-				v.registerType(field.Type.Elem.NamedType)
-			}
+
+		cFields, ok := v.customTypes[field.NamedType]
+		if ok {
+			fields = append(cFields, fields...)
+			v.customTypes[field.NamedType] = fields
+		} else {
+			v.customTypes[field.NamedType] = fields
 		}
 	}
 }
@@ -145,19 +120,4 @@ func (v *visitor) findLeafType(elem *ast.Type) *ast.Type {
 		return v.findLeafType(elem.Elem)
 	}
 	return elem
-}
-
-func (v *visitor) registerType(typeName string) {
-	if typeName != "" && !v.typeRegistered(typeName) {
-		v.customTypes = append(v.customTypes, typeName)
-	}
-}
-
-func (v *visitor) typeRegistered(typeName string) bool {
-	for _, cType := range v.customTypes {
-		if typeName == cType {
-			return true
-		}
-	}
-	return false
 }

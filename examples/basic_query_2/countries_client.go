@@ -11,7 +11,6 @@ import (
 type Country struct {
 	Name      string     `json:"name"`
 	Native    string     `json:"native"`
-	Capital   string     `json:"capital"`
 	Currency  string     `json:"currency"`
 	Languages []Language `json:"languages"`
 	Emoji     string     `json:"emoji"`

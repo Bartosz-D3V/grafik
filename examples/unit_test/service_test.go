@@ -1,4 +1,4 @@
-package unitTestExampleWithMock
+package main
 
 import (
 	"bytes"

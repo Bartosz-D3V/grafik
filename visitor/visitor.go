@@ -14,8 +14,7 @@ type Visitor interface {
 type visitor struct {
 	schema        *ast.Schema
 	queryDocument *ast.QueryDocument
-	customTypes   []string
-	customTypes2  map[string][]string
+	customTypes   map[string][]string
 }
 
 // New return instance of visitor - it requires parsed GraphQL schema and query files.
@@ -23,8 +22,7 @@ func New(schema *ast.Schema, queryDocument *ast.QueryDocument) Visitor {
 	return &visitor{
 		schema:        schema,
 		queryDocument: queryDocument,
-		customTypes:   make([]string, 0),
-		customTypes2:  make(map[string][]string, 0),
+		customTypes:   make(map[string][]string),
 	}
 }
 
@@ -32,11 +30,6 @@ func (v *visitor) IntrospectTypes() map[string][]string {
 	if v.queryDocument.Operations != nil {
 		v.parseOpTypes(v.queryDocument.Operations)
 	}
-	//if v.schema.Query != nil {
-	//	v.parseOpTypes(v.schema.Query)
-	//}
-	//if v.schema.Mutation != nil {
-	//	v.parseOpTypes(v.schema.Mutation)
-	//}
-	return v.customTypes2
+
+	return v.customTypes
 }

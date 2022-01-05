@@ -407,25 +407,17 @@ type Character struct {
 	Species   Species %[1]cjson:"species"%[1]c
 }
 
-type Planet struct {
-	Location Location %[1]cjson:"location"%[1]c
-}
-
 type Location struct {
 	PosX int %[1]cjson:"posX"%[1]c
 	PoxY int %[1]cjson:"poxY"%[1]c
 }
 
+type Planet struct {
+	Location Location %[1]cjson:"location"%[1]c
+}
+
 type Species struct {
 	Origin Planet %[1]cjson:"origin"%[1]c
-}
-
-type CharacterSelector struct {
-	IdSelector IdSelector %[1]cjson:"idSelector"%[1]c
-}
-
-type IdSelector struct {
-	Id string %[1]cjson:"id"%[1]c
 }
 
 const getHeroWithId123ABC = %[1]cquery GetHeroWithId123ABC {
@@ -433,6 +425,13 @@ const getHeroWithId123ABC = %[1]cquery GetHeroWithId123ABC {
         homeWorld {
             location {
                 posX
+            }
+        }
+        species {
+            origin {
+                location {
+                    poxY
+                }
             }
         }
     }
@@ -878,7 +877,6 @@ import (
 )
 
 type Actor struct {
-	Name    string  %[1]cjson:"name"%[1]c
 	ActedIn []Movie %[1]cjson:"actedIn"%[1]c
 }
 

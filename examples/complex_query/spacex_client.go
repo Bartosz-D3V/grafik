@@ -8,9 +8,32 @@ import (
 	"net/http"
 )
 
+type Dragon struct {
+	Name               string                   `json:"name"`
+	Type               string                   `json:"type"`
+	Wikipedia          string                   `json:"wikipedia"`
+	PressurizedCapsule DragonPressurizedCapsule `json:"pressurized_capsule"`
+}
+
+type DragonPressurizedCapsule struct {
+	PayloadVolume Volume `json:"payload_volume"`
+}
+
+type Info struct {
+	Ceo string `json:"ceo"`
+}
+
 type Launchpad struct {
 	Name     string   `json:"name"`
 	Location Location `json:"location"`
+}
+
+type Location struct {
+	Name string `json:"name"`
+}
+
+type Mission struct {
+	Manufacturers []string `json:"manufacturers"`
 }
 
 type Roadster struct {
@@ -20,27 +43,6 @@ type Roadster struct {
 
 type Volume struct {
 	CubicMeters int `json:"cubic_meters"`
-}
-
-type Mission struct {
-	Manufacturers []string `json:"manufacturers"`
-}
-
-type Location struct {
-}
-
-type Info struct {
-	Ceo string `json:"ceo"`
-}
-
-type DragonPressurizedCapsule struct {
-}
-
-type Dragon struct {
-	Name               string                   `json:"name"`
-	Type               string                   `json:"type"`
-	Wikipedia          string                   `json:"wikipedia"`
-	PressurizedCapsule DragonPressurizedCapsule `json:"pressurized_capsule"`
 }
 
 const getBatchInfo = `query getBatchInfo($limit: Int) {

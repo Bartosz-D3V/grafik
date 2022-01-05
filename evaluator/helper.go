@@ -25,32 +25,6 @@ func (e *evaluator) genSchemaDef() {
 	e.generator.WriteLineBreak(twoLinesBreak)
 }
 
-// generateStructs generates Go code based on GraphQL schema.
-//func (e *evaluator) generateGoTypes() {
-//	cTypes := e.visitor.IntrospectTypes()
-//	for _, customType := range cTypes {
-//		cType := e.schema.Types[customType]
-//
-//		// skipping all predefined GraphQL types (i.e. String, Int etc).
-//		if cType.BuiltIn {
-//			continue
-//		}
-//
-//		switch cType.Kind {
-//		case ast.Object,
-//			ast.InputObject:
-//			e.createStruct(cType)
-//		case ast.Enum:
-//			e.createEnum(cType)
-//		case ast.Scalar:
-//			e.createInterfaceType(cType)
-//		case ast.Interface:
-//			e.createCommonStruct(cType, graphQLFragmentStructName)
-//		case ast.Union:
-//			e.createCommonStruct(cType, graphQLUnionStructName)
-//		}
-//	}
-//}
 func (e *evaluator) generateGoTypes() {
 	cTypes := e.visitor.IntrospectTypes()
 
@@ -64,11 +38,6 @@ func (e *evaluator) generateGoTypes() {
 		cType, ok := e.schema.Types[key]
 		if !ok {
 			panic(fmt.Errorf("failed to find definition of %s in GraphQL Schema AST", key))
-		}
-
-		// skipping all predefined GraphQL types (i.e. String, Int etc).
-		if cType.BuiltIn {
-			continue
 		}
 
 		switch cType.Kind {
