@@ -990,7 +990,9 @@ fragment RocketShortInfo on Rocket {
 
 fragment AdditionalRocketInfo on Rocket {
     country
-    ...InformatoryRocketInfo
+    ... on Rocket {
+        ...InformatoryRocketInfo
+    }
 }
 
 fragment InformatoryRocketInfo on Rocket {
@@ -1172,7 +1174,9 @@ type CharacterFragment struct {
 const getCharacters = %[1]cquery getCharacters {
     characters {
         ... on Human {
-            homePlanet
+            ... on Human {
+                homePlanet
+            }
         }
         ... on Droid {
             primaryFunction
@@ -1564,7 +1568,9 @@ fragment RocketShortInfo on Rocket {
 
 fragment AdditionalRocketInfo on Rocket {
     country
-    ...InformatoryRocketInfo
+    ... on Rocket {
+        ...InformatoryRocketInfo
+    }
 }
 
 fragment InformatoryRocketInfo on Rocket {

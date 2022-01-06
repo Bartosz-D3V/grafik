@@ -13,7 +13,9 @@ fragment RocketShortInfo on Rocket {
 
 fragment AdditionalRocketInfo on Rocket {
     country
-    ...InformatoryRocketInfo
+    ... on Rocket {
+        ...InformatoryRocketInfo
+    }
 }
 
 fragment InformatoryRocketInfo on Rocket {
