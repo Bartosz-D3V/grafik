@@ -14,38 +14,46 @@ func (v *visitor) parseOpTypes(opList ast.OperationList) {
 
 func (v *visitor) parseSelectionSet(selectionSet ast.SelectionSet, fields []string) []string {
 	for _, selection := range selectionSet {
-
-		if field, ok := selection.(*ast.Field); ok {
-			if field.SelectionSet == nil || len(field.SelectionSet) == 0 {
-				fields = append(fields, field.Name)
-				continue
-			}
-
-			for _, s := range field.SelectionSet {
-				switch parsedType := s.(type) {
-				case *ast.Field:
-					fields = append(fields, parsedType.Name)
-					if parsedType.SelectionSet != nil && len(parsedType.SelectionSet) > 0 {
-						v.parseSelectionSet(parsedType.SelectionSet, fields)
-					}
-					v.registerType(parsedType.Definition.Type, make([]string, 0))
-				case *ast.InlineFragment:
-					v.parseSelectionSet(parsedType.SelectionSet, fields)
-				case *ast.FragmentSpread:
-					fields = v.parseFragmentSpread(parsedType, fields)
-					v.parseSelectionSet(parsedType.Definition.SelectionSet, fields)
-				}
-			}
-
-			v.registerType(field.Definition.Type, fields)
-			if field.SelectionSet != nil && len(field.SelectionSet) > 0 {
-				v.parseSelectionSet(field.SelectionSet, fields)
-			}
+		switch selectionType := selection.(type) {
+		case *ast.Field:
+			fields = v.parseField(selectionType, fields)
+		case *ast.FragmentSpread:
+			fields = v.parseFragmentSpread(selectionType, fields)
+		case *ast.InlineFragment:
+			fields = v.parseInlineFragment(selectionType, fields)
 		}
-		if fragment, ok := selection.(*ast.FragmentSpread); ok {
-			fields = v.parseFragmentSpread(fragment, fields)
-			v.parseSelectionSet(fragment.Definition.SelectionSet, fields)
-		}
+	}
+	return fields
+}
+
+func (v *visitor) parseField(field *ast.Field, fields []string) []string {
+	if field.SelectionSet == nil || len(field.SelectionSet) == 0 {
+		fields = append(fields, field.Name)
+	}
+
+	for _, s := range field.SelectionSet {
+		fields = v.parseSelection(s, fields)
+	}
+
+	v.registerType(field.Definition.Type, fields)
+	if field.SelectionSet != nil && len(field.SelectionSet) > 0 {
+		v.parseSelectionSet(field.SelectionSet, fields)
+	}
+	return fields
+}
+
+func (v *visitor) parseSelection(s ast.Selection, fields []string) []string {
+	switch parsedType := s.(type) {
+	case *ast.Field:
+		fields = append(fields, parsedType.Name)
+		v.parseSelectionSet(parsedType.SelectionSet, fields)
+		v.registerType(parsedType.Definition.Type, make([]string, 0))
+	case *ast.InlineFragment:
+		fields = v.parseInlineFragment(parsedType, fields)
+		v.parseSelectionSet(parsedType.SelectionSet, fields)
+	case *ast.FragmentSpread:
+		fields = v.parseFragmentSpread(parsedType, fields)
+		v.parseSelectionSet(parsedType.Definition.SelectionSet, fields)
 	}
 	return fields
 }
@@ -57,6 +65,22 @@ func (v *visitor) parseFragmentSpread(parsedType *ast.FragmentSpread, fields []s
 			fields = append(fields, selType.Name)
 		case *ast.FragmentSpread:
 			fields = v.parseSelectionSet(selType.Definition.SelectionSet, fields)
+		case *ast.InlineFragment:
+			fields = v.parseSelectionSet(selType.SelectionSet, fields)
+		}
+	}
+	return fields
+}
+
+func (v *visitor) parseInlineFragment(parsedType *ast.InlineFragment, fields []string) []string {
+	for _, sel := range parsedType.SelectionSet {
+		switch selType := sel.(type) {
+		case *ast.Field:
+			fields = append(fields, selType.Name)
+		case *ast.FragmentSpread:
+			fields = v.parseSelectionSet(selType.Definition.SelectionSet, fields)
+		case *ast.InlineFragment:
+			fields = v.parseSelectionSet(selType.SelectionSet, fields)
 		}
 	}
 	return fields
@@ -70,12 +94,14 @@ func (v *visitor) parseVariables(variableDefinitionList ast.VariableDefinitionLi
 
 func (v *visitor) parseType(definitionType *ast.Type) {
 	var leafDefType *ast.Definition
+
 	if common.IsList(definitionType) {
 		leafType := v.findLeafType(definitionType)
 		leafDefType = v.schema.Types[leafType.NamedType]
 	} else {
 		leafDefType = v.schema.Types[definitionType.NamedType]
 	}
+
 	if leafDefType != nil && !leafDefType.BuiltIn {
 		fields := make([]string, len(leafDefType.Fields))
 		for i, field := range leafDefType.Fields {

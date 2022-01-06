@@ -1164,7 +1164,6 @@ import (
 )
 
 type CharacterFragment struct {
-	Id              string %[1]cjson:"id"%[1]c
 	Name            string %[1]cjson:"name"%[1]c
 	HomePlanet      string %[1]cjson:"homePlanet"%[1]c
 	PrimaryFunction string %[1]cjson:"primaryFunction"%[1]c
@@ -1256,7 +1255,6 @@ import (
 )
 
 type CharacterFragment struct {
-	Id              string %[1]cjson:"id"%[1]c
 	Name            string %[1]cjson:"name"%[1]c
 	HomePlanet      string %[1]cjson:"homePlanet"%[1]c
 	PrimaryFunction string %[1]cjson:"primaryFunction"%[1]c
@@ -1348,14 +1346,12 @@ import (
 )
 
 type CharacterFragment struct {
-	Id              string %[1]cjson:"id"%[1]c
 	Name            string %[1]cjson:"name"%[1]c
 	HomePlanet      string %[1]cjson:"homePlanet"%[1]c
 	PrimaryFunction string %[1]cjson:"primaryFunction"%[1]c
 }
 
 type PlanetFragment struct {
-	Id          string %[1]cjson:"id"%[1]c
 	Name        string %[1]cjson:"name"%[1]c
 	Temperature int    %[1]cjson:"temperature"%[1]c
 	Age         int    %[1]cjson:"age"%[1]c

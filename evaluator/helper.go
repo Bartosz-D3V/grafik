@@ -49,9 +49,9 @@ func (e *evaluator) generateGoTypes() {
 		case ast.Scalar:
 			e.createInterfaceType(cType)
 		case ast.Interface:
-			e.createCommonStruct(cType, graphQLFragmentStructName)
+			e.createCommonStruct(cType, cTypes[key], graphQLFragmentStructName)
 		case ast.Union:
-			e.createCommonStruct(cType, graphQLUnionStructName)
+			e.createCommonStruct(cType, cTypes[key], graphQLUnionStructName)
 		}
 	}
 }
@@ -89,7 +89,7 @@ func (e *evaluator) createStruct(cType *ast.Definition, selectedFields []string)
 }
 
 // createCommonStruct creates a generic struct containing all the fields that interface and all implementations it has.
-func (e *evaluator) createCommonStruct(cType *ast.Definition, graphQLTypeSuffix string) {
+func (e *evaluator) createCommonStruct(cType *ast.Definition, selectedFields []string, graphQLTypeSuffix string) {
 	fragmentName := fmt.Sprintf("%s%s", cType.Name, graphQLTypeSuffix)
 	fragmentFields := make(ast.FieldList, 0)
 
@@ -99,6 +99,16 @@ func (e *evaluator) createCommonStruct(cType *ast.Definition, graphQLTypeSuffix 
 
 	fList := make(ast.FieldList, 0)
 	for _, fField := range fragmentFields {
+		selected := false
+		for _, field := range selectedFields {
+			if fField.Name == field {
+				selected = true
+			}
+		}
+		if !selected {
+			continue
+		}
+
 		if fList.ForName(fField.Name) == nil {
 			fList = append(fList, fField)
 		}
