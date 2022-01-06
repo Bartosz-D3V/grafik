@@ -7,12 +7,12 @@ import (
 
 func (v *visitor) parseOpTypes(opList ast.OperationList) {
 	for _, opDef := range opList {
-		v.parseSelection(opDef.SelectionSet, make([]string, 0))
+		v.parseSelectionSet(opDef.SelectionSet, make([]string, 0))
 		v.parseVariables(opDef.VariableDefinitions)
 	}
 }
 
-func (v *visitor) parseSelection(selectionSet ast.SelectionSet, fields []string) []string {
+func (v *visitor) parseSelectionSet(selectionSet ast.SelectionSet, fields []string) []string {
 	for _, selection := range selectionSet {
 
 		if field, ok := selection.(*ast.Field); ok {
@@ -26,25 +26,25 @@ func (v *visitor) parseSelection(selectionSet ast.SelectionSet, fields []string)
 				case *ast.Field:
 					fields = append(fields, parsedType.Name)
 					if parsedType.SelectionSet != nil && len(parsedType.SelectionSet) > 0 {
-						v.parseSelection(parsedType.SelectionSet, fields)
+						v.parseSelectionSet(parsedType.SelectionSet, fields)
 					}
 					v.registerType(parsedType.Definition.Type, make([]string, 0))
 				case *ast.InlineFragment:
-					v.parseSelection(parsedType.SelectionSet, fields)
+					v.parseSelectionSet(parsedType.SelectionSet, fields)
 				case *ast.FragmentSpread:
 					fields = v.parseFragmentSpread(parsedType, fields)
-					v.parseSelection(parsedType.Definition.SelectionSet, fields)
+					v.parseSelectionSet(parsedType.Definition.SelectionSet, fields)
 				}
 			}
 
 			v.registerType(field.Definition.Type, fields)
 			if field.SelectionSet != nil && len(field.SelectionSet) > 0 {
-				v.parseSelection(field.SelectionSet, fields)
+				v.parseSelectionSet(field.SelectionSet, fields)
 			}
 		}
 		if fragment, ok := selection.(*ast.FragmentSpread); ok {
 			fields = v.parseFragmentSpread(fragment, fields)
-			v.parseSelection(fragment.Definition.SelectionSet, fields)
+			v.parseSelectionSet(fragment.Definition.SelectionSet, fields)
 		}
 	}
 	return fields
@@ -56,7 +56,7 @@ func (v *visitor) parseFragmentSpread(parsedType *ast.FragmentSpread, fields []s
 		case *ast.Field:
 			fields = append(fields, selType.Name)
 		case *ast.FragmentSpread:
-			fields = v.parseSelection(selType.Definition.SelectionSet, fields)
+			fields = v.parseSelectionSet(selType.Definition.SelectionSet, fields)
 		}
 	}
 	return fields
@@ -87,31 +87,23 @@ func (v *visitor) parseType(definitionType *ast.Type) {
 }
 
 func (v *visitor) registerType(field *ast.Type, fields []string) {
+	var leafType *ast.Type
+
 	if common.IsList(field) {
-		leafType := v.findLeafType(field)
-		if v.schema.Types[leafType.NamedType].BuiltIn {
-			return
-		}
-
-		cFields, ok := v.customTypes[leafType.NamedType]
-		if ok {
-			fields = append(cFields, fields...)
-			v.customTypes[leafType.NamedType] = fields
-		} else {
-			v.customTypes[leafType.NamedType] = fields
-		}
+		leafType = v.findLeafType(field)
 	} else {
-		if v.schema.Types[field.NamedType].BuiltIn {
-			return
-		}
+		leafType = field
+	}
 
-		cFields, ok := v.customTypes[field.NamedType]
-		if ok {
-			fields = append(cFields, fields...)
-			v.customTypes[field.NamedType] = fields
-		} else {
-			v.customTypes[field.NamedType] = fields
-		}
+	if leafType == nil || v.schema.Types[leafType.NamedType].BuiltIn {
+		return
+	}
+
+	if cFields, ok := v.customTypes[leafType.NamedType]; ok {
+		fields = append(cFields, fields...)
+		v.customTypes[leafType.NamedType] = fields
+	} else {
+		v.customTypes[leafType.NamedType] = fields
 	}
 }
 

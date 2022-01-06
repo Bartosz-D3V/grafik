@@ -1,4 +1,4 @@
-package main
+package unit_test_example
 
 import (
 	"bytes"
