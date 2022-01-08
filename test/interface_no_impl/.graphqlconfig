@@ -1,0 +1,8 @@
+{
+  "name": "Interface without implementation test",
+  "projects": {
+    "array": {
+      "includes": ["./**"]
+    }
+   }
+}

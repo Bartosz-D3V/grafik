@@ -93,9 +93,13 @@ func (e *evaluator) createCommonStruct(cType *ast.Definition, selectedFields []s
 	fragmentName := fmt.Sprintf("%s%s", cType.Name, graphQLTypeSuffix)
 	fragmentFields := make(ast.FieldList, 0)
 
+	// Add fields of all implementations
 	for _, definition := range e.schema.GetPossibleTypes(cType) {
 		fragmentFields = append(fragmentFields, definition.Fields...)
 	}
+
+	// Add fields of an interface
+	fragmentFields = append(fragmentFields, cType.Fields...)
 
 	fList := make(ast.FieldList, 0)
 	for _, fField := range fragmentFields {
@@ -224,10 +228,14 @@ func (e *evaluator) convComplexType(astType *ast.Type) string {
 		default:
 			return fmt.Sprintf("[]%s", e.convGoType(nt))
 		}
+	} else if e.schema.Types[astType.NamedType].Kind == ast.Interface {
+		return fmt.Sprintf("%s%s", astType.NamedType, graphQLFragmentStructName)
+	} else if e.schema.Types[astType.NamedType].Kind == ast.Union {
+		return fmt.Sprintf("%s%s", astType.NamedType, graphQLUnionStructName)
+	} else {
+		// If astType is not array it is an object - just return the name
+		return astType.NamedType
 	}
-
-	// If astType is not array it is an object - just return the name
-	return astType.NamedType
 }
 
 // genOperations generates GraphQL operations as constants.

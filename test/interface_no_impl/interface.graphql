@@ -1,0 +1,16 @@
+schema {
+    query: Query
+}
+
+type Query {
+    characters: Response
+}
+
+type Response {
+    superType: Character
+}
+
+interface Character {
+    id: ID!
+    name: String!
+}

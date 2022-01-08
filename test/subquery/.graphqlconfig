@@ -1,0 +1,8 @@
+{
+  "name": "Subquery test",
+  "projects": {
+    "array": {
+      "includes": ["./**"]
+    }
+   }
+}

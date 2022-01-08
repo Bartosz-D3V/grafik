@@ -1,0 +1,33 @@
+schema {
+    query: Query
+}
+
+type Query {
+    repositories(first: Int): [Repository!]
+}
+
+type Repository {
+    name: String
+    author: User
+    pullRequests(after: String): [PullRequest!]
+    users(before: String): [User!]
+}
+
+type PullRequest {
+    branchName: String
+    collaborators(first: Int): [Collaborator!]
+}
+
+type Collaborator {
+    id: ID
+    nickname: String
+}
+
+interface User {
+    totalCommits: Int
+}
+
+type Author implements User {
+    name: String
+    totalCommits: Int
+}

@@ -1326,6 +1326,93 @@ func New(endpoint string, client *http.Client) CharacterClient {
 	assert.Equal(t, expOut, out)
 }
 
+func TestEvaluator_Interface_No_Implementation(t *testing.T) {
+	t.Parallel()
+	schema := loadSchema(t, "test/interface_no_impl/interface.graphql")
+	query := loadQuery(t, schema, "test/interface_no_impl/interface_query.graphql")
+	info := AdditionalInfo{
+		PackageName: "grafik_client",
+		ClientName:  "CharacterClient",
+		UsePointers: false,
+	}
+	e := New(schema, query, info)
+
+	out := getSourceString(t, e)
+	expOut := test.PrepExpCode(t, fmt.Sprintf(`
+// Generated with grafik. DO NOT EDIT
+
+package grafik_client
+
+import (
+	"context"
+	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
+	"net/http"
+)
+
+type CharacterFragment struct {
+	Id string %[1]cjson:"id"%[1]c
+}
+
+type Response struct {
+	SuperType CharacterFragment %[1]cjson:"superType"%[1]c
+}
+
+const getCharactersId = %[1]cquery getCharactersId {
+    characters {
+        superType {
+            id
+        }
+    }
+}%[1]c
+
+type CharacterClient interface {
+	GetCharactersId(ctx context.Context, header *http.Header) (*http.Response, error)
+}
+
+func (c *characterClient) GetCharactersId(ctx context.Context, header *http.Header) (*http.Response, error) {
+	params := make(map[string]interface{}, 0)
+
+	return c.ctrl.Execute(ctx, getCharactersId, params, header)
+}
+
+type GetCharactersIdResponse struct {
+	Data   GetCharactersIdData %[1]cjson:"data"%[1]c
+	Errors []GraphQLError      %[1]cjson:"errors"%[1]c
+}
+
+type GetCharactersIdData struct {
+	Characters Response %[1]cjson:"characters"%[1]c
+}
+
+type GraphQLError struct {
+	Message    string                 %[1]cjson:"message"%[1]c
+	Locations  []GraphQLErrorLocation %[1]cjson:"locations"%[1]c
+	Extensions GraphQLErrorExtensions %[1]cjson:"extensions"%[1]c
+}
+
+type GraphQLErrorLocation struct {
+	Line   int %[1]cjson:"line"%[1]c
+	Column int %[1]cjson:"column"%[1]c
+}
+
+type GraphQLErrorExtensions struct {
+	Code string %[1]cjson:"code"%[1]c
+}
+
+type characterClient struct {
+	ctrl GraphqlClient.Client
+}
+
+func New(endpoint string, client *http.Client) CharacterClient {
+	return &characterClient{
+		ctrl: GraphqlClient.New(endpoint, client),
+	}
+}
+`, '`'))
+
+	assert.Equal(t, expOut, out)
+}
+
 func TestEvaluator_InterfaceWithSelectionSet(t *testing.T) {
 	t.Parallel()
 	schema := loadSchema(t, "test/interface_selection_set/interface_selection_set.graphql")
@@ -1618,6 +1705,119 @@ type rocketClient struct {
 
 func New(endpoint string, client *http.Client) RocketClient {
 	return &rocketClient{
+		ctrl: GraphqlClient.New(endpoint, client),
+	}
+}
+`, '`'))
+
+	assert.Equal(t, expOut, out)
+}
+
+func TestEvaluator_SubQuery(t *testing.T) {
+	t.Parallel()
+	schema := loadSchema(t, "test/subquery/schema.graphql")
+	query := loadQuery(t, schema, "test/subquery/query.graphql")
+	info := AdditionalInfo{
+		PackageName: "grafik_client",
+		ClientName:  "GitClient",
+		UsePointers: false,
+	}
+	e := New(schema, query, info)
+
+	out := getSourceString(t, e)
+	expOut := test.PrepExpCode(t, fmt.Sprintf(`
+// Generated with grafik. DO NOT EDIT
+
+package grafik_client
+
+import (
+	"context"
+	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
+	"net/http"
+)
+
+type Collaborator struct {
+	Id string %[1]cjson:"id"%[1]c
+}
+
+type PullRequest struct {
+	BranchName    string         %[1]cjson:"branchName"%[1]c
+	Collaborators []Collaborator %[1]cjson:"collaborators"%[1]c
+}
+
+type Repository struct {
+	Name         string         %[1]cjson:"name"%[1]c
+	Author       UserFragment   %[1]cjson:"author"%[1]c
+	PullRequests []PullRequest  %[1]cjson:"pullRequests"%[1]c
+	Users        []UserFragment %[1]cjson:"users"%[1]c
+}
+
+type UserFragment struct {
+	Name         string %[1]cjson:"name"%[1]c
+	TotalCommits int    %[1]cjson:"totalCommits"%[1]c
+}
+
+const getRepositoryInformation = %[1]cquery getRepositoryInformation {
+    repositories(first: 10) {
+        name
+        author {
+            ... on Author {
+                name
+            }
+        }
+        pullRequests(after: "ABC") {
+            branchName
+            collaborators(first: 5) {
+                id
+            }
+        }
+        users(before: "123") {
+            totalCommits
+        }
+    }
+}
+%[1]c
+
+type GitClient interface {
+	GetRepositoryInformation(ctx context.Context, header *http.Header) (*http.Response, error)
+}
+
+func (c *gitClient) GetRepositoryInformation(ctx context.Context, header *http.Header) (*http.Response, error) {
+	params := make(map[string]interface{}, 0)
+
+	return c.ctrl.Execute(ctx, getRepositoryInformation, params, header)
+}
+
+type GetRepositoryInformationResponse struct {
+	Data   GetRepositoryInformationData %[1]cjson:"data"%[1]c
+	Errors []GraphQLError               %[1]cjson:"errors"%[1]c
+}
+
+type GetRepositoryInformationData struct {
+	Repositories []Repository %[1]cjson:"repositories"%[1]c
+}
+
+type GraphQLError struct {
+	Message    string                 %[1]cjson:"message"%[1]c
+	Locations  []GraphQLErrorLocation %[1]cjson:"locations"%[1]c
+	Extensions GraphQLErrorExtensions %[1]cjson:"extensions"%[1]c
+}
+
+type GraphQLErrorLocation struct {
+	Line   int %[1]cjson:"line"%[1]c
+	Column int %[1]cjson:"column"%[1]c
+}
+
+type GraphQLErrorExtensions struct {
+	Code string %[1]cjson:"code"%[1]c
+}
+
+type gitClient struct {
+	ctrl GraphqlClient.Client
+}
+
+func New(endpoint string, client *http.Client) GitClient {
+	return &gitClient{
 		ctrl: GraphqlClient.New(endpoint, client),
 	}
 }

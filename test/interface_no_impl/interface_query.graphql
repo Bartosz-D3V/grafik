@@ -1,0 +1,7 @@
+query getCharactersId {
+    characters {
+        superType {
+            id
+        }
+    }
+}
