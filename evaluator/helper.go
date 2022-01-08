@@ -213,28 +213,35 @@ func (e *evaluator) convGoType(astType *ast.Type) string {
 
 // convComplexType recursively checks GraphQL type and returns corresponding Go type.
 func (e *evaluator) convComplexType(astType *ast.Type) string {
-	if common.IsList(astType) {
-		switch nt := astType.Elem; {
-		// If astType is not multi-dimensional array of interfaces return '[]' with 'Fragment' suffix
-		case common.IsComplex(nt) && !common.IsList(nt) && e.schema.Types[nt.NamedType].Kind == ast.Interface:
-			return fmt.Sprintf("[]%s%s", nt.NamedType, graphQLFragmentStructName)
-		// If astType is not multi-dimensional array of unions return '[]' with 'Union' suffix
-		case common.IsComplex(nt) && !common.IsList(nt) && e.schema.Types[nt.NamedType].Kind == ast.Union:
-			return fmt.Sprintf("[]%s%s", nt.NamedType, graphQLUnionStructName)
-		// If astType is not multi-dimensional array return '[]' with named type
-		case common.IsComplex(nt) && !common.IsList(nt):
-			return fmt.Sprintf("[]%s", nt.NamedType)
-		// Otherwise, recursively check the type
-		default:
-			return fmt.Sprintf("[]%s", e.convGoType(nt))
-		}
-	} else if e.schema.Types[astType.NamedType].Kind == ast.Interface {
+	switch {
+	case common.IsList(astType):
+		return e.convListType(astType)
+	// If astType is interface return with 'Fragment' suffix
+	case e.schema.Types[astType.NamedType].Kind == ast.Interface:
 		return fmt.Sprintf("%s%s", astType.NamedType, graphQLFragmentStructName)
-	} else if e.schema.Types[astType.NamedType].Kind == ast.Union {
+	// If astType is union return with 'Union' suffix
+	case e.schema.Types[astType.NamedType].Kind == ast.Union:
 		return fmt.Sprintf("%s%s", astType.NamedType, graphQLUnionStructName)
-	} else {
-		// If astType is not array it is an object - just return the name
+	// Otherwise, just return the name
+	default:
 		return astType.NamedType
+	}
+}
+
+func (e *evaluator) convListType(astType *ast.Type) string {
+	switch nt := astType.Elem; {
+	// If astType is not multi-dimensional array of interfaces return '[]' with 'Fragment' suffix
+	case common.IsComplex(nt) && !common.IsList(nt) && e.schema.Types[nt.NamedType].Kind == ast.Interface:
+		return fmt.Sprintf("[]%s%s", nt.NamedType, graphQLFragmentStructName)
+	// If astType is not multi-dimensional array of unions return '[]' with 'Union' suffix
+	case common.IsComplex(nt) && !common.IsList(nt) && e.schema.Types[nt.NamedType].Kind == ast.Union:
+		return fmt.Sprintf("[]%s%s", nt.NamedType, graphQLUnionStructName)
+	// If astType is not multi-dimensional array return '[]' with named type
+	case common.IsComplex(nt) && !common.IsList(nt):
+		return fmt.Sprintf("[]%s", nt.NamedType)
+	// Otherwise, recursively check the type
+	default:
+		return fmt.Sprintf("[]%s", e.convGoType(nt))
 	}
 }
 
@@ -275,6 +282,7 @@ func (e *evaluator) genOperations() {
 		}
 		if nextOp != nil {
 			queryStr := src[curOp.Position.Start:nextOp.Position.Start]
+			queryStr = e.removeComments(queryStr)
 			c := generator.Const{
 				Name: curOp.Name,
 				Val:  queryStr,
@@ -283,6 +291,7 @@ func (e *evaluator) genOperations() {
 			e.generator.WriteLineBreak(twoLinesBreak)
 		} else {
 			queryStr := src[curOp.Position.Start:]
+			queryStr = e.removeComments(queryStr)
 			c := generator.Const{
 				Name: curOp.Name,
 				Val:  queryStr,

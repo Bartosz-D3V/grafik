@@ -43,9 +43,7 @@ const getFileNameWithId = %[1]cquery GetFileNameWithId($id: ID!) {
     getFile(id: $id) {
         name
     }
-}
-
-%[1]c
+}%[1]c
 
 const renameFileWithId = %[1]cmutation RenameFileWithId($id: ID!, $name: String!) {
     renameFile(id: $id, name: $name) {
@@ -980,25 +978,21 @@ const getShortRocketInfo = %[1]cquery GetShortRocketInfo {
         ...RocketShortInfo
     }
 }
-
 fragment RocketShortInfo on Rocket {
     id
     name
     description
     ...AdditionalRocketInfo
 }
-
 fragment AdditionalRocketInfo on Rocket {
     country
     ... on Rocket {
         ...InformatoryRocketInfo
     }
 }
-
 fragment InformatoryRocketInfo on Rocket {
     active
-}
-%[1]c
+}%[1]c
 
 type RocketClient interface {
 	GetShortRocketInfo(ctx context.Context, header *http.Header) (*http.Response, error)
@@ -1090,8 +1084,7 @@ const getCountriesAndContinents = %[1]cquery getCountriesAndContinents {
         code
         name
     }
-}
-%[1]c
+}%[1]c
 
 type CountriesClient interface {
 	GetCountriesAndContinents(ctx context.Context, header *http.Header) (*http.Response, error)
@@ -1645,25 +1638,21 @@ const getShortRocketInfo = %[1]cquery GetShortRocketInfo {
         ...RocketShortInfo
     }
 }
-
 fragment RocketShortInfo on Rocket {
     id
     name
     description
     ...AdditionalRocketInfo
 }
-
 fragment AdditionalRocketInfo on Rocket {
     country
     ... on Rocket {
         ...InformatoryRocketInfo
     }
 }
-
 fragment InformatoryRocketInfo on Rocket {
     active
-}
-%[1]c
+}%[1]c
 
 type RocketClient interface {
 	GetShortRocketInfo(ctx context.Context, header *http.Header) (*http.Response, error)
@@ -1775,8 +1764,7 @@ const getRepositoryInformation = %[1]cquery getRepositoryInformation {
             totalCommits
         }
     }
-}
-%[1]c
+}%[1]c
 
 type GitClient interface {
 	GetRepositoryInformation(ctx context.Context, header *http.Header) (*http.Response, error)
@@ -1818,6 +1806,88 @@ type gitClient struct {
 
 func New(endpoint string, client *http.Client) GitClient {
 	return &gitClient{
+		ctrl: GraphqlClient.New(endpoint, client),
+	}
+}
+`, '`'))
+
+	assert.Equal(t, expOut, out)
+}
+
+func TestEvaluator_Comments(t *testing.T) {
+	t.Parallel()
+	schema := loadSchema(t, "test/comments/schema.graphql")
+	query := loadQuery(t, schema, "test/comments/query.graphql")
+	info := AdditionalInfo{
+		PackageName: "grafik_client",
+		ClientName:  "CommentsClient",
+		UsePointers: false,
+	}
+	e := New(schema, query, info)
+
+	out := getSourceString(t, e)
+	expOut := test.PrepExpCode(t, fmt.Sprintf(`
+// Generated with grafik. DO NOT EDIT
+
+package grafik_client
+
+import (
+	"context"
+	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
+	"net/http"
+)
+
+type File struct {
+	Name string %[1]cjson:"name"%[1]c
+}
+
+const getFileNameWithId = %[1]cquery GetFileNameWithId($id: ID!) {
+    getFile(id: $id) {
+        name 
+    }
+}%[1]c
+
+type CommentsClient interface {
+	GetFileNameWithId(ctx context.Context, id string, header *http.Header) (*http.Response, error)
+}
+
+func (c *commentsClient) GetFileNameWithId(ctx context.Context, id string, header *http.Header) (*http.Response, error) {
+	params := make(map[string]interface{}, 1)
+	params["id"] = id
+
+	return c.ctrl.Execute(ctx, getFileNameWithId, params, header)
+}
+
+type GetFileNameWithIdResponse struct {
+	Data   GetFileNameWithIdData %[1]cjson:"data"%[1]c
+	Errors []GraphQLError        %[1]cjson:"errors"%[1]c
+}
+
+type GetFileNameWithIdData struct {
+	GetFile File %[1]cjson:"getFile"%[1]c
+}
+
+type GraphQLError struct {
+	Message    string                 %[1]cjson:"message"%[1]c
+	Locations  []GraphQLErrorLocation %[1]cjson:"locations"%[1]c
+	Extensions GraphQLErrorExtensions %[1]cjson:"extensions"%[1]c
+}
+
+type GraphQLErrorLocation struct {
+	Line   int %[1]cjson:"line"%[1]c
+	Column int %[1]cjson:"column"%[1]c
+}
+
+type GraphQLErrorExtensions struct {
+	Code string %[1]cjson:"code"%[1]c
+}
+
+type commentsClient struct {
+	ctrl GraphqlClient.Client
+}
+
+func New(endpoint string, client *http.Client) CommentsClient {
+	return &commentsClient{
 		ctrl: GraphqlClient.New(endpoint, client),
 	}
 }

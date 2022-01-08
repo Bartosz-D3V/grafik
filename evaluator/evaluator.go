@@ -3,10 +3,13 @@
 package evaluator
 
 import (
+	"bufio"
+	"bytes"
 	"github.com/Bartosz-D3V/grafik/generator"
 	"github.com/Bartosz-D3V/grafik/visitor"
 	"github.com/vektah/gqlparser/ast"
 	"io"
+	"strings"
 )
 
 // Evaluator provides a contract for evaluator and is being used as a return type of New instead of a pointer.
@@ -56,4 +59,21 @@ func (e *evaluator) Generate() io.WriterTo {
 	e.generator.WriteLineBreak(oneLineBreak)
 
 	return e.generator.Generate()
+}
+
+func (e *evaluator) removeComments(queryStr string) string {
+	const commentToken = "#"
+
+	var out bytes.Buffer
+	scanner := bufio.NewScanner(strings.NewReader(queryStr))
+
+	for scanner.Scan() {
+		splitLine := strings.Split(scanner.Text(), commentToken)
+		code := strings.TrimSpace(splitLine[0])
+		if code != "" {
+			out.WriteString(splitLine[0])
+			out.WriteRune('\n')
+		}
+	}
+	return strings.TrimRight(out.String(), "\n")
 }
