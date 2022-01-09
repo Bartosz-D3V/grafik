@@ -75,7 +75,7 @@ func main() {
 		Input: string(schemaContent),
 	})
 
-	// gqlparser returns err that is not nil even when schema is parsed correctly
+	// gqlparser returns err that is not nil even when schema is parsed correctly.
 	if err.Error() != "" {
 		panic(fmt.Errorf("failed to parse GraphQL schema file. Cause: %s", err.Error()))
 	}
@@ -86,7 +86,7 @@ func main() {
 	}
 
 	query, err := gqlparser.LoadQuery(schema, string(queryContent))
-	// gqlparser returns err that is not nil even when schema is parsed correctly
+	// gqlparser returns err that is not nil even when schema is parsed correctly.
 	if err.Error() != "" {
 		panic(fmt.Errorf("failed to parse GraphQL query file. Cause: %s", err.Error()))
 	}

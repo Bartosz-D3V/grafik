@@ -42,7 +42,7 @@ func (v *visitor) parseField(field *ast.Field, fields []string) []string {
 
 	v.registerType(field.Definition.Type, fields)
 
-	// If the fields is a selectionSet - parse it recursively
+	// If the fields is a selectionSet - parse it recursively.
 	if field.SelectionSet != nil && len(field.SelectionSet) > 0 {
 		v.parseSelectionSet(field.SelectionSet, fields)
 	}

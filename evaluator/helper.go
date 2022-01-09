@@ -97,12 +97,12 @@ func (e *evaluator) createCommonStruct(cType *ast.Definition, selectedFields []s
 	fragmentName := fmt.Sprintf("%s%s", cType.Name, graphQLTypeSuffix)
 	fragmentFields := make(ast.FieldList, 0)
 
-	// Add fields of all implementations
+	// Add fields of all implementations.
 	for _, definition := range e.schema.GetPossibleTypes(cType) {
 		fragmentFields = append(fragmentFields, definition.Fields...)
 	}
 
-	// Add fields of an interface
+	// Add fields of an interface.
 	fragmentFields = append(fragmentFields, cType.Fields...)
 
 	fList := make(ast.FieldList, 0)
@@ -220,32 +220,32 @@ func (e *evaluator) convComplexType(astType *ast.Type) string {
 	switch {
 	case common.IsList(astType):
 		return e.convListType(astType)
-	// If astType is interface return with 'Fragment' suffix
+	// If astType is interface return with 'Fragment' suffix.
 	case e.schema.Types[astType.NamedType].Kind == ast.Interface:
 		return fmt.Sprintf("%s%s", astType.NamedType, graphQLFragmentStructName)
-	// If astType is union return with 'Union' suffix
+	// If astType is union return with 'Union' suffix.
 	case e.schema.Types[astType.NamedType].Kind == ast.Union:
 		return fmt.Sprintf("%s%s", astType.NamedType, graphQLUnionStructName)
-	// Otherwise, just return the name
+	// Otherwise, just return the name.
 	default:
 		return astType.NamedType
 	}
 }
 
 // convListType returns Go type for list of GraphQL Type.
-// I.e. [[Character]] -> [][]Character
+// I.e. [[Character]] -> [][]Character.
 func (e *evaluator) convListType(astType *ast.Type) string {
 	switch nt := astType.Elem; {
-	// If astType is not multi-dimensional array of interfaces return '[]' with 'Fragment' suffix
+	// If astType is not multi-dimensional array of interfaces return '[]' with 'Fragment' suffix.
 	case common.IsComplex(nt) && !common.IsList(nt) && e.schema.Types[nt.NamedType].Kind == ast.Interface:
 		return fmt.Sprintf("[]%s%s", nt.NamedType, graphQLFragmentStructName)
-	// If astType is not multi-dimensional array of unions return '[]' with 'Union' suffix
+	// If astType is not multi-dimensional array of unions return '[]' with 'Union' suffix.
 	case common.IsComplex(nt) && !common.IsList(nt) && e.schema.Types[nt.NamedType].Kind == ast.Union:
 		return fmt.Sprintf("[]%s%s", nt.NamedType, graphQLUnionStructName)
-	// If astType is not multi-dimensional array return '[]' with named type
+	// If astType is not multi-dimensional array return '[]' with named type.
 	case common.IsComplex(nt) && !common.IsList(nt):
 		return fmt.Sprintf("[]%s", nt.NamedType)
-	// Otherwise, recursively check the type
+	// Otherwise, recursively check the type.
 	default:
 		return fmt.Sprintf("[]%s", e.convGoType(nt))
 	}
@@ -278,7 +278,7 @@ func (e *evaluator) genOperations() {
 	var curOp *ast.OperationDefinition
 	var nextOp *ast.OperationDefinition
 
-	// Split multiple GraphQL operations into sub-operations to generate const value for each operation
+	// Split multiple GraphQL operations into sub-operations to generate const value for each operation.
 	for i := 0; i < opsCount; i++ {
 		curOp = ops[i]
 		if i < opsCount-1 {
@@ -340,18 +340,18 @@ func (e *evaluator) genOpsInterface() {
 	e.generator.WriteInterface(e.AdditionalInfo.ClientName, funcs...)
 	e.generator.WriteLineBreak(twoLinesBreak)
 
-	// Generate interface implementation for each interface method
+	// Generate interface implementation for each interface method.
 	for _, f := range funcs {
 		e.generator.WriteInterfaceImplementation(e.AdditionalInfo.ClientName, f)
 		e.generator.WriteLineBreak(twoLinesBreak)
 	}
 
-	// Generate wrapper struct for selection set operations
+	// Generate wrapper struct for selection set operations.
 	for _, f := range funcs {
 		e.genWrapperResponseStruct(f)
 	}
 
-	// Generate predefined error structs
+	// Generate predefined error structs.
 	e.genErrorStructs()
 }
 
@@ -376,8 +376,8 @@ func (e *evaluator) genWrapperResponseStruct(f generator.Func) {
 	e.generator.WritePublicStruct(structWrapper, e.AdditionalInfo.UsePointers)
 	e.generator.WriteLineBreak(twoLinesBreak)
 
-	// generate object referenced in 'data' JSON response
-	// if object has selection set - those will be created as struct fields
+	// generate object referenced in 'data' JSON response.
+	// if object has selection set - those will be created as struct fields.
 	s := generator.Struct{
 		Name:   dataStructName,
 		Fields: f.WrapperTypes,

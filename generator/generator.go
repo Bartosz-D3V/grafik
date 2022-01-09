@@ -41,8 +41,10 @@ type generatorWriter interface {
 
 // generator is a private struct that can be created with New function.
 type generator struct {
-	stream   generatorWriter    // IO to write all code to and read from
-	template *template.Template // Predefined template defined in package templates
+	// IO to write all code to and read from.
+	stream generatorWriter
+	// Predefined template defined in package templates.
+	template *template.Template
 }
 
 // New return instance of generator.

@@ -36,6 +36,7 @@ linters-settings:
   godot:
     exclude:
       - '[}]+'
+    scope: all
   dupl:
     threshold: 200
   cyclop:
