@@ -1,6 +1,6 @@
 // Generated with grafik. DO NOT EDIT
 
-package main
+package unit_test_with_grafik
 
 import (
 	"context"
