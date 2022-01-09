@@ -34,8 +34,7 @@ const getRocketResults = `query getRocketResults($limit: Int){
             cost_per_launch
         }
     }
-}
-`
+}`
 
 type SpaceXClient interface {
 	GetRocketResults(ctx context.Context, limit int, header *http.Header) (*http.Response, error)

@@ -1,4 +1,4 @@
-package unit_test_example
+package main
 
 import (
 	"context"

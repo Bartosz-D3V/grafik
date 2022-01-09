@@ -72,8 +72,7 @@ const getBatchInfo = `query getBatchInfo($limit: Int) {
             }
         }
     }
-}
-`
+}`
 
 type SpaceXClient interface {
 	GetBatchInfo(ctx context.Context, limit int, header *http.Header) (*http.Response, error)

@@ -1,6 +1,6 @@
 // Generated with grafik. DO NOT EDIT
 
-package unit_test_example
+package main
 
 import (
 	"context"
@@ -34,8 +34,7 @@ const getRocketResults = `query getRocketResults($limit: Int){
             cost_per_launch
         }
     }
-}
-`
+}`
 
 type SpaceXClient interface {
 	GetRocketResults(ctx context.Context, limit int, header *http.Header) (*http.Response, error)
