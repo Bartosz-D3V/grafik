@@ -1,6 +1,8 @@
 package evaluator
 
 import (
+	"bufio"
+	"bytes"
 	"fmt"
 	"github.com/Bartosz-D3V/grafik/common"
 	"github.com/Bartosz-D3V/grafik/generator"
@@ -25,9 +27,11 @@ func (e *evaluator) genSchemaDef() {
 	e.generator.WriteLineBreak(twoLinesBreak)
 }
 
+// generateGoTypes iterates through all fields in GraphQL query and generates GO type based on selected subfields.
 func (e *evaluator) generateGoTypes() {
 	cTypes := e.visitor.IntrospectTypes()
 
+	// To make the output order of the generated code deterministic always sort alphabetically.
 	keys := make([]string, 0, len(cTypes))
 	for k := range cTypes {
 		keys = append(keys, k)
@@ -228,6 +232,8 @@ func (e *evaluator) convComplexType(astType *ast.Type) string {
 	}
 }
 
+// convListType returns Go type for list of GraphQL Type.
+// I.e. [[Character]] -> [][]Character
 func (e *evaluator) convListType(astType *ast.Type) string {
 	switch nt := astType.Elem; {
 	// If astType is not multi-dimensional array of interfaces return '[]' with 'Fragment' suffix
@@ -397,4 +403,22 @@ func (e *evaluator) genClientStruct() {
 		},
 	}
 	e.generator.WritePrivateStruct(s)
+}
+
+// removeComments removes comments from GraphQL queries.
+func (e *evaluator) removeComments(queryStr string) string {
+	const commentToken = "#"
+
+	var out bytes.Buffer
+	scanner := bufio.NewScanner(strings.NewReader(queryStr))
+
+	for scanner.Scan() {
+		splitLine := strings.Split(scanner.Text(), commentToken)
+		code := strings.TrimSpace(splitLine[0])
+		if code != "" {
+			out.WriteString(splitLine[0])
+			out.WriteRune('\n')
+		}
+	}
+	return strings.TrimRight(out.String(), "\n")
 }

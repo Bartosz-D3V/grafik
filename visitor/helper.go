@@ -5,6 +5,7 @@ import (
 	"github.com/vektah/gqlparser/ast"
 )
 
+// parseOpTypes parses selectionSet of each GraphQL operation and all variables.
 func (v *visitor) parseOpTypes(opList ast.OperationList) {
 	for _, opDef := range opList {
 		v.parseSelectionSet(opDef.SelectionSet, make([]string, 0))
@@ -12,6 +13,8 @@ func (v *visitor) parseOpTypes(opList ast.OperationList) {
 	}
 }
 
+// parseSelectionSet parses each selection based on its type (Field/FragmentSpread/Inline Fragment)
+// It returns the fields that the selection uses from GraphQL schema.
 func (v *visitor) parseSelectionSet(selectionSet ast.SelectionSet, fields []string) []string {
 	for _, selection := range selectionSet {
 		switch selectionType := selection.(type) {
@@ -26,6 +29,8 @@ func (v *visitor) parseSelectionSet(selectionSet ast.SelectionSet, fields []stri
 	return fields
 }
 
+// parseField parses GraphQL field and registers its type.
+// It returns the fields that the selection uses from GraphQL schema.
 func (v *visitor) parseField(field *ast.Field, fields []string) []string {
 	if field.SelectionSet == nil || len(field.SelectionSet) == 0 {
 		fields = append(fields, field.Name)
@@ -36,12 +41,16 @@ func (v *visitor) parseField(field *ast.Field, fields []string) []string {
 	}
 
 	v.registerType(field.Definition.Type, fields)
+
+	// If the fields is a selectionSet - parse it recursively
 	if field.SelectionSet != nil && len(field.SelectionSet) > 0 {
 		v.parseSelectionSet(field.SelectionSet, fields)
 	}
 	return fields
 }
 
+// parseSelection parses GraphQL selection.
+// It returns the fields that the selection uses from GraphQL schema.
 func (v *visitor) parseSelection(s ast.Selection, fields []string) []string {
 	switch parsedType := s.(type) {
 	case *ast.Field:
@@ -58,6 +67,8 @@ func (v *visitor) parseSelection(s ast.Selection, fields []string) []string {
 	return fields
 }
 
+// parseFragmentSpread parses GraphQL Fragment Spread - it will add all fields to the visitor.
+// It returns the fields that the selection uses from GraphQL schema.
 func (v *visitor) parseFragmentSpread(parsedType *ast.FragmentSpread, fields []string) []string {
 	for _, sel := range parsedType.Definition.SelectionSet {
 		switch selType := sel.(type) {
@@ -72,6 +83,8 @@ func (v *visitor) parseFragmentSpread(parsedType *ast.FragmentSpread, fields []s
 	return fields
 }
 
+// parseFragmentSpread parses GraphQL Fragment Spread - it will add all fields of all fragments to the visitor.
+// It returns the fields that the selection uses from GraphQL schema.
 func (v *visitor) parseInlineFragment(parsedType *ast.InlineFragment, fields []string) []string {
 	for _, sel := range parsedType.SelectionSet {
 		switch selType := sel.(type) {
@@ -86,25 +99,22 @@ func (v *visitor) parseInlineFragment(parsedType *ast.InlineFragment, fields []s
 	return fields
 }
 
+// parseVariables parses all variables defined in the GraphQL operation.
 func (v *visitor) parseVariables(variableDefinitionList ast.VariableDefinitionList) {
 	for _, varDef := range variableDefinitionList {
 		v.parseType(varDef.Type)
 	}
 }
 
+// parseType parses generic GraphQL Type.
 func (v *visitor) parseType(definitionType *ast.Type) {
-	var leafDefType *ast.Definition
+	leafType := v.findLeafType(definitionType)
+	leafTypeDef := v.schema.Types[leafType.NamedType]
 
-	if common.IsList(definitionType) {
-		leafType := v.findLeafType(definitionType)
-		leafDefType = v.schema.Types[leafType.NamedType]
-	} else {
-		leafDefType = v.schema.Types[definitionType.NamedType]
-	}
-
-	if leafDefType != nil && !leafDefType.BuiltIn {
-		fields := make([]string, len(leafDefType.Fields))
-		for i, field := range leafDefType.Fields {
+	// If the type is not built-in to the GraphQL specification, register it will all fields selected in the GraphQL query.
+	if leafTypeDef != nil && !leafTypeDef.BuiltIn {
+		fields := make([]string, len(leafTypeDef.Fields))
+		for i, field := range leafTypeDef.Fields {
 			fields[i] = field.Name
 			v.parseType(field.Type)
 		}
@@ -112,14 +122,9 @@ func (v *visitor) parseType(definitionType *ast.Type) {
 	}
 }
 
-func (v *visitor) registerType(field *ast.Type, fields []string) {
-	var leafType *ast.Type
-
-	if common.IsList(field) {
-		leafType = v.findLeafType(field)
-	} else {
-		leafType = field
-	}
+// registerType adds field with selected fields into visitor.
+func (v *visitor) registerType(selectType *ast.Type, fields []string) {
+	leafType := v.findLeafType(selectType)
 
 	if leafType == nil || v.schema.Types[leafType.NamedType].BuiltIn {
 		return
@@ -133,6 +138,8 @@ func (v *visitor) registerType(field *ast.Type, fields []string) {
 	}
 }
 
+// findLeafType unwraps the type of array.
+// If the type is a list (i.e. [[Character!]]) then return leafType (in this example Character).
 func (v *visitor) findLeafType(elem *ast.Type) *ast.Type {
 	if common.IsList(elem) {
 		return v.findLeafType(elem.Elem)

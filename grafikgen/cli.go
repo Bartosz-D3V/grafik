@@ -1,4 +1,4 @@
-// package main provides grafikgen CLI tools used for generating grafik clients.
+// Package main provides grafikgen CLI tools used for generating grafik clients.
 package main
 
 import (
