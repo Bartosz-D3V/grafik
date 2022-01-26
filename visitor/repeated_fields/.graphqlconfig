@@ -1,0 +1,8 @@
+{
+  "name": "Repeated fields test",
+  "projects": {
+    "array": {
+      "includes": ["./**"]
+    }
+   }
+}
