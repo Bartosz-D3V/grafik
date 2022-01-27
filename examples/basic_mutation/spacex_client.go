@@ -8,18 +8,8 @@ import (
 	"net/http"
 )
 
-type UsersMutationResponse struct {
-	AffectedRows int     `json:"affected_rows"`
-	Returning    []Users `json:"returning"`
-}
-
 type Users struct {
 	Id string `json:"id"`
-}
-
-type UsersOnConflict struct {
-	Constraint    UsersConstraint     `json:"constraint"`
-	UpdateColumns []UsersUpdateColumn `json:"update_columns"`
 }
 
 type UsersConstraint string
@@ -27,6 +17,16 @@ type UsersConstraint string
 const (
 	UsersPkey UsersConstraint = "users_pkey"
 )
+
+type UsersMutationResponse struct {
+	AffectedRows int     `json:"affected_rows"`
+	Returning    []Users `json:"returning"`
+}
+
+type UsersOnConflict struct {
+	Constraint    UsersConstraint     `json:"constraint"`
+	UpdateColumns []UsersUpdateColumn `json:"update_columns"`
+}
 
 type UsersUpdateColumn string
 

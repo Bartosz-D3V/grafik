@@ -130,11 +130,11 @@ func handleRequest(t *testing.T, exp countriesResponse, w http.ResponseWriter, r
 	_, err = w.Write(b)
 	assert.NoError(t, err)
 
-	// Check content-type
+	// Check content-type.
 	assert.NotNil(t, r.Header.Get("Content-Type"))
 	assert.Equal(t, "application/json", r.Header.Get("Content-Type"))
 
-	// Check payload - variables
+	// Check payload - variables.
 	resBytes, err := io.ReadAll(r.Body)
 	assert.NoError(t, err)
 	var graphqlReq GraphQLRequest
@@ -143,7 +143,7 @@ func handleRequest(t *testing.T, exp countriesResponse, w http.ResponseWriter, r
 	assert.Equal(t, 1, len(graphqlReq.Variables))
 	assert.Equal(t, "EU", graphqlReq.Variables["code"])
 
-	// Check payload - query
+	// Check payload - query.
 	assert.NotNil(t, graphqlReq.Query)
 	assert.False(t, strings.Contains(graphqlReq.Query, "\n"))
 	assert.False(t, strings.Contains(graphqlReq.Query, "\t"))

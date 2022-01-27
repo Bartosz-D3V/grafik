@@ -5,5 +5,12 @@ query GetHeroWithId123ABC {
                 posX
             }
         }
+        species {
+            origin {
+                location {
+                    poxY
+                }
+            }
+        }
     }
 }

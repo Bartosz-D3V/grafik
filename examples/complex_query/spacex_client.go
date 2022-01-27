@@ -8,8 +8,19 @@ import (
 	"net/http"
 )
 
-type Mission struct {
-	Manufacturers []string `json:"manufacturers"`
+type Dragon struct {
+	Name               string                   `json:"name"`
+	Type               string                   `json:"type"`
+	Wikipedia          string                   `json:"wikipedia"`
+	PressurizedCapsule DragonPressurizedCapsule `json:"pressurized_capsule"`
+}
+
+type DragonPressurizedCapsule struct {
+	PayloadVolume Volume `json:"payload_volume"`
+}
+
+type Info struct {
+	Ceo string `json:"ceo"`
 }
 
 type Launchpad struct {
@@ -21,24 +32,13 @@ type Location struct {
 	Name string `json:"name"`
 }
 
+type Mission struct {
+	Manufacturers []string `json:"manufacturers"`
+}
+
 type Roadster struct {
 	Name      string `json:"name"`
 	Wikipedia string `json:"wikipedia"`
-}
-
-type Info struct {
-	Ceo string `json:"ceo"`
-}
-
-type Dragon struct {
-	Name               string                   `json:"name"`
-	Type               string                   `json:"type"`
-	Wikipedia          string                   `json:"wikipedia"`
-	PressurizedCapsule DragonPressurizedCapsule `json:"pressurized_capsule"`
-}
-
-type DragonPressurizedCapsule struct {
-	PayloadVolume Volume `json:"payload_volume"`
 }
 
 type Volume struct {
@@ -72,8 +72,7 @@ const getBatchInfo = `query getBatchInfo($limit: Int) {
             }
         }
     }
-}
-`
+}`
 
 type SpaceXClient interface {
 	GetBatchInfo(ctx context.Context, limit int, header *http.Header) (*http.Response, error)

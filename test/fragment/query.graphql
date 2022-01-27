@@ -1,0 +1,23 @@
+query GetShortRocketInfo {
+    rockets {
+        ...RocketShortInfo
+    }
+}
+
+fragment RocketShortInfo on Rocket {
+    id
+    name
+    description
+    ...AdditionalRocketInfo
+}
+
+fragment AdditionalRocketInfo on Rocket {
+    country
+    ... on Rocket {
+        ...InformatoryRocketInfo
+    }
+}
+
+fragment InformatoryRocketInfo on Rocket {
+    active
+}

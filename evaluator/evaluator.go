@@ -38,18 +38,15 @@ func New(schema *ast.Schema, queryDocument *ast.QueryDocument, additionalInfo Ad
 // Generate is a root level function that generates the whole grafik client.
 func (e *evaluator) Generate() io.WriterTo {
 	e.generator.WriteHeader()
-
 	e.generator.WriteLineBreak(twoLinesBreak)
 
 	e.generator.WritePackage(e.AdditionalInfo.PackageName)
 	e.generator.WriteLineBreak(twoLinesBreak)
 
 	e.generator.WriteImports()
-
 	e.generator.WriteLineBreak(twoLinesBreak)
 
 	e.genSchemaDef()
-
 	e.generator.WriteLineBreak(oneLineBreak)
 
 	e.genOperations()

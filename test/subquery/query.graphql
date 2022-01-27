@@ -1,0 +1,19 @@
+query getRepositoryInformation {
+    repositories(first: 10) {
+        name
+        author {
+            ... on Author {
+                name
+            }
+        }
+        pullRequests(after: "ABC") {
+            branchName
+            collaborators(first: 5) {
+                id
+            }
+        }
+        users(before: "123") {
+            totalCommits
+        }
+    }
+}

@@ -1,0 +1,9 @@
+# This is a comment that should be removed before sending to GraphQL endpoint
+query GetFileNameWithId($id: ID!) {
+    # getFile returns a file object
+    # it only returns name
+    getFile(id: $id) {
+        name # inline comment
+    }
+}
+# This is a common at the end of the file - it should be removed too

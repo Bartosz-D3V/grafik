@@ -1,0 +1,8 @@
+{
+  "name": "Remove comments test",
+  "projects": {
+    "array": {
+      "includes": ["./**"]
+    }
+   }
+}

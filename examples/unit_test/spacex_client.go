@@ -1,17 +1,12 @@
 // Generated with grafik. DO NOT EDIT
 
-package unitTestExampleWithMock
+package unit_test_with_grafik
 
 import (
 	"context"
 	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
 	"net/http"
 )
-
-type RocketsResult struct {
-	Result Result   `json:"result"`
-	Data   []Rocket `json:"data"`
-}
 
 type Result struct {
 	TotalCount int `json:"totalCount"`
@@ -21,6 +16,11 @@ type Rocket struct {
 	CostPerLaunch int    `json:"cost_per_launch"`
 	Country       string `json:"country"`
 	Name          string `json:"name"`
+}
+
+type RocketsResult struct {
+	Result Result   `json:"result"`
+	Data   []Rocket `json:"data"`
 }
 
 const getRocketResults = `query getRocketResults($limit: Int){
@@ -34,8 +34,7 @@ const getRocketResults = `query getRocketResults($limit: Int){
             cost_per_launch
         }
     }
-}
-`
+}`
 
 type SpaceXClient interface {
 	GetRocketResults(ctx context.Context, limit int, header *http.Header) (*http.Response, error)

@@ -91,20 +91,19 @@ import (
 	"net/http"
 )
 
-type Result struct {
-	Total int `json:"total"`
-}
-
 type Condition struct {
 	IdSet []string `json:"idSet"`
+}
+
+type Result struct {
+	Total int `json:"total"`
 }
 
 const countResults = `query countResults($condition: Condition!){
     countResults(condition: $condition) {
         total
     }
-}
-`
+}`
 
 type GraphqlClient interface {
 	CountResults(condition Condition, header *http.Header) (*http.Response, error)

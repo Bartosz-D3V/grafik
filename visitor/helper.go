@@ -5,69 +5,110 @@ import (
 	"github.com/vektah/gqlparser/ast"
 )
 
-func (v *visitor) IntrospectTypes() []string {
-	if v.schema.Query != nil {
-		v.parseOpTypes(v.schema.Query)
+// parseOpTypes parses selectionSet of each GraphQL operation and all variables.
+func (v *visitor) parseOpTypes(opList ast.OperationList) {
+	for _, opDef := range opList {
+		v.parseSelectionSet(opDef.SelectionSet, make([]string, 0), false)
+		v.parseVariables(opDef.VariableDefinitions)
 	}
-	if v.schema.Mutation != nil {
-		v.parseOpTypes(v.schema.Mutation)
-	}
-	return v.customTypes
 }
 
-func (v *visitor) parseOpTypes(query *ast.Definition) {
-	for _, field := range query.Fields {
-		if field.Type.NamedType != "" {
-			v.findSubTypes(v.schema.Types[field.Type.NamedType])
-		}
-
-		for _, arg := range field.Arguments {
-			v.findSubTypes(v.schema.Types[arg.Type.NamedType])
-		}
-
-		if common.IsList(field.Type) {
-			typeLeafType := v.findLeafType(field.Type.Elem)
-			v.findSubTypes(v.schema.Types[typeLeafType.NamedType])
-
-			for _, arg := range field.Arguments {
-				argLeafType := v.findLeafType(arg.Type)
-				v.findSubTypes(v.schema.Types[argLeafType.NamedType])
+// parseSelectionSet parses each selection based on its type (Field/FragmentSpread/Inline Fragment)
+// It returns the fields that the selection uses from GraphQL schema.
+func (v *visitor) parseSelectionSet(selectionSet ast.SelectionSet, fields []string, registerType bool) []string {
+	for _, selection := range selectionSet {
+		switch selectionType := selection.(type) {
+		case *ast.Field:
+			fields = append(fields, selectionType.Name)
+			v.parseSelectionSet(selectionType.SelectionSet, make([]string, 0), true)
+			if registerType {
+				v.registerTypeByName(selectionType.ObjectDefinition.Name, fields)
+				v.registerType(selectionType.Definition.Type, make([]string, 0))
 			}
-		}
-	}
-}
-
-func (v *visitor) findSubTypes(t *ast.Definition) {
-	if t != nil && !t.BuiltIn {
-		v.registerType(t.Name)
-		for _, field := range t.Fields {
-			v.registerType(t.Name)
-			v.findSubTypes(v.schema.Types[field.Type.NamedType])
-			if common.IsList(field.Type) {
-				v.registerType(field.Type.Elem.NamedType)
+		case *ast.InlineFragment:
+			fields = v.parseInlineFragment(selectionType, make([]string, 0), false)
+			if registerType {
+				v.registerTypeByName(selectionType.ObjectDefinition.Name, fields)
 			}
+		case *ast.FragmentSpread:
+			fields = v.parseFragmentSpread(selectionType, fields, true)
 		}
 	}
+	return fields
 }
 
-func (v *visitor) findLeafType(elem *ast.Type) *ast.Type {
-	if common.IsList(elem) {
-		return v.findLeafType(elem.Elem)
+// parseFragmentSpread parses GraphQL Fragment Spread - it will add all fields to the visitor.
+// It returns the fields that the selection uses from GraphQL schema.
+func (v *visitor) parseFragmentSpread(fragmentSpread *ast.FragmentSpread, fields []string, registerType bool) []string {
+	fields = v.parseSelectionSet(fragmentSpread.Definition.SelectionSet, fields, registerType)
+	return fields
+}
+
+// parseInlineFragment parses GraphQL Inline Fragment - it will add all fields of all fragments to the visitor.
+// It returns the fields that the selection uses from GraphQL schema.
+func (v *visitor) parseInlineFragment(parsedType *ast.InlineFragment, fields []string, registerType bool) []string {
+	fields = v.parseSelectionSet(parsedType.SelectionSet, fields, registerType)
+	return fields
+}
+
+// parseVariables parses all variables defined in the GraphQL operation.
+func (v *visitor) parseVariables(variableDefinitionList ast.VariableDefinitionList) {
+	for _, varDef := range variableDefinitionList {
+		v.parseType(varDef.Type)
 	}
-	return elem
 }
 
-func (v *visitor) registerType(typeName string) {
-	if typeName != "" && !v.typeRegistered(typeName) {
-		v.customTypes = append(v.customTypes, typeName)
-	}
-}
+// parseType parses generic GraphQL Type.
+func (v *visitor) parseType(astType *ast.Type) {
+	leafType := v.findLeafType(astType)
+	leafTypeDef := v.schema.Types[leafType.NamedType]
 
-func (v *visitor) typeRegistered(typeName string) bool {
-	for _, cType := range v.customTypes {
-		if typeName == cType {
-			return true
+	// If the type is not built-in to the GraphQL specification, register it with all fields selected in the GraphQL query.
+	if leafTypeDef != nil && !leafTypeDef.BuiltIn {
+		fields := make([]string, len(leafTypeDef.Fields))
+		for i, field := range leafTypeDef.Fields {
+			fields[i] = field.Name
+			v.parseType(field.Type)
 		}
+		v.registerType(astType, fields)
 	}
-	return false
+}
+
+// registerType adds field with selected fields into visitor.
+func (v *visitor) registerType(astType *ast.Type, fields []string) {
+	leafType := v.findLeafType(astType)
+
+	if leafType == nil || v.schema.Types[leafType.NamedType].BuiltIn {
+		return
+	}
+
+	if cFields, ok := v.customTypes[leafType.NamedType]; ok {
+		fields = append(cFields, fields...)
+		v.customTypes[leafType.NamedType] = fields
+	} else {
+		v.customTypes[leafType.NamedType] = fields
+	}
+}
+
+// registerTypeByName adds field by name with selected fields into visitor.
+func (v *visitor) registerTypeByName(astTypeName string, fields []string) {
+	if v.schema.Types[astTypeName].BuiltIn {
+		return
+	}
+
+	if cFields, ok := v.customTypes[astTypeName]; ok {
+		fields = append(cFields, fields...)
+		v.customTypes[astTypeName] = fields
+	} else {
+		v.customTypes[astTypeName] = fields
+	}
+}
+
+// findLeafType unwraps the type of array.
+// If the type is a list (i.e. [[Character!]]) then return leafType (in this example Character).
+func (v *visitor) findLeafType(astType *ast.Type) *ast.Type {
+	if common.IsList(astType) {
+		return v.findLeafType(astType.Elem)
+	}
+	return astType
 }

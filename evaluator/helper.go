@@ -1,10 +1,13 @@
 package evaluator
 
 import (
+	"bufio"
+	"bytes"
 	"fmt"
 	"github.com/Bartosz-D3V/grafik/common"
 	"github.com/Bartosz-D3V/grafik/generator"
 	"github.com/vektah/gqlparser/ast"
+	"sort"
 	"strings"
 )
 
@@ -24,29 +27,35 @@ func (e *evaluator) genSchemaDef() {
 	e.generator.WriteLineBreak(twoLinesBreak)
 }
 
-// generateStructs generates Go code based on GraphQL schema.
+// generateGoTypes iterates through all fields in GraphQL query and generates GO type based on selected subfields.
 func (e *evaluator) generateGoTypes() {
 	cTypes := e.visitor.IntrospectTypes()
-	for _, customType := range cTypes {
-		cType := e.schema.Types[customType]
 
-		// skipping all predefined GraphQL types (i.e. String, Int etc).
-		if cType.BuiltIn {
-			continue
+	// To make the output order of the generated code deterministic always sort alphabetically.
+	keys := make([]string, 0, len(cTypes))
+	for k := range cTypes {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for _, key := range keys {
+		cType, ok := e.schema.Types[key]
+		if !ok {
+			panic(fmt.Errorf("failed to find definition of %s in GraphQL Schema AST", key))
 		}
 
 		switch cType.Kind {
 		case ast.Object,
 			ast.InputObject:
-			e.createStruct(cType)
+			e.createStruct(cType, cTypes[key])
 		case ast.Enum:
 			e.createEnum(cType)
 		case ast.Scalar:
 			e.createInterfaceType(cType)
 		case ast.Interface:
-			e.createCommonStruct(cType, graphQLFragmentStructName)
+			e.createCommonStruct(cType, cTypes[key], graphQLFragmentStructName)
 		case ast.Union:
-			e.createCommonStruct(cType, graphQLUnionStructName)
+			e.createCommonStruct(cType, cTypes[key], graphQLUnionStructName)
 		}
 	}
 }
@@ -74,26 +83,40 @@ func (e *evaluator) createInterfaceType(cType *ast.Definition) {
 }
 
 // createStruct creates generator.Struct and writes to IO.
-func (e *evaluator) createStruct(cType *ast.Definition) {
+func (e *evaluator) createStruct(cType *ast.Definition, selectedFields []string) {
 	s := generator.Struct{
 		Name:   cType.Name,
-		Fields: e.parseFieldArgs(&cType.Fields),
+		Fields: e.parseFieldArgs(&cType.Fields, selectedFields),
 	}
 	e.generator.WriteLineBreak(twoLinesBreak)
 	e.generator.WritePublicStruct(s, e.AdditionalInfo.UsePointers)
 }
 
 // createCommonStruct creates a generic struct containing all the fields that interface and all implementations it has.
-func (e *evaluator) createCommonStruct(cType *ast.Definition, graphQLTypeSuffix string) {
+func (e *evaluator) createCommonStruct(cType *ast.Definition, selectedFields []string, graphQLTypeSuffix string) {
 	fragmentName := fmt.Sprintf("%s%s", cType.Name, graphQLTypeSuffix)
 	fragmentFields := make(ast.FieldList, 0)
 
+	// Add fields of all implementations.
 	for _, definition := range e.schema.GetPossibleTypes(cType) {
 		fragmentFields = append(fragmentFields, definition.Fields...)
 	}
 
+	// Add fields of an interface.
+	fragmentFields = append(fragmentFields, cType.Fields...)
+
 	fList := make(ast.FieldList, 0)
 	for _, fField := range fragmentFields {
+		selected := false
+		for _, field := range selectedFields {
+			if fField.Name == field {
+				selected = true
+			}
+		}
+		if !selected {
+			continue
+		}
+
 		if fList.ForName(fField.Name) == nil {
 			fList = append(fList, fField)
 		}
@@ -104,7 +127,13 @@ func (e *evaluator) createCommonStruct(cType *ast.Definition, graphQLTypeSuffix 
 		Name:   fragmentName,
 		Fields: fList,
 	}
-	e.createStruct(fragmentDef)
+
+	allFields := make([]string, len(fList))
+	for i, field := range fList {
+		allFields[i] = field.Name
+	}
+
+	e.createStruct(fragmentDef, allFields)
 }
 
 // parseSelectionSet creates array of type generator.TypeArg based on selection set.
@@ -146,14 +175,24 @@ func (e *evaluator) parseFnArgs(args *ast.VariableDefinitionList) []generator.Ty
 }
 
 // parseFieldArgs converts GraphQL fields (ast.FieldList) into generator.TypeArg.
-func (e *evaluator) parseFieldArgs(args *ast.FieldList) []generator.TypeArg {
-	funcArgs := make([]generator.TypeArg, len(*args))
-	for i, arg := range *args {
+func (e *evaluator) parseFieldArgs(args *ast.FieldList, selectedFields []string) []generator.TypeArg {
+	funcArgs := make([]generator.TypeArg, 0)
+	for _, arg := range *args {
+		selected := false
+		for _, field := range selectedFields {
+			if arg.Name == field {
+				selected = true
+			}
+		}
+		if !selected {
+			continue
+		}
+
 		fArg := generator.TypeArg{
 			Name: arg.Name,
 			Type: e.convGoType(arg.Type),
 		}
-		funcArgs[i] = fArg
+		funcArgs = append(funcArgs, fArg)
 	}
 	return funcArgs
 }
@@ -178,25 +217,38 @@ func (e *evaluator) convGoType(astType *ast.Type) string {
 
 // convComplexType recursively checks GraphQL type and returns corresponding Go type.
 func (e *evaluator) convComplexType(astType *ast.Type) string {
-	if common.IsList(astType) {
-		switch nt := astType.Elem; {
-		// If astType is not multi-dimensional array of interfaces return '[]' with 'Fragment' suffix
-		case common.IsComplex(nt) && !common.IsList(nt) && e.schema.Types[nt.NamedType].Kind == ast.Interface:
-			return fmt.Sprintf("[]%s%s", nt.NamedType, graphQLFragmentStructName)
-		// If astType is not multi-dimensional array of unions return '[]' with 'Union' suffix
-		case common.IsComplex(nt) && !common.IsList(nt) && e.schema.Types[nt.NamedType].Kind == ast.Union:
-			return fmt.Sprintf("[]%s%s", nt.NamedType, graphQLUnionStructName)
-		// If astType is not multi-dimensional array return '[]' with named type
-		case common.IsComplex(nt) && !common.IsList(nt):
-			return fmt.Sprintf("[]%s", nt.NamedType)
-		// Otherwise, recursively check the type
-		default:
-			return fmt.Sprintf("[]%s", e.convGoType(nt))
-		}
+	switch {
+	case common.IsList(astType):
+		return e.convListType(astType)
+	// If astType is interface return with 'Fragment' suffix.
+	case e.schema.Types[astType.NamedType].Kind == ast.Interface:
+		return fmt.Sprintf("%s%s", astType.NamedType, graphQLFragmentStructName)
+	// If astType is union return with 'Union' suffix.
+	case e.schema.Types[astType.NamedType].Kind == ast.Union:
+		return fmt.Sprintf("%s%s", astType.NamedType, graphQLUnionStructName)
+	// Otherwise, just return the name.
+	default:
+		return astType.NamedType
 	}
+}
 
-	// If astType is not array it is an object - just return the name
-	return astType.NamedType
+// convListType returns Go type for list of GraphQL Type.
+// I.e. [[Character]] -> [][]Character.
+func (e *evaluator) convListType(astType *ast.Type) string {
+	switch nt := astType.Elem; {
+	// If astType is not multi-dimensional array of interfaces return '[]' with 'Fragment' suffix.
+	case common.IsComplex(nt) && !common.IsList(nt) && e.schema.Types[nt.NamedType].Kind == ast.Interface:
+		return fmt.Sprintf("[]%s%s", nt.NamedType, graphQLFragmentStructName)
+	// If astType is not multi-dimensional array of unions return '[]' with 'Union' suffix.
+	case common.IsComplex(nt) && !common.IsList(nt) && e.schema.Types[nt.NamedType].Kind == ast.Union:
+		return fmt.Sprintf("[]%s%s", nt.NamedType, graphQLUnionStructName)
+	// If astType is not multi-dimensional array return '[]' with named type.
+	case common.IsComplex(nt) && !common.IsList(nt):
+		return fmt.Sprintf("[]%s", nt.NamedType)
+	// Otherwise, recursively check the type.
+	default:
+		return fmt.Sprintf("[]%s", e.convGoType(nt))
+	}
 }
 
 // genOperations generates GraphQL operations as constants.
@@ -226,7 +278,7 @@ func (e *evaluator) genOperations() {
 	var curOp *ast.OperationDefinition
 	var nextOp *ast.OperationDefinition
 
-	// Split multiple GraphQL operations into sub-operations to generate const value for each operation
+	// Split multiple GraphQL operations into sub-operations to generate const value for each operation.
 	for i := 0; i < opsCount; i++ {
 		curOp = ops[i]
 		if i < opsCount-1 {
@@ -236,6 +288,7 @@ func (e *evaluator) genOperations() {
 		}
 		if nextOp != nil {
 			queryStr := src[curOp.Position.Start:nextOp.Position.Start]
+			queryStr = e.removeComments(queryStr)
 			c := generator.Const{
 				Name: curOp.Name,
 				Val:  queryStr,
@@ -244,6 +297,7 @@ func (e *evaluator) genOperations() {
 			e.generator.WriteLineBreak(twoLinesBreak)
 		} else {
 			queryStr := src[curOp.Position.Start:]
+			queryStr = e.removeComments(queryStr)
 			c := generator.Const{
 				Name: curOp.Name,
 				Val:  queryStr,
@@ -286,18 +340,18 @@ func (e *evaluator) genOpsInterface() {
 	e.generator.WriteInterface(e.AdditionalInfo.ClientName, funcs...)
 	e.generator.WriteLineBreak(twoLinesBreak)
 
-	// Generate interface implementation for each interface method
+	// Generate interface implementation for each interface method.
 	for _, f := range funcs {
 		e.generator.WriteInterfaceImplementation(e.AdditionalInfo.ClientName, f)
 		e.generator.WriteLineBreak(twoLinesBreak)
 	}
 
-	// Generate wrapper struct for selection set operations
+	// Generate wrapper struct for selection set operations.
 	for _, f := range funcs {
 		e.genWrapperResponseStruct(f)
 	}
 
-	// Generate predefined error structs
+	// Generate predefined error structs.
 	e.genErrorStructs()
 }
 
@@ -322,8 +376,8 @@ func (e *evaluator) genWrapperResponseStruct(f generator.Func) {
 	e.generator.WritePublicStruct(structWrapper, e.AdditionalInfo.UsePointers)
 	e.generator.WriteLineBreak(twoLinesBreak)
 
-	// generate object referenced in 'data' JSON response
-	// if object has selection set - those will be created as struct fields
+	// generate object referenced in 'data' JSON response.
+	// if object has selection set - those will be created as struct fields.
 	s := generator.Struct{
 		Name:   dataStructName,
 		Fields: f.WrapperTypes,
@@ -349,4 +403,22 @@ func (e *evaluator) genClientStruct() {
 		},
 	}
 	e.generator.WritePrivateStruct(s)
+}
+
+// removeComments removes comments from GraphQL queries.
+func (e *evaluator) removeComments(queryStr string) string {
+	const commentToken = "#"
+
+	var out bytes.Buffer
+	scanner := bufio.NewScanner(strings.NewReader(queryStr))
+
+	for scanner.Scan() {
+		splitLine := strings.Split(scanner.Text(), commentToken)
+		code := strings.TrimSpace(splitLine[0])
+		if code != "" {
+			out.WriteString(splitLine[0])
+			out.WriteRune('\n')
+		}
+	}
+	return strings.TrimRight(out.String(), "\n")
 }
