@@ -17,3 +17,4 @@
 # JetBrains IDEA
 .idea/
 *.iml
+dist/
