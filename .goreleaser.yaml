@@ -1,0 +1,38 @@
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - binary: grafikgen
+    dir: grafikgen
+    env:
+      - CGO_ENABLED=0
+    tags:
+      - grafikgen
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+      - "386"
+archives:
+  - format: tar.gz
+    wrap_in_directory: true
+    files:
+      - LICENSE
+      - README.md
+release:
+  github:
+    owner: Bartosz-D3V
+    name: grafik
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
