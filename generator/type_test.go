@@ -56,31 +56,31 @@ func TestTypeArg_ExportType(t *testing.T) {
 	}
 }
 
-func TestTypeArg_PointerType(t *testing.T) {
+func TestTypeField_PointerType(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		t   TypeArg
+		t   TypeField
 		exp string
 	}{
-		{TypeArg{Type: "string"}, "*string"},
-		{TypeArg{Type: "int"}, "*int"},
-		{TypeArg{Type: "bool"}, "*bool"},
-		{TypeArg{Type: "[]string"}, "[]string"},
-		{TypeArg{Type: "[]int"}, "[]int"},
-		{TypeArg{Type: "[]bool"}, "[]bool"},
-		{TypeArg{Type: "[][]string"}, "[][]string"},
-		{TypeArg{Type: "[][]int"}, "[][]int"},
-		{TypeArg{Type: "[][]bool"}, "[][]bool"},
-		{TypeArg{Type: "[][][]string"}, "[][][]string"},
-		{TypeArg{Type: "[][][]int"}, "[][][]int"},
-		{TypeArg{Type: "[][][]bool"}, "[][][]bool"},
-		{TypeArg{Type: "person"}, "*person"},
-		{TypeArg{Type: "[]person"}, "[]person"},
-		{TypeArg{Type: "[][]person"}, "[][]person"},
-		{TypeArg{Type: "[][][]person"}, "[][][]person"},
-		{TypeArg{Type: "Person"}, "*Person"},
-		{TypeArg{Type: "[]Person"}, "[]Person"},
+		{TypeField{Type: "string"}, "*string"},
+		{TypeField{Type: "int"}, "*int"},
+		{TypeField{Type: "bool"}, "*bool"},
+		{TypeField{Type: "[]string"}, "[]string"},
+		{TypeField{Type: "[]int"}, "[]int"},
+		{TypeField{Type: "[]bool"}, "[]bool"},
+		{TypeField{Type: "[][]string"}, "[][]string"},
+		{TypeField{Type: "[][]int"}, "[][]int"},
+		{TypeField{Type: "[][]bool"}, "[][]bool"},
+		{TypeField{Type: "[][][]string"}, "[][][]string"},
+		{TypeField{Type: "[][][]int"}, "[][][]int"},
+		{TypeField{Type: "[][][]bool"}, "[][][]bool"},
+		{TypeField{Type: "person"}, "*person"},
+		{TypeField{Type: "[]person"}, "[]person"},
+		{TypeField{Type: "[][]person"}, "[][]person"},
+		{TypeField{Type: "[][][]person"}, "[][][]person"},
+		{TypeField{Type: "Person"}, "*Person"},
+		{TypeField{Type: "[]Person"}, "[]Person"},
 	}
 
 	for _, test := range tests {

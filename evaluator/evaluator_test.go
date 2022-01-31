@@ -1896,6 +1896,98 @@ func New(endpoint string, client *http.Client) CommentsClient {
 	assert.Equal(t, expOut, out)
 }
 
+func TestEvaluator_TypenameField(t *testing.T) {
+	t.Parallel()
+	schema := loadSchema(t, "test/__typename/schema.graphql")
+	query := loadQuery(t, schema, "test/__typename/query.graphql")
+	info := AdditionalInfo{
+		PackageName: "grafik_client",
+		ClientName:  "FieldClient",
+		UsePointers: false,
+	}
+	e := New(schema, query, info)
+
+	out := getSourceString(t, e)
+	expOut := test.PrepExpCode(t, fmt.Sprintf(`
+// Generated with grafik. DO NOT EDIT
+
+package grafik_client
+
+import (
+	"context"
+	GraphqlClient "github.com/Bartosz-D3V/grafik/client"
+	"net/http"
+)
+
+type File struct {
+	Name     string %[1]cjson:"name"%[1]c
+	Meta	 Meta   %[1]cjson:"meta"%[1]c
+	TypeName string %[1]cjson:"__typename"%[1]c
+}
+
+type Meta struct {
+	TypeName string %[1]cjson:"__typename"%[1]c
+}
+
+const getFileNameWithId = %[1]cquery GetFileNameWithId($id: ID!) {
+    getFile(id: $id) {
+        name
+        __typename
+        meta {
+            __typename
+        }
+    }
+}%[1]c
+
+type FieldClient interface {
+	GetFileNameWithId(ctx context.Context, id string, header *http.Header) (*http.Response, error)
+}
+
+func (c *fieldClient) GetFileNameWithId(ctx context.Context, id string, header *http.Header) (*http.Response, error) {
+	params := make(map[string]interface{}, 1)
+	params["id"] = id
+
+	return c.ctrl.Execute(ctx, getFileNameWithId, params, header)
+}
+
+type GetFileNameWithIdResponse struct {
+	Data   GetFileNameWithIdData %[1]cjson:"data"%[1]c
+	Errors []GraphQLError        %[1]cjson:"errors"%[1]c
+}
+
+type GetFileNameWithIdData struct {
+	GetFile File %[1]cjson:"getFile"%[1]c
+}
+
+type GraphQLError struct {
+	Message    string                 %[1]cjson:"message"%[1]c
+	Locations  []GraphQLErrorLocation %[1]cjson:"locations"%[1]c
+	Extensions GraphQLErrorExtensions %[1]cjson:"extensions"%[1]c
+}
+
+type GraphQLErrorLocation struct {
+	Line   int %[1]cjson:"line"%[1]c
+	Column int %[1]cjson:"column"%[1]c
+}
+
+type GraphQLErrorExtensions struct {
+	Code string %[1]cjson:"code"%[1]c
+}
+
+type fieldClient struct {
+	ctrl GraphqlClient.Client
+}
+
+func New(endpoint string, client *http.Client) FieldClient {
+	return &fieldClient{
+		ctrl: GraphqlClient.New(endpoint, client),
+	}
+}
+`, '`'))
+
+	assert.Equal(t, expOut, out)
+}
+
 func loadSchema(t *testing.T, schemaName string) *ast.Schema {
 	schemaLoc := path.Join("../", schemaName)
 	file, err := ioutil.ReadFile(schemaLoc)

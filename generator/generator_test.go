@@ -242,14 +242,16 @@ func TestGenerator_WritePublicStruct(t *testing.T) {
 
 	s := Struct{
 		Name: "Person",
-		Fields: []TypeArg{
+		Fields: []TypeField{
 			{
-				Name: "Name",
-				Type: "string",
+				Name:     "Name",
+				Type:     "string",
+				JsonName: "name",
 			},
 			{
-				Name: "Age",
-				Type: "int",
+				Name:     "Age",
+				Type:     "int",
+				JsonName: "age",
 			},
 		},
 	}
@@ -278,14 +280,16 @@ func TestGenerator_WritePublicStruct_WithPointers(t *testing.T) {
 
 	s := Struct{
 		Name: "Person",
-		Fields: []TypeArg{
+		Fields: []TypeField{
 			{
-				Name: "Name",
-				Type: "string",
+				Name:     "Name",
+				Type:     "string",
+				JsonName: "name",
 			},
 			{
-				Name: "Age",
-				Type: "int",
+				Name:     "Age",
+				Type:     "int",
+				JsonName: "age",
 			},
 		},
 	}
@@ -328,7 +332,7 @@ func TestGenerator_WritePrivateStruct(t *testing.T) {
 
 	s := Struct{
 		Name: "Person",
-		Fields: []TypeArg{
+		Fields: []TypeField{
 			{
 				Name: "Name",
 				Type: "string",
