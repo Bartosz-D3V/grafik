@@ -18,6 +18,15 @@ Grafik is a schema based GraphQL [Go][golang] code generator & HTTP client.
 ## Foreword
 Grafik is still in **early stage** and under **active development**. If you notice a bug, or you would like to request a new feature, please raise an issue/PR.
 
+## Introduction
+Writing type-safe GraphQL code in Go is difficult.
+Developers usually end up manually writing queries as a string and passing it inside the JSON field.
+This is not only inefficient and error-prone, but also an unpleasant development experience as we cannot use auto-completion, formatting and schema validation features.
+
+Grafik allows you to write your GraphQL queries and mutations in `.graphql` file. It will not only generate Go code like structs, functions and interfaces, but also provide convenient `Execute` function to execute your GraphQL code instantly.
+
+Due to its nature, it is also extremely easy to mock.
+
 ## Installation
 Assuming you have [Go][golang] installed on your machine, first install `grafikgen`.
 
@@ -35,7 +44,7 @@ GO111MODULE=on go install github.com/Bartosz-D3V/grafik/grafikgen@latest
 go install github.com/Bartosz-D3V/grafik/grafikgen@latest
 ```
 
-To add grafik GraphQL client add grafik as a dependency to the project:
+To add grafik GraphQL client add grafik as a dependency to your project:
 
 ```shell
 go get github.com/Bartosz-D3V/grafik
@@ -43,6 +52,7 @@ go get github.com/Bartosz-D3V/grafik
 
 ## Running grafikgen
 Grafik requires two types of GraphQL files - `schema.graphql` that represents the schema of the GraphQL endpoint and `query.graphql` that holds all the queries and mutations.
+
 Grafik will parse GraphQL files, create AST using [gqlparser][gqlparser-link] and then generate GraphQL Go client that can be used programmatically.
 
 ## Example
@@ -166,7 +176,7 @@ Grafik does not provide any direct authorization mechanism because it accepts `h
 
 For example - `http.Client` can be configured with `CookieJar` to provide appropriate cookies.
 
-If GraphQL endpoint requires JWT inside an HTTP header, it can be passed as a `http.Header` argument.
+If GraphQL endpoint requires JWT inside an HTTP header, it can be passed as a `http.Header` argument or `http.RoundTripper`.
 
 ## Flags
 The graffikgen tool is used to generate GraphQL clients in Go. It supports the following flags:

@@ -2,7 +2,9 @@
   "name": "Complex query example",
   "projects": {
     "array": {
-      "includes": ["./**"]
+      "includes": [
+        "./**"
+      ]
     }
-   }
+  }
 }

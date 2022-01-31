@@ -12,7 +12,7 @@ type Result {
 }
 
 type Rocket {
-#   Typo made for purpose of error handling demonstration
+    #   Typo made for purpose of error handling demonstration
     total_per_launch: Int
     country: String
     name: String
