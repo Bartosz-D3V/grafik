@@ -6,6 +6,7 @@ import (
 	"embed"
 	"fmt"
 	"github.com/Bartosz-D3V/grafik/common"
+	"github.com/Bartosz-D3V/grafik/ds"
 	"go/format"
 	"go/parser"
 	"go/token"
@@ -20,13 +21,13 @@ type Generator interface {
 	WritePackage(pkgName string)
 	WriteImports()
 	WriteLineBreak(r int)
-	WriteInterface(name string, fn ...Func)
-	WritePublicStruct(s Struct, usePointers bool)
-	WritePrivateStruct(s Struct)
-	WriteEnum(e Enum)
-	WriteConst(c Const)
+	WriteInterface(name string, fn ...ds.Func)
+	WritePublicStruct(s ds.Struct, usePointers bool)
+	WritePrivateStruct(s ds.Struct)
+	WriteEnum(e ds.Enum)
+	WriteConst(c ds.Const)
 	WriteClientConstructor(clientName string)
-	WriteInterfaceImplementation(clientName string, f Func)
+	WriteInterfaceImplementation(clientName string, f ds.Func)
 	WriteGraphqlErrorStructs(usePointers bool)
 	Generate() io.WriterTo
 }
@@ -98,7 +99,7 @@ func (g *generator) WriteLineBreak(r int) {
 }
 
 // WriteInterface writes interface of provided name and functions (fn).
-func (g *generator) WriteInterface(name string, fn ...Func) {
+func (g *generator) WriteInterface(name string, fn ...ds.Func) {
 	config := map[string]interface{}{
 		"InterfaceName": name,
 		"Functions":     fn,
@@ -110,7 +111,7 @@ func (g *generator) WriteInterface(name string, fn ...Func) {
 }
 
 // WritePublicStruct writes struct with capitalized name, fields and json tags based on generator.Struct.
-func (g *generator) WritePublicStruct(s Struct, usePointers bool) {
+func (g *generator) WritePublicStruct(s ds.Struct, usePointers bool) {
 	config := map[string]interface{}{
 		"Struct":      s,
 		"Public":      true,
@@ -123,7 +124,7 @@ func (g *generator) WritePublicStruct(s Struct, usePointers bool) {
 }
 
 // WritePrivateStruct writes struct with lowercase name, fields and no json tags based on generator.Struct.
-func (g *generator) WritePrivateStruct(s Struct) {
+func (g *generator) WritePrivateStruct(s ds.Struct) {
 	config := map[string]interface{}{
 		"Struct": s,
 		"Public": false,
@@ -135,7 +136,7 @@ func (g *generator) WritePrivateStruct(s Struct) {
 }
 
 // WriteEnum writes Enum based on generator.Enum.
-func (g *generator) WriteEnum(e Enum) {
+func (g *generator) WriteEnum(e ds.Enum) {
 	err := g.template.ExecuteTemplate(g.stream, "enum.tmpl", e)
 	if err != nil {
 		panic(fmt.Errorf("failed to execute 'enum' template. Cause: %w", err))
@@ -143,7 +144,7 @@ func (g *generator) WriteEnum(e Enum) {
 }
 
 // WriteConst writes Const based on generator.Const.
-func (g *generator) WriteConst(c Const) {
+func (g *generator) WriteConst(c ds.Const) {
 	err := g.template.ExecuteTemplate(g.stream, "const.tmpl", c)
 	if err != nil {
 		panic(fmt.Errorf("failed to execute 'const' template. Cause: %w", err))
@@ -159,7 +160,7 @@ func (g *generator) WriteClientConstructor(clientName string) {
 }
 
 // WriteInterfaceImplementation writes implementation for earlier defined interface as function with receiver.
-func (g *generator) WriteInterfaceImplementation(clientName string, f Func) {
+func (g *generator) WriteInterfaceImplementation(clientName string, f ds.Func) {
 	config := map[string]interface{}{
 		"ClientName": clientName,
 		"Func":       f,

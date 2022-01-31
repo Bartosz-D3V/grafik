@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/Bartosz-D3V/grafik/ds"
 	"github.com/Bartosz-D3V/grafik/test"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -98,9 +99,9 @@ func TestGenerator_WriteImports_Error(t *testing.T) {
 
 func TestGenerator_WriteInterface_NoArgWithReturn(t *testing.T) {
 	t.Parallel()
-	fn := Func{
+	fn := ds.Func{
 		Name: "FindBook",
-		Args: make([]TypeArg, 0),
+		Args: make([]ds.TypeArg, 0),
 		Type: "Book",
 	}
 
@@ -125,9 +126,9 @@ type BookService interface {
 
 func TestGenerator_WriteInterface_SingleArgWithReturn(t *testing.T) {
 	t.Parallel()
-	fn := Func{
+	fn := ds.Func{
 		Name: "FindBook",
-		Args: []TypeArg{{Name: "isbn", Type: "string"}},
+		Args: []ds.TypeArg{{Name: "isbn", Type: "string"}},
 		Type: "Book",
 	}
 
@@ -152,9 +153,9 @@ type BookService interface {
 
 func TestGenerator_WriteInterface_MultiArgWithReturn(t *testing.T) {
 	t.Parallel()
-	fn := Func{
+	fn := ds.Func{
 		Name: "FindEmployee",
-		Args: []TypeArg{
+		Args: []ds.TypeArg{
 			{Name: "name", Type: "string"},
 			{Name: "department", Type: "string"},
 			{Name: "age", Type: "int"},
@@ -183,14 +184,14 @@ type EmployeeService interface {
 
 func TestGenerator_WriteInterface_MultiMethods(t *testing.T) {
 	t.Parallel()
-	fn1 := Func{
+	fn1 := ds.Func{
 		Name: "FindBook",
-		Args: make([]TypeArg, 0),
+		Args: make([]ds.TypeArg, 0),
 		Type: "Book",
 	}
-	fn2 := Func{
+	fn2 := ds.Func{
 		Name: "FindEmployee",
-		Args: []TypeArg{
+		Args: []ds.TypeArg{
 			{Name: "name", Type: "string"},
 			{Name: "department", Type: "string"},
 			{Name: "age", Type: "int"},
@@ -240,9 +241,9 @@ func TestGenerator_WritePublicStruct(t *testing.T) {
 	g.WritePackage("test")
 	g.WriteLineBreak(2)
 
-	s := Struct{
+	s := ds.Struct{
 		Name: "Person",
-		Fields: []TypeField{
+		Fields: []ds.TypeField{
 			{
 				Name:     "Name",
 				Type:     "string",
@@ -278,9 +279,9 @@ func TestGenerator_WritePublicStruct_WithPointers(t *testing.T) {
 	g.WritePackage("test")
 	g.WriteLineBreak(2)
 
-	s := Struct{
+	s := ds.Struct{
 		Name: "Person",
-		Fields: []TypeField{
+		Fields: []ds.TypeField{
 			{
 				Name:     "Name",
 				Type:     "string",
@@ -318,7 +319,7 @@ func TestGenerator_WritePublicStruct_Error(t *testing.T) {
 	}
 
 	assert.PanicsWithError(t, "failed to execute 'struct' template. Cause: unit test: Failed to write a slice of bytes", func() {
-		g.WritePublicStruct(Struct{}, false)
+		g.WritePublicStruct(ds.Struct{}, false)
 	})
 }
 
@@ -330,9 +331,9 @@ func TestGenerator_WritePrivateStruct(t *testing.T) {
 	g.WritePackage("test")
 	g.WriteLineBreak(2)
 
-	s := Struct{
+	s := ds.Struct{
 		Name: "Person",
-		Fields: []TypeField{
+		Fields: []ds.TypeField{
 			{
 				Name: "Name",
 				Type: "string",
@@ -368,7 +369,7 @@ func TestGenerator_WritePrivateStruct_Error(t *testing.T) {
 	}
 
 	assert.PanicsWithError(t, "failed to execute 'struct' template. Cause: unit test: Failed to write a slice of bytes", func() {
-		g.WritePrivateStruct(Struct{})
+		g.WritePrivateStruct(ds.Struct{})
 	})
 }
 
@@ -380,7 +381,7 @@ func TestGenerator_WriteEnum(t *testing.T) {
 	g.WritePackage("test")
 	g.WriteLineBreak(2)
 
-	e := Enum{
+	e := ds.Enum{
 		Name:   "Planet",
 		Fields: []string{"NEPTUNE", "MARS", "SATURN"},
 	}
@@ -412,7 +413,7 @@ func TestGenerator_WriteEnum_Error(t *testing.T) {
 	}
 
 	assert.PanicsWithError(t, "failed to execute 'enum' template. Cause: unit test: Failed to write a slice of bytes", func() {
-		g.WriteEnum(Enum{})
+		g.WriteEnum(ds.Enum{})
 	})
 }
 
@@ -424,11 +425,11 @@ func TestGenerator_WriteConst(t *testing.T) {
 	g.WritePackage("test")
 	g.WriteLineBreak(2)
 
-	c1 := Const{
+	c1 := ds.Const{
 		Name: "pi",
 		Val:  3.16,
 	}
-	c2 := Const{
+	c2 := ds.Const{
 		Name: "encoding",
 		Val:  "UTF-8",
 	}
@@ -460,7 +461,7 @@ func TestGenerator_WriteConst_Error(t *testing.T) {
 	}
 
 	assert.PanicsWithError(t, "failed to execute 'const' template. Cause: unit test: Failed to write a slice of bytes", func() {
-		g.WriteConst(Const{})
+		g.WriteConst(ds.Const{})
 	})
 }
 
@@ -510,9 +511,9 @@ func TestGenerator_WriteInterfaceImplementation(t *testing.T) {
 	g.WritePackage("test")
 	g.WriteLineBreak(2)
 
-	f := Func{
+	f := ds.Func{
 		Name: "countResults",
-		Args: []TypeArg{{
+		Args: []ds.TypeArg{{
 			Name: "condition",
 			Type: "string",
 		}},
@@ -546,7 +547,7 @@ func TestGenerator_WriteInterfaceImplementation_Error(t *testing.T) {
 	}
 
 	assert.PanicsWithError(t, "failed to execute 'interface_impl' template. Cause: unit test: Failed to write a slice of bytes", func() {
-		g.WriteInterfaceImplementation("", Func{})
+		g.WriteInterfaceImplementation("", ds.Func{})
 	})
 }
 
