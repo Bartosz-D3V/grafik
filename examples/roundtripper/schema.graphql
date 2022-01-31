@@ -1,3 +1,5 @@
+# Schema fetched from Github documentation: https://docs.github.com/en/graphql/overview/public-schema
+
 """
 Marks an element of a GraphQL schema as only available via a preview header
 """
