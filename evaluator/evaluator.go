@@ -16,11 +16,12 @@ type Evaluator interface {
 
 // evaluator is a struct used internally by grafikgen to wrap all required services and properties.
 type evaluator struct {
-	generator      generator.Generator // Instance of generator to abstract logic responsible for generating Go code.
-	visitor        visitor.Visitor     // Instance of visitor to obtain list of all used custom GraphQL types.
-	schema         *ast.Schema         // GraphQL schema provided via CLI.
-	queryDocument  *ast.QueryDocument  // GraphQL query document provided via CLI.
-	AdditionalInfo AdditionalInfo      // Additional info provided via CLI.
+	generator                  generator.Generator // Instance of generator to abstract logic responsible for generating Go code.
+	visitor                    visitor.Visitor     // Instance of visitor to obtain list of all used custom GraphQL types.
+	schema                     *ast.Schema         // GraphQL schema provided via CLI.
+	queryDocument              *ast.QueryDocument  // GraphQL query document provided via CLI.
+	AdditionalInfo             AdditionalInfo      // Additional info provided via CLI.
+	SpecialGraphqlTypesMapping map[string]string   // Special GraphQL types (i.e. __typename).
 }
 
 // New function creates an instance of evaluator.
@@ -32,6 +33,9 @@ func New(schema *ast.Schema, queryDocument *ast.QueryDocument, additionalInfo Ad
 		schema:         schema,
 		queryDocument:  queryDocument,
 		AdditionalInfo: additionalInfo,
+		SpecialGraphqlTypesMapping: map[string]string{
+			"__typename": "TypeName",
+		},
 	}
 }
 

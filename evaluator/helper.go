@@ -1,3 +1,5 @@
+// Package evaluator contains the logic responsible for evaluating schema & query GraphQL Abstract Syntax Tree [AST].
+// It orchestrates the generation of the code by using visitor & generator packages.
 package evaluator
 
 import (
@@ -5,6 +7,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/Bartosz-D3V/grafik/common"
+	"github.com/Bartosz-D3V/grafik/ds"
 	"github.com/Bartosz-D3V/grafik/generator"
 	"github.com/vektah/gqlparser/ast"
 	"sort"
@@ -67,7 +70,7 @@ func (e *evaluator) createEnum(cType *ast.Definition) {
 		fields[i] = field.Name
 	}
 
-	en := generator.Enum{
+	en := ds.Enum{
 		Name:   cType.Name,
 		Fields: fields,
 	}
@@ -84,7 +87,7 @@ func (e *evaluator) createInterfaceType(cType *ast.Definition) {
 
 // createStruct creates generator.Struct and writes to IO.
 func (e *evaluator) createStruct(cType *ast.Definition, selectedFields []string) {
-	s := generator.Struct{
+	s := ds.Struct{
 		Name:   cType.Name,
 		Fields: e.parseFieldArgs(&cType.Fields, selectedFields),
 	}
@@ -149,23 +152,24 @@ func (e *evaluator) createCommonStruct(cType *ast.Definition, selectedFields []s
 // ast.SelectionSet is array of continents and country.
 // parseSelectionSet will return array of type generator.TypeArg with two elements - continents and country.
 // Name will be continents and country. Type will be introspected and either primitive or user defined struct.
-func (e *evaluator) parseSelectionSet(set ast.SelectionSet) []generator.TypeArg {
-	selectionSet := make([]generator.TypeArg, len(set))
+func (e *evaluator) parseSelectionSet(set ast.SelectionSet) []ds.TypeField {
+	selectionSet := make([]ds.TypeField, len(set))
 	for i, s := range set {
 		astField := s.(*ast.Field)
-		selectionSet[i] = generator.TypeArg{
-			Name: astField.Alias,
-			Type: e.convGoType(astField.Definition.Type),
+		selectionSet[i] = ds.TypeField{
+			Name:     astField.Alias,
+			Type:     e.convGoType(astField.Definition.Type),
+			JsonName: common.SentenceCase(astField.Alias),
 		}
 	}
 	return selectionSet
 }
 
 // parseFnArgs converts GraphQL operation (query/mutation) arguments (ast.VariableDefinitionList) and returns slice of generator.TypeArg.
-func (e *evaluator) parseFnArgs(args *ast.VariableDefinitionList) []generator.TypeArg {
-	funcArgs := make([]generator.TypeArg, len(*args))
+func (e *evaluator) parseFnArgs(args *ast.VariableDefinitionList) []ds.TypeArg {
+	funcArgs := make([]ds.TypeArg, len(*args))
 	for i, arg := range *args {
-		fArg := generator.TypeArg{
+		fArg := ds.TypeArg{
 			Name: arg.Variable,
 			Type: e.convGoType(arg.Type),
 		}
@@ -175,8 +179,8 @@ func (e *evaluator) parseFnArgs(args *ast.VariableDefinitionList) []generator.Ty
 }
 
 // parseFieldArgs converts GraphQL fields (ast.FieldList) into generator.TypeArg.
-func (e *evaluator) parseFieldArgs(args *ast.FieldList, selectedFields []string) []generator.TypeArg {
-	funcArgs := make([]generator.TypeArg, 0)
+func (e *evaluator) parseFieldArgs(args *ast.FieldList, selectedFields []string) []ds.TypeField {
+	funcArgs := make([]ds.TypeField, 0)
 	for _, arg := range *args {
 		selected := false
 		for _, field := range selectedFields {
@@ -188,13 +192,41 @@ func (e *evaluator) parseFieldArgs(args *ast.FieldList, selectedFields []string)
 			continue
 		}
 
-		fArg := generator.TypeArg{
-			Name: arg.Name,
-			Type: e.convGoType(arg.Type),
+		fArg := ds.TypeField{
+			Name:     arg.Name,
+			Type:     e.convGoType(arg.Type),
+			JsonName: common.SentenceCase(arg.Name),
+		}
+		funcArgs = append(funcArgs, fArg)
+	}
+	for k, v := range e.SpecialGraphqlTypesMapping {
+		selected := false
+		for _, field := range selectedFields {
+			if k == field {
+				selected = true
+			}
+		}
+		if !selected {
+			continue
+		}
+
+		fArg := ds.TypeField{
+			Name:     v,
+			Type:     e.mapSpecialType(k),
+			JsonName: k,
 		}
 		funcArgs = append(funcArgs, fArg)
 	}
 	return funcArgs
+}
+
+func (e *evaluator) mapSpecialType(name string) string {
+	switch name {
+	case "__typename":
+		return "string"
+	default:
+		panic(fmt.Sprintf("Unrecognized field=%s", name))
+	}
 }
 
 // convGoType maps GraphQL types into Go types.
@@ -289,7 +321,7 @@ func (e *evaluator) genOperations() {
 		if nextOp != nil {
 			queryStr := src[curOp.Position.Start:nextOp.Position.Start]
 			queryStr = e.removeComments(queryStr)
-			c := generator.Const{
+			c := ds.Const{
 				Name: curOp.Name,
 				Val:  queryStr,
 			}
@@ -298,7 +330,7 @@ func (e *evaluator) genOperations() {
 		} else {
 			queryStr := src[curOp.Position.Start:]
 			queryStr = e.removeComments(queryStr)
-			c := generator.Const{
+			c := ds.Const{
 				Name: curOp.Name,
 				Val:  queryStr,
 			}
@@ -327,9 +359,9 @@ func (e *evaluator) genClientCode() {
 func (e *evaluator) genOpsInterface() {
 	ops := e.queryDocument.Operations
 
-	funcs := make([]generator.Func, len(ops))
+	funcs := make([]ds.Func, len(ops))
 	for i, op := range ops {
-		f := generator.Func{
+		f := ds.Func{
 			Name:         op.Name,
 			Args:         e.parseFnArgs(&op.VariableDefinitions),
 			Type:         "(*http.Response, error)",
@@ -357,19 +389,21 @@ func (e *evaluator) genOpsInterface() {
 
 // genWrapperResponseStruct generates top level GraphQL response type
 // See https://graphql.org/learn/serving-over-http/#response
-func (e *evaluator) genWrapperResponseStruct(f generator.Func) {
+func (e *evaluator) genWrapperResponseStruct(f ds.Func) {
 	dataStructName := fmt.Sprintf("%sData", strings.Title(f.Name))
 	responseStructName := fmt.Sprintf("%sResponse", strings.Title(f.Name))
-	structWrapper := generator.Struct{
+	structWrapper := ds.Struct{
 		Name: responseStructName,
-		Fields: []generator.TypeArg{
+		Fields: []ds.TypeField{
 			{
-				Name: "data",
-				Type: dataStructName,
+				Name:     "data",
+				Type:     dataStructName,
+				JsonName: "data",
 			},
 			{
-				Name: "errors",
-				Type: fmt.Sprintf("[]%s", generator.GraphQLErrorStructName),
+				Name:     "errors",
+				Type:     fmt.Sprintf("[]%s", generator.GraphQLErrorStructName),
+				JsonName: "errors",
 			},
 		},
 	}
@@ -378,7 +412,7 @@ func (e *evaluator) genWrapperResponseStruct(f generator.Func) {
 
 	// generate object referenced in 'data' JSON response.
 	// if object has selection set - those will be created as struct fields.
-	s := generator.Struct{
+	s := ds.Struct{
 		Name:   dataStructName,
 		Fields: f.WrapperTypes,
 	}
@@ -393,9 +427,9 @@ func (e *evaluator) genErrorStructs() {
 
 // genClientStruct generates internal grafik GraphQL client defined in package client.
 func (e *evaluator) genClientStruct() {
-	s := generator.Struct{
+	s := ds.Struct{
 		Name: e.AdditionalInfo.ClientName,
-		Fields: []generator.TypeArg{
+		Fields: []ds.TypeField{
 			{
 				Name: "ctrl",
 				Type: "graphqlClient.Client",

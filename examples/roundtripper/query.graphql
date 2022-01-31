@@ -1,0 +1,33 @@
+query getData {
+    viewer {
+        login
+        starredRepositories {
+            totalCount
+        }
+        repositories(first: 3) {
+            edges {
+                node {
+                    name
+                    languages(first: 5) {
+                        nodes {
+                            name,
+                            color
+                        }
+                    }
+                    stargazers {
+                        totalCount
+                    }
+                    forks {
+                        totalCount
+                    }
+                    watchers {
+                        totalCount
+                    }
+                    issues(states:[OPEN]) {
+                        totalCount
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,3 +1,4 @@
+// Package common contains commonly used helper functions used within grafik project.
 package common
 
 import (

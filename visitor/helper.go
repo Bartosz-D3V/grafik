@@ -1,3 +1,4 @@
+// Package visitor abstracts logic responsible for determining which custom types from GraphQL Schema file should be generated based on usage in GraphQL query file.
 package visitor
 
 import (

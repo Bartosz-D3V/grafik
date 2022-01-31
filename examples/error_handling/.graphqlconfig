@@ -2,7 +2,9 @@
   "name": "Error handling example",
   "projects": {
     "array": {
-      "includes": ["./**"]
+      "includes": [
+        "./**"
+      ]
     }
-   }
+  }
 }

@@ -1,0 +1,9 @@
+query GetFileNameWithId($id: ID!) {
+    getFile(id: $id) {
+        name
+        __typename
+        meta {
+            __typename
+        }
+    }
+}

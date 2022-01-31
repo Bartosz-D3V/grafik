@@ -1,8 +1,8 @@
 mutation addOrUpdateHardcodedUser($rocketName: String, $usersOnConflict: users_on_conflict) {
-        insert_users(objects: {id: "5b8bcf27-9561-4123-87ff-75088c9da9c7", rocket: $rocketName}, on_conflict: $usersOnConflict) {
-            affected_rows
-            returning {
-                id
-            }
+    insert_users(objects: {id: "5b8bcf27-9561-4123-87ff-75088c9da9c7", rocket: $rocketName}, on_conflict: $usersOnConflict) {
+        affected_rows
+        returning {
+            id
         }
+    }
 }
