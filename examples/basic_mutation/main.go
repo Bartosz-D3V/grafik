@@ -15,7 +15,7 @@ func main() {
 		Timeout: 10 * time.Second,
 	}
 	client := New(spacexUrl, httpClient)
-	headers := &http.Header{
+	headers := http.Header{
 		"Date": []string{time.Now().String()},
 	}
 	onConflict := UsersOnConflict{

@@ -354,7 +354,7 @@ func (e *evaluator) genClientCode() {
 // genOpsInterface generates public interface for grafik client.
 // For example:
 // type SpaceXClient interface {
-//	AddOrUpdateHardcodedUser(rocketName string, usersOnConflict UsersOnConflict, header *http.Header) (*http.Response, error)
+//	AddOrUpdateHardcodedUser(rocketName string, usersOnConflict UsersOnConflict, header http.Header) (*http.Response, error)
 // }
 func (e *evaluator) genOpsInterface() {
 	ops := e.queryDocument.Operations

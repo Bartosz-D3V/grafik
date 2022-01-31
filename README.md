@@ -116,10 +116,10 @@ const countResults = `query countResults($condition: Condition!){
 }`
 
 type GraphqlClient interface {
-	CountResults(condition Condition, header *http.Header) (*http.Response, error)
+	CountResults(condition Condition, header http.Header) (*http.Response, error)
 }
 
-func (c *graphqlClient) CountResults(ctx context.Context, condition Condition, header *http.Header) (*http.Response, error) {
+func (c *graphqlClient) CountResults(ctx context.Context, condition Condition, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 1)
 	params["condition"] = condition
 

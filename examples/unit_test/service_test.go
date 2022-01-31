@@ -35,7 +35,7 @@ type mockSpaceXClient struct {
 	returnValidResponse bool
 }
 
-func (c mockSpaceXClient) GetRocketResults(context.Context, int, *http.Header) (*http.Response, error) {
+func (c mockSpaceXClient) GetRocketResults(context.Context, int, http.Header) (*http.Response, error) {
 	if c.returnValidResponse {
 		res := createGraphQLResponse()
 		resJson, _ := json.Marshal(res)

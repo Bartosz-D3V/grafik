@@ -33,10 +33,10 @@ const getPolandInfo = `query getPolandInfo {
 }`
 
 type CountriesClient interface {
-	GetPolandInfo(ctx context.Context, header *http.Header) (*http.Response, error)
+	GetPolandInfo(ctx context.Context, header http.Header) (*http.Response, error)
 }
 
-func (c *countriesClient) GetPolandInfo(ctx context.Context, header *http.Header) (*http.Response, error) {
+func (c *countriesClient) GetPolandInfo(ctx context.Context, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(ctx, getPolandInfo, params, header)
