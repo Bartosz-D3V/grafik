@@ -48,10 +48,10 @@ const addOrUpdateHardcodedUser = `mutation addOrUpdateHardcodedUser($rocketName:
 }`
 
 type SpaceXClient interface {
-	AddOrUpdateHardcodedUser(ctx context.Context, rocketName string, usersOnConflict UsersOnConflict, header *http.Header) (*http.Response, error)
+	AddOrUpdateHardcodedUser(ctx context.Context, rocketName string, usersOnConflict UsersOnConflict, header http.Header) (*http.Response, error)
 }
 
-func (c *spaceXClient) AddOrUpdateHardcodedUser(ctx context.Context, rocketName string, usersOnConflict UsersOnConflict, header *http.Header) (*http.Response, error) {
+func (c *spaceXClient) AddOrUpdateHardcodedUser(ctx context.Context, rocketName string, usersOnConflict UsersOnConflict, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 2)
 	params["rocketName"] = rocketName
 	params["usersOnConflict"] = usersOnConflict

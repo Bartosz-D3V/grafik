@@ -118,7 +118,7 @@ func TestGenerator_WriteInterface_NoArgWithReturn(t *testing.T) {
 package test
 
 type BookService interface {
-	FindBook(ctx context.Context, header *http.Header) Book
+	FindBook(ctx context.Context, header http.Header) Book
 }`)
 
 	assert.Equal(t, expOut, out)
@@ -145,7 +145,7 @@ func TestGenerator_WriteInterface_SingleArgWithReturn(t *testing.T) {
 package test
 
 type BookService interface {
-	FindBook(ctx context.Context, isbn string, header *http.Header) Book
+	FindBook(ctx context.Context, isbn string, header http.Header) Book
 }`)
 
 	assert.Equal(t, expOut, out)
@@ -176,7 +176,7 @@ func TestGenerator_WriteInterface_MultiArgWithReturn(t *testing.T) {
 package test
 
 type EmployeeService interface {
-	FindEmployee(ctx context.Context, name string, department string, age int, header *http.Header) Employee
+	FindEmployee(ctx context.Context, name string, department string, age int, header http.Header) Employee
 }`)
 
 	assert.Equal(t, expOut, out)
@@ -212,8 +212,8 @@ func TestGenerator_WriteInterface_MultiMethods(t *testing.T) {
 package test
 
 type BookService interface {
-	FindBook(ctx context.Context, header *http.Header) Book
-	FindEmployee(ctx context.Context, name string, department string, age int, header *http.Header) Employee
+	FindBook(ctx context.Context, header http.Header) Book
+	FindEmployee(ctx context.Context, name string, department string, age int, header http.Header) Employee
 }`)
 
 	assert.Equal(t, expOut, out)
@@ -526,7 +526,7 @@ func TestGenerator_WriteInterfaceImplementation(t *testing.T) {
 	expOut := test.PrepExpCode(t, `
 package test
 
-func (c *apiClient) CountResults(ctx context.Context, condition string, header *http.Header) (*http.Response, error) {
+func (c *apiClient) CountResults(ctx context.Context, condition string, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 1)
 	params["condition"] = condition
 

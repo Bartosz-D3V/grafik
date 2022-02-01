@@ -11,7 +11,7 @@ import (
 // A Client is an interface that defines a contract of grafik internal GraphQL client.
 // It can be mocked with tools like https://github.com/golang/mock in unit tests.
 type Client interface {
-	Execute(ctx context.Context, query string, params map[string]interface{}, header *http.Header) (*http.Response, error)
+	Execute(ctx context.Context, query string, params map[string]interface{}, header http.Header) (*http.Response, error)
 }
 
 // client is a private struct that can be created with New function.
@@ -33,7 +33,7 @@ func New(endpoint string, httpClient *http.Client) Client {
 
 // Execute is a receiver function used by generated grafik client to execute HTTP requests.
 // Caller method is responsible for closing the body reader.
-func (c *client) Execute(ctx context.Context, query string, params map[string]interface{}, header *http.Header) (*http.Response, error) {
+func (c *client) Execute(ctx context.Context, query string, params map[string]interface{}, header http.Header) (*http.Response, error) {
 	q := c.formatQuery(query)
 	req := GraphQLRequest{
 		Query:     q,
@@ -50,7 +50,7 @@ func (c *client) Execute(ctx context.Context, query string, params map[string]in
 	}
 
 	if header != nil {
-		httpReq.Header = *header
+		httpReq.Header = header
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
 

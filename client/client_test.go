@@ -66,7 +66,7 @@ func TestClient_Execute_CustomHeader_Success(t *testing.T) {
 	client := New(svr.URL, svr.Client())
 	params := make(map[string]interface{})
 	params["code"] = "EU"
-	res, err := client.Execute(context.TODO(), query, params, &expHeader)
+	res, err := client.Execute(context.TODO(), query, params, expHeader)
 	assert.NoError(t, err)
 
 	b, err := io.ReadAll(res.Body)

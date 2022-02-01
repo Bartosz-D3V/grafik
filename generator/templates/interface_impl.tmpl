@@ -1,4 +1,4 @@
-func (c *{{sentenceCase .ClientName}}) {{.Func.ExportName}}(ctx context.Context, {{.Func.JoinArgsBy ", "}}{{if .Func.Args}}, header *http.Header{{else}} header *http.Header{{end}}) (*http.Response, error) {
+func (c *{{sentenceCase .ClientName}}) {{.Func.ExportName}}(ctx context.Context, {{.Func.JoinArgsBy ", "}}{{if .Func.Args}}, header http.Header{{else}} header http.Header{{end}}) (*http.Response, error) {
     params := make(map[string]interface{}, {{len .Func.Args}})
     {{range .Func.Args}}params["{{.Name}}"] = {{.Name}}{{"\n"}}{{end}}
     return c.ctrl.Execute(ctx, {{sentenceCase .Func.Name}}, params, header)

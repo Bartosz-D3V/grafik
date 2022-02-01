@@ -75,10 +75,10 @@ const getBatchInfo = `query getBatchInfo($limit: Int) {
 }`
 
 type SpaceXClient interface {
-	GetBatchInfo(ctx context.Context, limit int, header *http.Header) (*http.Response, error)
+	GetBatchInfo(ctx context.Context, limit int, header http.Header) (*http.Response, error)
 }
 
-func (c *spaceXClient) GetBatchInfo(ctx context.Context, limit int, header *http.Header) (*http.Response, error) {
+func (c *spaceXClient) GetBatchInfo(ctx context.Context, limit int, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 1)
 	params["limit"] = limit
 

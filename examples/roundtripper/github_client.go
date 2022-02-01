@@ -92,10 +92,10 @@ const getData = `query getData {
 }`
 
 type GithubClient interface {
-	GetData(ctx context.Context, header *http.Header) (*http.Response, error)
+	GetData(ctx context.Context, header http.Header) (*http.Response, error)
 }
 
-func (c *githubClient) GetData(ctx context.Context, header *http.Header) (*http.Response, error) {
+func (c *githubClient) GetData(ctx context.Context, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(ctx, getData, params, header)

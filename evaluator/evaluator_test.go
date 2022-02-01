@@ -52,18 +52,18 @@ const renameFileWithId = %[1]cmutation RenameFileWithId($id: ID!, $name: String!
 }%[1]c
 
 type FilesClient interface {
-	GetFileNameWithId(ctx context.Context, id string, header *http.Header) (*http.Response, error)
-	RenameFileWithId(ctx context.Context, id string, name string, header *http.Header) (*http.Response, error)
+	GetFileNameWithId(ctx context.Context, id string, header http.Header) (*http.Response, error)
+	RenameFileWithId(ctx context.Context, id string, name string, header http.Header) (*http.Response, error)
 }
 
-func (c *filesClient) GetFileNameWithId(ctx context.Context, id string, header *http.Header) (*http.Response, error) {
+func (c *filesClient) GetFileNameWithId(ctx context.Context, id string, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 1)
 	params["id"] = id
 
 	return c.ctrl.Execute(ctx, getFileNameWithId, params, header)
 }
 
-func (c *filesClient) RenameFileWithId(ctx context.Context, id string, name string, header *http.Header) (*http.Response, error) {
+func (c *filesClient) RenameFileWithId(ctx context.Context, id string, name string, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 2)
 	params["id"] = id
 	params["name"] = name
@@ -158,10 +158,10 @@ const getAllFilmsProducers = %[1]cquery GetAllFilmsProducers {
 }%[1]c
 
 type FilmsClient interface {
-	GetAllFilmsProducers(ctx context.Context, header *http.Header) (*http.Response, error)
+	GetAllFilmsProducers(ctx context.Context, header http.Header) (*http.Response, error)
 }
 
-func (c *filmsClient) GetAllFilmsProducers(ctx context.Context, header *http.Header) (*http.Response, error) {
+func (c *filmsClient) GetAllFilmsProducers(ctx context.Context, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(ctx, getAllFilmsProducers, params, header)
@@ -244,10 +244,10 @@ const getAllResults = %[1]cquery GetAllResults {
 }%[1]c
 
 type MathClient interface {
-	GetAllResults(ctx context.Context, header *http.Header) (*http.Response, error)
+	GetAllResults(ctx context.Context, header http.Header) (*http.Response, error)
 }
 
-func (c *mathClient) GetAllResults(ctx context.Context, header *http.Header) (*http.Response, error) {
+func (c *mathClient) GetAllResults(ctx context.Context, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(ctx, getAllResults, params, header)
@@ -330,10 +330,10 @@ const getAllResults = %[1]cquery GetAllResults {
 }%[1]c
 
 type MathClient interface {
-	GetAllResults(ctx context.Context, header *http.Header) (*http.Response, error)
+	GetAllResults(ctx context.Context, header http.Header) (*http.Response, error)
 }
 
-func (c *mathClient) GetAllResults(ctx context.Context, header *http.Header) (*http.Response, error) {
+func (c *mathClient) GetAllResults(ctx context.Context, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(ctx, getAllResults, params, header)
@@ -436,10 +436,10 @@ const getHeroWithId123ABC = %[1]cquery GetHeroWithId123ABC {
 }%[1]c
 
 type SpecificHeroClient interface {
-	GetHeroWithId123ABC(ctx context.Context, header *http.Header) (*http.Response, error)
+	GetHeroWithId123ABC(ctx context.Context, header http.Header) (*http.Response, error)
 }
 
-func (c *specificHeroClient) GetHeroWithId123ABC(ctx context.Context, header *http.Header) (*http.Response, error) {
+func (c *specificHeroClient) GetHeroWithId123ABC(ctx context.Context, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(ctx, getHeroWithId123ABC, params, header)
@@ -526,10 +526,10 @@ const getDepartment = %[1]cquery getDepartment {
 }%[1]c
 
 type CompanyClient interface {
-	GetDepartment(ctx context.Context, header *http.Header) (*http.Response, error)
+	GetDepartment(ctx context.Context, header http.Header) (*http.Response, error)
 }
 
-func (c *companyClient) GetDepartment(ctx context.Context, header *http.Header) (*http.Response, error) {
+func (c *companyClient) GetDepartment(ctx context.Context, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(ctx, getDepartment, params, header)
@@ -613,10 +613,10 @@ const getCapsulesByFullSelector = %[1]cquery GetCapsulesByFullSelector($order: S
 }%[1]c
 
 type CapsulesClient interface {
-	GetCapsulesByFullSelector(ctx context.Context, order string, mission string, originalLaunch Date, id string, sort string, header *http.Header) (*http.Response, error)
+	GetCapsulesByFullSelector(ctx context.Context, order string, mission string, originalLaunch Date, id string, sort string, header http.Header) (*http.Response, error)
 }
 
-func (c *capsulesClient) GetCapsulesByFullSelector(ctx context.Context, order string, mission string, originalLaunch Date, id string, sort string, header *http.Header) (*http.Response, error) {
+func (c *capsulesClient) GetCapsulesByFullSelector(ctx context.Context, order string, mission string, originalLaunch Date, id string, sort string, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 5)
 	params["order"] = order
 	params["mission"] = mission
@@ -708,10 +708,10 @@ const getCapsulesByPositions = %[1]cquery GetCapsulesByPositions($find: [[Positi
 }%[1]c
 
 type CapsulesClient interface {
-	GetCapsulesByPositions(ctx context.Context, find [][]Position, limit [][]Limit, selector [][]string, header *http.Header) (*http.Response, error)
+	GetCapsulesByPositions(ctx context.Context, find [][]Position, limit [][]Limit, selector [][]string, header http.Header) (*http.Response, error)
 }
 
-func (c *capsulesClient) GetCapsulesByPositions(ctx context.Context, find [][]Position, limit [][]Limit, selector [][]string, header *http.Header) (*http.Response, error) {
+func (c *capsulesClient) GetCapsulesByPositions(ctx context.Context, find [][]Position, limit [][]Limit, selector [][]string, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 3)
 	params["find"] = find
 	params["limit"] = limit
@@ -801,10 +801,10 @@ const getCapsulesByPositions = %[1]cquery GetCapsulesByPositions($find: [[[Posit
 }%[1]c
 
 type CapsulesClient interface {
-	GetCapsulesByPositions(ctx context.Context, find [][][]Position, limit [][][]Limit, selector [][][]string, header *http.Header) (*http.Response, error)
+	GetCapsulesByPositions(ctx context.Context, find [][][]Position, limit [][][]Limit, selector [][][]string, header http.Header) (*http.Response, error)
 }
 
-func (c *capsulesClient) GetCapsulesByPositions(ctx context.Context, find [][][]Position, limit [][][]Limit, selector [][][]string, header *http.Header) (*http.Response, error) {
+func (c *capsulesClient) GetCapsulesByPositions(ctx context.Context, find [][][]Position, limit [][][]Limit, selector [][][]string, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 3)
 	params["find"] = find
 	params["limit"] = limit
@@ -894,10 +894,10 @@ const getAllMoviesWhereActorsOfTheMovieActedIn = %[1]cquery GetAllMoviesWhereAct
 }%[1]c
 
 type MovieClient interface {
-	GetAllMoviesWhereActorsOfTheMovieActedIn(ctx context.Context, title string, header *http.Header) (*http.Response, error)
+	GetAllMoviesWhereActorsOfTheMovieActedIn(ctx context.Context, title string, header http.Header) (*http.Response, error)
 }
 
-func (c *movieClient) GetAllMoviesWhereActorsOfTheMovieActedIn(ctx context.Context, title string, header *http.Header) (*http.Response, error) {
+func (c *movieClient) GetAllMoviesWhereActorsOfTheMovieActedIn(ctx context.Context, title string, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 1)
 	params["title"] = title
 
@@ -995,10 +995,10 @@ fragment InformatoryRocketInfo on Rocket {
 }%[1]c
 
 type RocketClient interface {
-	GetShortRocketInfo(ctx context.Context, header *http.Header) (*http.Response, error)
+	GetShortRocketInfo(ctx context.Context, header http.Header) (*http.Response, error)
 }
 
-func (c *rocketClient) GetShortRocketInfo(ctx context.Context, header *http.Header) (*http.Response, error) {
+func (c *rocketClient) GetShortRocketInfo(ctx context.Context, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(ctx, getShortRocketInfo, params, header)
@@ -1087,10 +1087,10 @@ const getCountriesAndContinents = %[1]cquery getCountriesAndContinents {
 }%[1]c
 
 type CountriesClient interface {
-	GetCountriesAndContinents(ctx context.Context, header *http.Header) (*http.Response, error)
+	GetCountriesAndContinents(ctx context.Context, header http.Header) (*http.Response, error)
 }
 
-func (c *countriesClient) GetCountriesAndContinents(ctx context.Context, header *http.Header) (*http.Response, error) {
+func (c *countriesClient) GetCountriesAndContinents(ctx context.Context, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(ctx, getCountriesAndContinents, params, header)
@@ -1181,10 +1181,10 @@ const getCharacters = %[1]cquery getCharacters {
 }%[1]c
 
 type CharacterClient interface {
-	GetCharacters(ctx context.Context, header *http.Header) (*http.Response, error)
+	GetCharacters(ctx context.Context, header http.Header) (*http.Response, error)
 }
 
-func (c *characterClient) GetCharacters(ctx context.Context, header *http.Header) (*http.Response, error) {
+func (c *characterClient) GetCharacters(ctx context.Context, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(ctx, getCharacters, params, header)
@@ -1272,10 +1272,10 @@ const getCharacters = %[1]cquery getCharacters {
 }%[1]c
 
 type CharacterClient interface {
-	GetCharacters(ctx context.Context, header *http.Header) (*http.Response, error)
+	GetCharacters(ctx context.Context, header http.Header) (*http.Response, error)
 }
 
-func (c *characterClient) GetCharacters(ctx context.Context, header *http.Header) (*http.Response, error) {
+func (c *characterClient) GetCharacters(ctx context.Context, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(ctx, getCharacters, params, header)
@@ -1359,10 +1359,10 @@ const getCharactersId = %[1]cquery getCharactersId {
 }%[1]c
 
 type CharacterClient interface {
-	GetCharactersId(ctx context.Context, header *http.Header) (*http.Response, error)
+	GetCharactersId(ctx context.Context, header http.Header) (*http.Response, error)
 }
 
-func (c *characterClient) GetCharactersId(ctx context.Context, header *http.Header) (*http.Response, error) {
+func (c *characterClient) GetCharactersId(ctx context.Context, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(ctx, getCharactersId, params, header)
@@ -1467,10 +1467,10 @@ const getCharacters = %[1]cquery getCharacters {
 }%[1]c
 
 type PlanetClient interface {
-	GetCharacters(ctx context.Context, header *http.Header) (*http.Response, error)
+	GetCharacters(ctx context.Context, header http.Header) (*http.Response, error)
 }
 
-func (c *planetClient) GetCharacters(ctx context.Context, header *http.Header) (*http.Response, error) {
+func (c *planetClient) GetCharacters(ctx context.Context, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(ctx, getCharacters, params, header)
@@ -1555,10 +1555,10 @@ const getCharacters = %[1]cquery getCharacters {
 }%[1]c
 
 type CharacterClient interface {
-	GetCharacters(ctx context.Context, header *http.Header) (*http.Response, error)
+	GetCharacters(ctx context.Context, header http.Header) (*http.Response, error)
 }
 
-func (c *characterClient) GetCharacters(ctx context.Context, header *http.Header) (*http.Response, error) {
+func (c *characterClient) GetCharacters(ctx context.Context, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(ctx, getCharacters, params, header)
@@ -1655,10 +1655,10 @@ fragment InformatoryRocketInfo on Rocket {
 }%[1]c
 
 type RocketClient interface {
-	GetShortRocketInfo(ctx context.Context, header *http.Header) (*http.Response, error)
+	GetShortRocketInfo(ctx context.Context, header http.Header) (*http.Response, error)
 }
 
-func (c *rocketClient) GetShortRocketInfo(ctx context.Context, header *http.Header) (*http.Response, error) {
+func (c *rocketClient) GetShortRocketInfo(ctx context.Context, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(ctx, getShortRocketInfo, params, header)
@@ -1767,10 +1767,10 @@ const getRepositoryInformation = %[1]cquery getRepositoryInformation {
 }%[1]c
 
 type GitClient interface {
-	GetRepositoryInformation(ctx context.Context, header *http.Header) (*http.Response, error)
+	GetRepositoryInformation(ctx context.Context, header http.Header) (*http.Response, error)
 }
 
-func (c *gitClient) GetRepositoryInformation(ctx context.Context, header *http.Header) (*http.Response, error) {
+func (c *gitClient) GetRepositoryInformation(ctx context.Context, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 0)
 
 	return c.ctrl.Execute(ctx, getRepositoryInformation, params, header)
@@ -1848,10 +1848,10 @@ const getFileNameWithId = %[1]cquery GetFileNameWithId($id: ID!) {
 }%[1]c
 
 type CommentsClient interface {
-	GetFileNameWithId(ctx context.Context, id string, header *http.Header) (*http.Response, error)
+	GetFileNameWithId(ctx context.Context, id string, header http.Header) (*http.Response, error)
 }
 
-func (c *commentsClient) GetFileNameWithId(ctx context.Context, id string, header *http.Header) (*http.Response, error) {
+func (c *commentsClient) GetFileNameWithId(ctx context.Context, id string, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 1)
 	params["id"] = id
 
@@ -1940,10 +1940,10 @@ const getFileNameWithId = %[1]cquery GetFileNameWithId($id: ID!) {
 }%[1]c
 
 type FieldClient interface {
-	GetFileNameWithId(ctx context.Context, id string, header *http.Header) (*http.Response, error)
+	GetFileNameWithId(ctx context.Context, id string, header http.Header) (*http.Response, error)
 }
 
-func (c *fieldClient) GetFileNameWithId(ctx context.Context, id string, header *http.Header) (*http.Response, error) {
+func (c *fieldClient) GetFileNameWithId(ctx context.Context, id string, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 1)
 	params["id"] = id
 

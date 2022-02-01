@@ -37,10 +37,10 @@ const getRocketResults = `query getRocketResults($limit: Int){
 }`
 
 type SpaceXClient interface {
-	GetRocketResults(ctx context.Context, limit int, header *http.Header) (*http.Response, error)
+	GetRocketResults(ctx context.Context, limit int, header http.Header) (*http.Response, error)
 }
 
-func (c *spaceXClient) GetRocketResults(ctx context.Context, limit int, header *http.Header) (*http.Response, error) {
+func (c *spaceXClient) GetRocketResults(ctx context.Context, limit int, header http.Header) (*http.Response, error) {
 	params := make(map[string]interface{}, 1)
 	params["limit"] = limit
 
